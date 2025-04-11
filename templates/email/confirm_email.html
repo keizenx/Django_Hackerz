@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de votre inscription sur Hackerz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .header h1 {
+            color: #00ff41;
+            margin: 0;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #eee;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #00ff41;
+            color: #000 !important;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .important {
+            color: #ff0000;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Confirmation de votre inscription</h1>
+        </div>
+        <div class="content">
+            <p>Bonjour {{ user.username }},</p>
+            <p>Merci de vous être inscrit sur Hackerz, votre référence pour la cybersécurité et le hacking éthique.</p>
+            <p>Pour activer votre compte et accéder à toutes nos fonctionnalités, veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous :</p>
+            
+            <p style="text-align: center; margin: 30px 0;">
+                <a href="{{ confirm_url }}" class="btn">Confirmer mon email</a>
+            </p>
+            
+            <p>Si le bouton ne fonctionne pas, vous pouvez également copier et coller le lien suivant dans votre navigateur :</p>
+            <p style="background-color: #f5f5f5; padding: 10px; word-break: break-all;">{{ confirm_url }}</p>
+            
+            <p><span class="important">Important :</span> Ce lien est valable pendant 24 heures.</p>
+            
+            <p>Une fois votre compte activé, vous pourrez :</p>
+            <ul>
+                <li>Accéder à notre boutique d'équipements spécialisés</li>
+                <li>Consulter nos articles exclusifs sur la cybersécurité</li>
+                <li>Créer votre liste de souhaits personnalisée</li>
+                <li>Participer à notre communauté de passionnés</li>
+            </ul>
+            
+            <p>Si vous n'avez pas demandé cette inscription, veuillez ignorer cet email.</p>
+            
+            <p>Cordialement,</p>
+            <p>L'équipe Hackerz</p>
+        </div>
+        <div class="footer">
+            <p>© 2025 Hackerz. Tous droits réservés.</p>
+            <p>Cet email a été envoyé à {{ user.email }}</p>
+        </div>
+    </div>
+</body>
+</html> 

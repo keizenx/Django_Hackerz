@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h1>Supprimer le produit</h1>
+      <a href="{% url 'shop:vendor_products' %}" class="button secondary">
+        <i class="bi bi-arrow-left"></i> Retour aux produits
+      </a>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <h2>Êtes-vous sûr de vouloir supprimer ce produit ?</h2>
+        <p class="text-danger">Cette action est irréversible.</p>
+
+        <div class="product-info">
+          <h3>{{ product.name }}</h3>
+          {% if product.image %}
+          <div class="product-image">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          </div>
+          {% endif %}
+          <p><strong>Prix :</strong> {{ product.price }} €</p>
+          <p><strong>Stock :</strong> {{ product.stock }}</p>
+          <p><strong>Description :</strong></p>
+          <p>{{ product.description }}</p>
+        </div>
+
+        <form method="POST" class="delete-form">
+          {% csrf_token %}
+          <div class="form-actions">
+            <a href="{% url 'shop:vendor_products' %}" class="button secondary">Annuler</a>
+            <button type="submit" class="button danger">Confirmer la suppression</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.product-info {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: var(--surface-2);
+  border-radius: 0.5rem;
+}
+
+.product-image {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.product-image img {
+  max-width: 200px;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.text-danger {
+  color: var(--danger);
+  font-weight: 500;
+}
+
+.delete-form {
+  margin-top: 2rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+</style>
+{% endblock %} 

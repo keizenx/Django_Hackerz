@@ -1,0 +1,1494 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mon Profil - Hackerz{% endblock %}
+
+{% block meta %}
+  <meta name="description" content="Gérez votre compte Hackerz, consultez vos commandes et mettez à jour vos informations personnelles.">
+{% endblock %}
+
+{% block content %}
+  <!-- Profile Section -->
+  <section class="section">
+    <div class="container">
+      <h1 style="font-size: 2rem; margin-bottom: 2rem;">Mon <span style="color: hsl(142, 100%, 50%);">Profil</span></h1>
+      
+      <div class="profile-page">
+        <!-- Sidebar -->
+        <div class="profile-sidebar">
+          <div class="profile-avatar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
+          <h2 class="profile-name">{{ user.username }}</h2>
+          <p class="profile-email">{{ user.email }}</p>
+          
+          <ul class="profile-menu">
+            <li class="profile-menu-item">
+              <a href="#dashboard" class="profile-menu-link active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <span>Tableau de bord</span>
+              </a>
+            </li>
+            <li class="profile-menu-item">
+              <a href="#orders" class="profile-menu-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <span>Mes commandes</span>
+              </a>
+            </li>
+            <li class="profile-menu-item">
+              <a href="#account" class="profile-menu-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>Mon compte</span>
+              </a>
+            </li>
+            <li class="profile-menu-item">
+              <a href="#security" class="profile-menu-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <span>Sécurité</span>
+              </a>
+            </li>
+            <li class="profile-menu-item">
+              <a href="#wishlist" class="profile-menu-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                <span>Liste de souhaits</span>
+              </a>
+            </li>
+            <li class="profile-menu-item">
+              <a href="#blog-posts" class="profile-menu-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <span>Mes articles</span>
+              </a>
+            </li>
+            <li class="profile-menu-item">
+              <a href="#vendor" class="profile-menu-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3zM21 9H3M21 15H3M12 3v18"></path></svg>
+                <span>Espace Vendeur</span>
+              </a>
+            </li>
+            <li class="profile-menu-item">
+              <a href="{% url 'shop:cart_detail' %}" class="profile-menu-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <span>Mon panier</span>
+              </a>
+            </li>
+            <li class="profile-menu-item">
+              <a href="{% url 'logout' %}" class="profile-menu-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                <span>Déconnexion</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Content -->
+        <div class="profile-content">
+          <div id="dashboard" class="profile-section">
+            <h2 class="profile-section-title">Tableau de bord</h2>
+            
+            <div class="grid grid-3">
+              <div class="card" style="padding: 1.5rem; text-align: center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(142, 100%, 50%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 0.5rem;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <h3 style="font-size: 1rem; margin-bottom: 0.25rem;">Commandes</h3>
+                <p style="font-size: 1.5rem; color: hsl(142, 100%, 50%);">{{ orders_count }}</p>
+              </div>
+              
+              <div class="card" style="padding: 1.5rem; text-align: center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(142, 100%, 50%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 0.5rem;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                <h3 style="font-size: 1rem; margin-bottom: 0.25rem;">Liste de souhaits</h3>
+                <p style="font-size: 1.5rem; color: hsl(142, 100%, 50%);">{{ wishlist_count }}</p>
+              </div>
+              
+              <div class="card" style="padding: 1.5rem; text-align: center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(142, 100%, 50%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 0.5rem;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <h3 style="font-size: 1rem; margin-bottom: 0.25rem;">Tutoriels lus</h3>
+                <p style="font-size: 1.5rem; color: hsl(142, 100%, 50%);">{{ blog_interactions }}</p>
+              </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Activité récente</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_activities %}
+                        <div class="timeline">
+                            {% for activity in recent_activities %}
+                                <div class="timeline-item">
+                                    <div class="timeline-date">
+                                        {{ activity.date|date:"d/m/Y H:i" }}
+                                    </div>
+                                    <div class="timeline-content">
+                                        {% if activity.type == 'order' %}
+                                            <div class="activity-order">
+                                                <i class="fas fa-shopping-cart"></i>
+                                                <span>Commande #{{ activity.content.id }}</span>
+                                                <span class="text-muted">{{ activity.content.total }} €</span>
+                                            </div>
+                                        {% elif activity.type == 'tutorial' %}
+                                            <div class="activity-tutorial">
+                                                <i class="fas fa-book-reader"></i>
+                                                <span>Lu le tutoriel : {{ activity.content.title }}</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center">Aucune activité récente à afficher</p>
+                    {% endif %}
+                </div>
+            </div>
+          </div>
+          
+          <div id="orders" class="profile-section" style="display: none;">
+            <h2 class="profile-section-title">Mes commandes</h2>
+            
+            <div class="order-list">
+              {% for order in orders %}
+              <div class="order-item">
+                <div class="order-header">
+                  <div class="order-number">Commande #{{ order.id }}</div>
+                  <div class="order-status {% if order.status == 'completed' %}completed{% else %}pending{% endif %}">
+                    {% if order.status == 'completed' %}Livré{% else %}En cours{% endif %}
+                </div>
+                </div>
+                <div class="order-products">
+                  {% for item in order.items.all %}
+                  <div class="order-product">
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="order-product-img">
+                    <div class="order-product-info">
+                      <div class="order-product-name">{{ item.product.name }}</div>
+                      <div class="order-product-price">{{ item.quantity }} x {{ item.price }} €</div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+                <div class="order-total">
+                  <div>Total</div>
+                  <div>{{ order.get_total_cost }} €</div>
+                </div>
+              </div>
+              {% empty %}
+              <div class="empty-state">
+                <p>Vous n'avez pas encore passé de commande.</p>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          
+          <div id="account" class="profile-section" style="display: none;">
+            <h2 class="profile-section-title">Mon compte</h2>
+            
+            <div class="card" style="padding: 1.5rem;">
+              <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Informations personnelles</h3>
+              
+              <form method="POST" action="{% url 'update_account' %}" id="personal-info-form">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="personal_info">
+                <div class="grid grid-2" style="gap: 1rem; margin-bottom: 1rem;">
+                  <div class="form-group">
+                    <label for="first-name" class="form-label">Prénom</label>
+                    <input type="text" id="first-name" name="first_name" class="form-input" value="{{ user.first_name }}">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="last-name" class="form-label">Nom</label>
+                    <input type="text" id="last-name" name="last_name" class="form-input" value="{{ user.last_name }}">
+                  </div>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="display-name" class="form-label">Nom d'affichage</label>
+                  <input type="text" id="display-name" name="display_name" class="form-input" value="{{ user.username }}">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="email" id="email" name="email" class="form-input" value="{{ user.email }}">
+                </div>
+                
+                <div id="personal-info-feedback" class="feedback" style="display: none; padding: 0.75rem; margin-bottom: 1rem; border-radius: 0.25rem; font-size: 0.875rem;"></div>
+                
+                <button type="submit" class="form-btn">Enregistrer les modifications</button>
+              </form>
+            </div>
+            
+            <div class="card" style="padding: 1.5rem; margin-top: 1.5rem;">
+              <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Adresse de livraison</h3>
+              
+              <form method="POST" action="{% url 'update_account' %}" id="shipping-address-form">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="shipping_address">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="address" class="form-label">Adresse</label>
+                  <input type="text" id="address" name="address" class="form-input" value="{% if user.profile.address %}{{ user.profile.address }}{% else %}123 Rue du Hacking{% endif %}">
+                </div>
+                
+                <div class="grid grid-2" style="gap: 1rem; margin-bottom: 1rem;">
+                  <div class="form-group">
+                    <label for="city" class="form-label">Ville</label>
+                    <input type="text" id="city" name="city" class="form-input" value="{% if user.profile.city %}{{ user.profile.city }}{% else %}Paris{% endif %}">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="postal-code" class="form-label">Code postal</label>
+                    <input type="text" id="postal-code" name="postal_code" class="form-input" value="{% if user.profile.postal_code %}{{ user.profile.postal_code }}{% else %}75001{% endif %}">
+                  </div>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="country" class="form-label">Pays</label>
+                  <select id="country" name="country" class="form-select">
+                    {% with stored_country=user.profile.country|default:'france' %}
+                    <option value="france" {% if stored_country == 'france' %}selected{% endif %}>France</option>
+                    <option value="belgium" {% if stored_country == 'belgium' %}selected{% endif %}>Belgique</option>
+                    <option value="switzerland" {% if stored_country == 'switzerland' %}selected{% endif %}>Suisse</option>
+                    <option value="canada" {% if stored_country == 'canada' %}selected{% endif %}>Canada</option>
+                    {% endwith %}
+                  </select>
+                </div>
+                
+                <div id="shipping-address-feedback" class="feedback" style="display: none; padding: 0.75rem; margin-bottom: 1rem; border-radius: 0.25rem; font-size: 0.875rem;"></div>
+                
+                <button type="submit" class="form-btn">Enregistrer l'adresse</button>
+              </form>
+            </div>
+          </div>
+          
+          <!-- Section Vendeur -->
+          <div id="vendor" class="profile-section" style="display: none;">
+            <h2 class="profile-section-title">Espace Vendeur</h2>
+            
+            <div class="card" style="padding: 1.5rem;">
+              {% if user.profile.is_vendor %}
+                {% if vendor_info.is_approved %}
+                  <div class="alert success">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <div>
+                      <h4>Vendeur Approuvé</h4>
+                      <p>Votre compte vendeur a été approuvé. Vous pouvez maintenant gérer vos produits.</p>
+                    </div>
+                  </div>
+                  
+                  <div style="margin-top: 1.5rem;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Gestion des produits</h3>
+                    <div class="grid grid-2" style="gap: 1rem;">
+                      <a href="{% url 'shop:vendor_products' %}" class="card hover-card">
+                        <div class="card-body">
+                          <h4>Mes produits</h4>
+                          <p>Gérer vos produits existants</p>
+                        </div>
+                      </a>
+                      <a href="{% url 'shop:add_product' %}" class="card hover-card">
+                        <div class="card-body">
+                          <h4>Ajouter un produit</h4>
+                          <p>Créer un nouveau produit</p>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <div style="margin-top: 1.5rem;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Informations de votre boutique</h3>
+                    <div class="grid grid-2" style="gap: 1rem;">
+                      <div>
+                        <p style="font-weight: 600;">Nom de la boutique:</p>
+                        <p>{{ vendor_info.shop_name }}</p>
+                      </div>
+                      <div>
+                        <p style="font-weight: 600;">SIRET:</p>
+                        <p>{{ vendor_info.siret }}</p>
+                      </div>
+                      {% if vendor_info.website %}
+                      <div>
+                        <p style="font-weight: 600;">Site Web:</p>
+                        <p><a href="{{ vendor_info.website }}" target="_blank">{{ vendor_info.website }}</a></p>
+                      </div>
+                      {% endif %}
+                      {% if vendor_info.phone %}
+                      <div>
+                        <p style="font-weight: 600;">Téléphone:</p>
+                        <p>{{ vendor_info.phone }}</p>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% else %}
+                  <div class="alert warning">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    <div>
+                      <h4>Demande en attente</h4>
+                      <p>Votre demande pour devenir vendeur est en cours d'examen. Vous recevrez une notification lorsqu'elle sera approuvée.</p>
+                    </div>
+                  </div>
+                  
+                  <div style="margin-top: 1.5rem;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Informations soumises</h3>
+                    <div class="grid grid-2" style="gap: 1rem;">
+                      <div>
+                        <p style="font-weight: 600;">Nom de la boutique:</p>
+                        <p>{{ vendor_info.shop_name }}</p>
+                      </div>
+                      <div>
+                        <p style="font-weight: 600;">SIRET:</p>
+                        <p>{{ vendor_info.siret }}</p>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              {% else %}
+                <div class="empty-state">
+                  <h3>Devenez vendeur sur Hackerz</h3>
+                  <p>Vendez vos produits et services de sécurité à notre communauté.</p>
+                  <a href="{% url 'become_vendor' %}" class="button primary">Devenir vendeur</a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          
+          <div id="security" class="profile-section" style="display: none;">
+            <h2 class="profile-section-title">Sécurité</h2>
+            
+            <div class="card" style="padding: 1.5rem;">
+              <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Changer votre mot de passe</h3>
+              
+              <form id="password-form">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="current-password" class="form-label">Mot de passe actuel</label>
+                  <input type="password" id="current-password" name="current-password" class="form-input" required>
+        </div>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="new-password" class="form-label">Nouveau mot de passe</label>
+                  <input type="password" id="new-password" name="new-password" class="form-input" required>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="confirm-password" class="form-label">Confirmer le mot de passe</label>
+                  <input type="password" id="confirm-password" name="confirm-password" class="form-input" required>
+                </div>
+                
+                <div id="password-feedback" class="feedback" style="display: none; padding: 0.75rem; margin-bottom: 1rem; border-radius: 0.25rem; font-size: 0.875rem;"></div>
+                
+                <button type="submit" class="form-btn">Mettre à jour le mot de passe</button>
+              </form>
+            </div>
+            
+            <div class="card" style="padding: 1.5rem; margin-top: 1.5rem;">
+              <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Double authentification</h3>
+              
+              <div class="switch-container" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                <span>Activer la double authentification</span>
+                <label class="switch">
+                  <input type="checkbox" id="2fa-toggle">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              
+              <div id="2fa-setup" style="display: none; margin-top: 1.5rem;">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                  <img src="{% static 'images/qr-placeholder.png' %}" alt="QR Code d'authentification" style="width: 150px; height: 150px; background-color: white; padding: 10px; border-radius: 4px;">
+                  <p style="margin-top: 0.5rem; font-size: 0.875rem; color: hsl(240, 5%, 64.9%);">Scannez ce QR code avec votre application d'authentification</p>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="auth-code" class="form-label">Code d'authentification</label>
+                  <input type="text" id="auth-code" name="auth-code" class="form-input" placeholder="XXXXXX" maxlength="6">
+                </div>
+                
+                <button id="verify-2fa" class="form-btn">Vérifier et activer</button>
+              </div>
+              
+              <p style="margin-top: 1rem; font-size: 0.875rem; color: hsl(240, 5%, 64.9%);">La double authentification renforce la sécurité de votre compte en nécessitant une vérification supplémentaire lors de la connexion.</p>
+            </div>
+            
+            <div class="card" style="padding: 1.5rem; margin-top: 1.5rem;">
+              <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Sessions actives</h3>
+              
+              <div class="session-list">
+                <div class="session-item" style="padding: 1rem 0; border-bottom: 1px solid hsl(240, 5%, 15%); display: flex; align-items: center; justify-content: space-between;">
+                  <div style="display: flex; align-items: center; gap: 1rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="hsl(142, 100%, 50%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    <div>
+                      <p>Windows - Chrome</p>
+                      <p style="font-size: 0.875rem; color: hsl(240, 5%, 64.9%);">Paris, France - Session actuelle</p>
+                    </div>
+                  </div>
+                  <span style="background-color: hsl(142, 100%, 25%); color: white; padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.75rem;">Actif</span>
+                </div>
+                
+                <div class="session-item" style="padding: 1rem 0; border-bottom: 1px solid hsl(240, 5%, 15%); display: flex; align-items: center; justify-content: space-between;">
+                  <div style="display: flex; align-items: center; gap: 1rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="hsl(240, 5%, 64.9%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    <div>
+                      <p>Android - Firefox</p>
+                      <p style="font-size: 0.875rem; color: hsl(240, 5%, 64.9%);">Paris, France - Dernière connexion il y a 1 jour</p>
+                    </div>
+                  </div>
+                  <button class="btn-text">Déconnecter</button>
+                </div>
+                
+                <div class="session-item" style="padding: 1rem 0; display: flex; align-items: center; justify-content: space-between;">
+                  <div style="display: flex; align-items: center; gap: 1rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="hsl(240, 5%, 64.9%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 1 18 8h-1.26A8 8 0 1 0 4 16.25"></path><line x1="8" y1="16" x2="8.01" y2="16"></line><line x1="8" y1="20" x2="8.01" y2="20"></line><line x1="12" y1="18" x2="12.01" y2="18"></line><line x1="12" y1="22" x2="12.01" y2="22"></line><line x1="16" y1="16" x2="16.01" y2="16"></line><line x1="16" y1="20" x2="16.01" y2="20"></line></svg>
+                    <div>
+                      <p>macOS - Safari</p>
+                      <p style="font-size: 0.875rem; color: hsl(240, 5%, 64.9%);">Lyon, France - Dernière connexion il y a 3 jours</p>
+                    </div>
+                  </div>
+                  <button class="btn-text">Déconnecter</button>
+                </div>
+              </div>
+              
+              <button class="btn-secondary" style="margin-top: 1.5rem;">Déconnecter toutes les autres sessions</button>
+            </div>
+          </div>
+          
+          <div id="wishlist" class="profile-section" style="display: none;">
+            <h2 class="profile-section-title">Liste de souhaits</h2>
+            
+            <div class="wishlist-container">
+              {% if wishlist_products %}
+                <div class="grid grid-3">
+                  {% for product in wishlist_products %}
+                    <div class="card" style="position: relative;" data-product-id="{{ product.id }}">
+                      <button class="remove-wishlist" data-product-id="{{ product.id }}" style="position: absolute; top: 10px; right: 10px; background-color: rgba(255, 0, 0, 0.2); border: none; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                      </button>
+                      <a href="{% url 'shop:product_detail' product.slug %}">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img">
+                      </a>
+                      <div class="card-body">
+                        <h3 class="card-title">
+                          <a href="{% url 'shop:product_detail' product.slug %}">{{ product.name }}</a>
+                        </h3>
+                        <p class="card-text">{{ product.category.name }}</p>
+                        <p class="card-price">{{ product.price }} €</p>
+                        <button class="card-btn add-to-cart" data-product-id="{{ product.id }}">
+                          Ajouter au panier
+                        </button>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+                
+                <div class="text-center" style="margin-top: 1.5rem;">
+                  <a href="{% url 'wishlist' %}" class="btn-secondary">Voir toute ma liste de souhaits</a>
+                </div>
+              {% else %}
+                <div class="empty-state">
+                  <p>Vous n'avez pas encore ajouté de produits à votre liste de souhaits.</p>
+                  <div class="text-center" style="margin-top: 1.5rem;">
+                    <a href="{% url 'wishlist' %}" class="btn-secondary">Voir toute ma liste de souhaits</a>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          
+          <!-- New Blog Posts Section -->
+          <div id="blog-posts" class="profile-section" style="display: none;">
+            <h2 class="profile-section-title">Mes articles de blog</h2>
+            
+            <!-- Create Blog Post Form -->
+            <div class="card" style="padding: 1.5rem; margin-bottom: 2rem;">
+              <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Créer un nouvel article</h3>
+              
+              <form method="POST" action="{% url 'blog:create_post' %}" enctype="multipart/form-data" id="create-blog-form">
+                {% csrf_token %}
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="post-title" class="form-label">Titre de l'article</label>
+                  <input type="text" id="post-title" name="title" class="form-input" required>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="post-category" class="form-label">Catégorie</label>
+                  <select id="post-category" name="category" class="form-input" required>
+                    <option value="">Sélectionner une catégorie</option>
+                    {% for category in categories %}
+                      <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="post-tags" class="form-label">Tags (séparés par des virgules)</label>
+                  <input type="text" id="post-tags" name="tags" class="form-input" placeholder="security, python, tutorial">
+                  {% if all_tags %}
+                    <div class="tags-selector" style="margin-top: 0.5rem;">
+                      <p style="font-size: 0.875rem; color: var(--color-text-muted); margin-bottom: 0.5rem;">
+                        Tags existants (cliquez pour ajouter):
+                      </p>
+                      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
+                        {% for tag in all_tags %}
+                          <button type="button" class="tag-option" data-tag="{{ tag.name }}" style="background-color: rgba(0, 255, 65, 0.1); border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; color: var(--color-text); transition: all 0.2s;">
+                            {{ tag.name }}
+                          </button>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="post-image" class="form-label">Image (optionnelle)</label>
+                  <input type="file" id="post-image" name="image" class="form-input" accept="image/*">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="post-content" class="form-label">Contenu</label>
+                  <textarea id="post-content" name="content" class="form-input" rows="10" required></textarea>
+                  <p class="form-hint" style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--color-text-muted);">
+                    Le contenu peut être rédigé en Markdown.
+                  </p>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label for="post-status" class="form-label">Statut</label>
+                  <select id="post-status" name="status" class="form-input" required>
+                    <option value="draft">Brouillon</option>
+                    <option value="published">Publier immédiatement</option>
+                  </select>
+                </div>
+                
+                <div id="create-post-feedback" class="feedback" style="display: none; padding: 0.75rem; margin-bottom: 1rem; border-radius: 0.25rem; font-size: 0.875rem;"></div>
+                
+                <button type="submit" id="submit-post-btn" class="btn btn-primary" style="background-color: var(--color-primary); color: var(--color-background); padding: 0.75rem 1rem; border-radius: 0.25rem; border: none; cursor: pointer; font-weight: 500;">
+                  Créer l'article
+                </button>
+              </form>
+            </div>
+            
+            <!-- User's Blog Posts List -->
+            <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Mes articles publiés</h3>
+            
+            {% if posts %}
+              <div class="grid grid-1" style="gap: 1rem;">
+                {% for post in posts %}
+                  <div class="card" style="padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                      <h4 style="margin: 0;">{{ post.title }}</h4>
+                      <span class="badge" style="background-color: {% if post.status == 'published' %}var(--color-success){% else %}var(--color-text-muted){% endif %}; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem;">
+                        {% if post.status == 'published' %}Publié{% else %}Brouillon{% endif %}
+                      </span>
+                    </div>
+                    
+                    <div style="display: flex; gap: 0.5rem; font-size: 0.875rem; color: var(--color-text-muted); margin-bottom: 0.5rem;">
+                      <span>{{ post.publish|date:"d/m/Y" }}</span>
+                      <span>•</span>
+                      <span>{{ post.category.name }}</span>
+                    </div>
+                    
+                    <p style="margin-bottom: 1rem;">{{ post.content|truncatewords:30 }}</p>
+                    
+                    <div style="display: flex; gap: 0.5rem;">
+                      <a href="{% url 'blog:post_detail' post.slug %}" class="btn btn-sm" style="padding: 0.5rem 0.75rem; border-radius: 0.25rem; text-decoration: none; background-color: var(--color-card); border: 1px solid var(--color-border); font-size: 0.875rem;">
+                        Voir
+                      </a>
+                      <a href="{% url 'blog:edit_post' post.slug %}" class="btn btn-sm" style="padding: 0.5rem 0.75rem; border-radius: 0.25rem; text-decoration: none; background-color: var(--color-card); border: 1px solid var(--color-border); font-size: 0.875rem;">
+                        Modifier
+                      </a>
+                      {% if post.status == 'draft' %}
+                        <a href="{% url 'blog:publish_post' post.id %}" class="btn btn-sm" style="padding: 0.5rem 0.75rem; border-radius: 0.25rem; text-decoration: none; background-color: var(--color-success); color: var(--color-background); border: none; font-size: 0.875rem;">
+                          Publier
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="empty-state" style="text-align: center; padding: 2rem; background-color: var(--color-card); border-radius: 0.5rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <p style="color: var(--color-text-muted); margin-bottom: 1rem;">Vous n'avez pas encore créé d'articles</p>
+                <p style="font-size: 0.875rem; color: var(--color-text-muted);">Créez votre premier article en utilisant le formulaire ci-dessus</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-container">
+        <div class="footer-section">
+          <h3>À propos</h3>
+          <p style="color: hsl(240, 5%, 64.9%); margin-bottom: 1rem;">Hackerz est votre destination pour l'équipement de hacking éthique et les ressources en cybersécurité.</p>
+          <div class="footer-social">
+            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a>
+            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>
+          </div>
+        </div>
+        
+        <div class="footer-section">
+          <h3>Liens Rapides</h3>
+          <ul class="footer-links">
+            <li><a href="{% url 'home' %}">Accueil</a></li>
+            <li><a href="{% url 'shop:shop' %}">Boutique</a></li>
+            <li><a href="{% url 'blog:post_list' %}">Blog</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+            <li><a href="{% url 'profile' %}" class="footer-link">Mon Compte</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h3>Catégories</h3>
+          <ul class="footer-links">
+            <li><a href="{% url 'shop:category_view' 'reseau' %}" class="footer-link">Réseau</a></li>
+            <li><a href="{% url 'shop:category_view' 'multitool' %}" class="footer-link">Multitools</a></li>
+            <li><a href="{% url 'shop:category_view' 'sbc' %}" class="footer-link">SBC</a></li>
+            <li><a href="{% url 'shop:category_view' 'rfid' %}" class="footer-link">RFID</a></li>
+            <li><a href="{% url 'shop:category_view' 'usb' %}" class="footer-link">USB</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h3>Contact</h3>
+          <ul class="footer-links">
+            <li class="footer-link" style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <span>contact@hackerz.com</span>
+            </li>
+            <li class="footer-link" style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              <span>+33 1 23 45 67 89</span>
+            </li>
+            <li class="footer-link" style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span>123 Rue du Hacking, Paris</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2025 Hackerz. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- Notification -->
+  <div id="notification" style="position: fixed; bottom: 20px; right: 20px; background-color: hsl(142, 100%, 15%); color: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); display: none; z-index: 1000; max-width: 300px;">
+    <p id="notification-message" style="margin: 0;"></p>
+  </div>
+  
+  <script src="{% static 'js/main.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Tab navigation
+      const menuLinks = document.querySelectorAll('.profile-menu-link');
+      const sections = document.querySelectorAll('.profile-section');
+      
+      menuLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          if (this.getAttribute('href').startsWith('#')) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href').substring(1);
+            
+            // Hide all sections
+            sections.forEach(section => {
+              section.style.display = 'none';
+            });
+            
+            // Show target section
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+              targetSection.style.display = 'block';
+            }
+            
+            // Update active state
+            menuLinks.forEach(link => {
+              link.classList.remove('active');
+            });
+            this.classList.add('active');
+          }
+        });
+      });
+      
+      // Fonction pour afficher une notification
+      function showNotification(message, isError = false) {
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notification-message');
+        
+        if (notification && notificationMessage) {
+          notification.style.backgroundColor = isError ? 'rgba(255, 0, 0, 0.9)' : 'rgba(0, 255, 65, 0.2)';
+          notificationMessage.textContent = message;
+          notification.style.display = 'block';
+          
+          setTimeout(function() {
+            notification.style.display = 'none';
+          }, 3000);
+        }
+      }
+
+      // Gestion du formulaire d'informations personnelles en AJAX
+      const personalInfoForm = document.getElementById('personal-info-form');
+      
+      if (personalInfoForm) {
+        personalInfoForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const formData = new FormData(this);
+          
+          fetch(this.getAttribute('action'), {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'Accept': 'application/json'
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            const feedbackElement = document.getElementById('personal-info-feedback');
+            
+            if (data.success) {
+              if (feedbackElement) {
+                feedbackElement.textContent = data.message;
+                feedbackElement.className = 'feedback success';
+                feedbackElement.style.display = 'block';
+                
+                // Masquer le message après un délai
+                setTimeout(function() {
+                  feedbackElement.style.display = 'none';
+                }, 5000);
+              } else {
+                showNotification(data.message);
+              }
+            } else {
+              if (feedbackElement) {
+                feedbackElement.textContent = data.message || 'Une erreur est survenue.';
+                feedbackElement.className = 'feedback error';
+                feedbackElement.style.display = 'block';
+              } else {
+                showNotification(data.message || 'Une erreur est survenue.', true);
+              }
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            showNotification('Une erreur est survenue lors de la mise à jour des informations.', true);
+          });
+        });
+      }
+      
+      // Gestion du formulaire d'adresse de livraison en AJAX
+      const shippingAddressForm = document.getElementById('shipping-address-form');
+      
+      if (shippingAddressForm) {
+        shippingAddressForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const formData = new FormData(this);
+          
+          fetch(this.getAttribute('action'), {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'Accept': 'application/json'
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            const feedbackElement = document.getElementById('shipping-address-feedback');
+            
+            if (data.success) {
+              if (feedbackElement) {
+                feedbackElement.textContent = data.message;
+                feedbackElement.className = 'feedback success';
+                feedbackElement.style.display = 'block';
+                
+                // Masquer le message après un délai
+                setTimeout(function() {
+                  feedbackElement.style.display = 'none';
+                }, 5000);
+              } else {
+                showNotification(data.message);
+              }
+            } else {
+              if (feedbackElement) {
+                feedbackElement.textContent = data.message || 'Une erreur est survenue.';
+                feedbackElement.className = 'feedback error';
+                feedbackElement.style.display = 'block';
+              } else {
+                showNotification(data.message || 'Une erreur est survenue.', true);
+              }
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            showNotification('Une erreur est survenue lors de la mise à jour de l\'adresse.', true);
+          });
+        });
+      }
+      
+      // Gestion du changement de mot de passe
+      const passwordForm = document.getElementById('password-form');
+      const passwordFeedback = document.getElementById('password-feedback');
+      
+      if (passwordForm) {
+        passwordForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const currentPassword = document.getElementById('current-password').value;
+          const newPassword = document.getElementById('new-password').value;
+          const confirmPassword = document.getElementById('confirm-password').value;
+          
+          // Validation simple
+          if (newPassword !== confirmPassword) {
+            showFeedback('Les mots de passe ne correspondent pas.', 'error');
+            return;
+          }
+          
+          if (newPassword.length < 8) {
+            showFeedback('Le mot de passe doit contenir au moins 8 caractères.', 'error');
+            return;
+          }
+          
+          // Simuler une mise à jour réussie
+          setTimeout(function() {
+            showFeedback('Votre mot de passe a été mis à jour avec succès.', 'success');
+            
+            // Réinitialiser le formulaire
+            passwordForm.reset();
+          }, 1000);
+        });
+      }
+      
+      function showFeedback(message, type) {
+        if (passwordFeedback) {
+          passwordFeedback.textContent = message;
+          passwordFeedback.className = 'feedback';
+          passwordFeedback.classList.add(type);
+          passwordFeedback.style.display = 'block';
+          
+          // Masquer le message après un délai
+          setTimeout(function() {
+            passwordFeedback.style.display = 'none';
+          }, 5000);
+        }
+      }
+      
+      // Gestion de la double authentification
+      const twoFAToggle = document.getElementById('2fa-toggle');
+      const twoFASetup = document.getElementById('2fa-setup');
+      const verifyTwoFA = document.getElementById('verify-2fa');
+      
+      if (twoFAToggle) {
+        twoFAToggle.addEventListener('change', function() {
+          if (this.checked) {
+            twoFASetup.style.display = 'block';
+          } else {
+            twoFASetup.style.display = 'none';
+          }
+        });
+      }
+      
+      if (verifyTwoFA) {
+        verifyTwoFA.addEventListener('click', function() {
+          const authCode = document.getElementById('auth-code').value;
+          
+          // Validation simple
+          if (!authCode || authCode.length !== 6 || isNaN(authCode)) {
+            alert('Veuillez entrer un code à 6 chiffres valide.');
+            return;
+          }
+          
+          // Simuler une vérification réussie
+          alert('Double authentification activée avec succès!');
+          twoFASetup.style.display = 'none';
+        });
+      }
+      
+      // Gestion des sessions
+      const disconnectButtons = document.querySelectorAll('.btn-text');
+      const disconnectAllButton = document.querySelector('.btn-secondary');
+      
+      disconnectButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const sessionItem = this.closest('.session-item');
+          if (sessionItem) {
+            sessionItem.style.opacity = '0.5';
+            this.textContent = 'Déconnecté';
+            this.disabled = true;
+          }
+        });
+      });
+      
+      if (disconnectAllButton) {
+        disconnectAllButton.addEventListener('click', function() {
+          disconnectButtons.forEach(button => {
+            const sessionItem = button.closest('.session-item');
+            if (sessionItem) {
+              sessionItem.style.opacity = '0.5';
+              button.textContent = 'Déconnecté';
+              button.disabled = true;
+            }
+          });
+          
+          this.textContent = 'Toutes les sessions déconnectées';
+          this.disabled = true;
+        });
+      }
+      
+      // Gestion de la liste de souhaits
+      const removeWishlistButtons = document.querySelectorAll('.remove-wishlist');
+      const addToCartButtons = document.querySelectorAll('.add-to-cart');
+      
+      removeWishlistButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const productId = this.getAttribute('data-product-id');
+          const card = this.closest('.card');
+          
+          fetch(`/wishlist/remove/${productId}/`, {
+            method: 'GET',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'Accept': 'application/json',
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Animer la disparition de la carte
+              if (card) {
+                card.style.opacity = '0';
+                setTimeout(() => {
+                  card.style.display = 'none';
+                  
+                  // Vérifier si c'était le dernier élément
+                  const remainingCards = document.querySelectorAll('.card[data-product-id]:not([style*="display: none"])');
+                  if (remainingCards.length === 0) {
+                    // Si plus de produits, afficher le message vide
+                    const container = document.querySelector('.wishlist-container');
+                    if (container) {
+                      container.innerHTML = `
+                      <div class="empty-state">
+                        <p>Vous n'avez pas encore ajouté de produits à votre liste de souhaits.</p>
+                        <div class="text-center" style="margin-top: 1.5rem;">
+                          <a href="/wishlist/" class="btn-secondary">Voir toute ma liste de souhaits</a>
+                        </div>`;
+                    }
+                  }
+                }, 300);
+              }
+              
+              showNotification(data.message);
+            } else {
+              showNotification(data.message, true);
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            showNotification('Une erreur est survenue lors de la suppression du produit.', true);
+          });
+        });
+      });
+      
+      addToCartButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const productId = this.getAttribute('data-product-id');
+          
+          fetch(`/shop/add/${productId}/`, {
+            method: 'GET',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'Accept': 'application/json',
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              showNotification(data.message);
+              
+              // Mettre à jour le compteur du panier
+              const cartCounter = document.querySelector('.cart-counter');
+              if (cartCounter) {
+                cartCounter.textContent = data.cart_count;
+              }
+            } else {
+              showNotification(data.message, true);
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            showNotification('Une erreur est survenue lors de l\'ajout au panier.', true);
+          });
+        });
+      });
+
+      // Gestion des tags dans le formulaire de blog
+      const tagsInput = document.getElementById('post-tags');
+      const tagButtons = document.querySelectorAll('.tag-option');
+      
+      if (tagButtons.length > 0 && tagsInput) {
+        tagButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            const tagName = this.getAttribute('data-tag');
+            let currentTags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t !== '');
+            
+            // Vérifier si le tag existe déjà
+            if (!currentTags.includes(tagName)) {
+              // Ajouter le tag
+              if (currentTags.length > 0) {
+                tagsInput.value = currentTags.join(', ') + ', ' + tagName;
+              } else {
+                tagsInput.value = tagName;
+              }
+              
+              // Marquer le bouton comme sélectionné
+              this.style.backgroundColor = 'rgba(0, 255, 65, 0.3)';
+            } else {
+              // Supprimer le tag
+              currentTags = currentTags.filter(t => t !== tagName);
+              tagsInput.value = currentTags.join(', ');
+              
+              // Réinitialiser le style du bouton
+              this.style.backgroundColor = 'rgba(0, 255, 65, 0.1)';
+            }
+          });
+        });
+      }
+    });
+  </script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .profile-page {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+  }
+  
+  @media (max-width: 768px) {
+    .profile-page {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .profile-sidebar {
+    background-color: hsl(240, 5%, 10%);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid hsl(240, 5%, 15%);
+    position: sticky;
+    top: 2rem;
+    height: fit-content;
+  }
+  
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    background-color: hsl(240, 5%, 15%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+  }
+  
+  .profile-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 0.25rem;
+  }
+  
+  .profile-email {
+    color: hsl(240, 5%, 64.9%);
+    font-size: 0.875rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .profile-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .profile-menu-item {
+    margin-bottom: 0.5rem;
+  }
+  
+  .profile-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    color: hsl(0, 0%, 100%);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  
+  .profile-menu-link:hover {
+    background-color: hsl(240, 5%, 15%);
+  }
+  
+  .profile-menu-link.active {
+    background-color: rgba(0, 255, 0, 0.1);
+    color: hsl(142, 100%, 50%);
+  }
+  
+  .profile-section {
+    margin-bottom: 2rem;
+  }
+  
+  .profile-section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .form-input, .form-select {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: hsl(240, 5%, 8%);
+    border: 1px solid hsl(240, 5%, 20%);
+    border-radius: 0.25rem;
+    color: white;
+    transition: border-color 0.2s;
+    font-family: inherit;
+  }
+  
+  .form-input:focus, .form-select:focus {
+    border-color: hsl(142, 100%, 50%);
+    outline: none;
+  }
+  
+  .form-btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: hsl(142, 100%, 50%);
+    color: black;
+    border: none;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-family: inherit;
+  }
+  
+  .form-btn:hover {
+    background-color: hsl(142, 100%, 45%);
+  }
+  
+  .btn-secondary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: hsl(240, 5%, 20%);
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-family: inherit;
+  }
+  
+  .btn-secondary:hover {
+    background-color: hsl(240, 5%, 25%);
+  }
+  
+  .btn-text {
+    background: none;
+    border: none;
+    color: hsl(142, 100%, 50%);
+    font-family: inherit;
+    cursor: pointer;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s;
+  }
+  
+  .btn-text:hover {
+    background-color: rgba(0, 255, 0, 0.1);
+  }
+  
+  .btn-text:disabled {
+    color: hsl(240, 5%, 64.9%);
+    cursor: not-allowed;
+  }
+  
+  .order-item {
+    background-color: hsl(240, 5%, 10%);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    padding: 1.5rem;
+    border: 1px solid hsl(240, 5%, 15%);
+    margin-bottom: 1.5rem;
+  }
+  
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid hsl(240, 5%, 15%);
+  }
+  
+  .order-number {
+    font-weight: 600;
+  }
+  
+  .order-status {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+  }
+  
+  .order-status.completed {
+    background-color: hsl(142, 100%, 15%);
+    color: hsl(142, 100%, 50%);
+  }
+  
+  .order-status.pending {
+    background-color: hsl(30, 100%, 15%);
+    color: hsl(30, 100%, 50%);
+  }
+  
+  .order-product {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .order-product-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+  }
+  
+  .order-product-name {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+  
+  .order-product-price {
+    font-size: 0.875rem;
+    color: hsl(240, 5%, 64.9%);
+  }
+  
+  .order-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid hsl(240, 5%, 15%);
+    font-weight: 600;
+  }
+  
+  .feedback {
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+  }
+  
+  .feedback.success {
+    background-color: rgba(0, 255, 0, 0.1);
+    border: 1px solid hsl(142, 100%, 30%);
+    color: hsl(142, 100%, 50%);
+  }
+  
+  .feedback.error {
+    background-color: rgba(255, 0, 0, 0.1);
+    border: 1px solid hsl(0, 100%, 30%);
+    color: hsl(0, 100%, 60%);
+  }
+  
+  /* Switch (toggle) */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: hsl(240, 5%, 15%);
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: hsl(142, 100%, 25%);
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px hsl(142, 100%, 50%);
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+// ... existing js code ...
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Navigation du profil
+    const menuLinks = document.querySelectorAll('.profile-menu-link');
+    const sections = document.querySelectorAll('.profile-section');
+    
+    // ... existing code ...
+    
+    // Gestion du formulaire de création d'article avec AJAX
+    const createBlogForm = document.getElementById('create-blog-form');
+    const createPostFeedback = document.getElementById('create-post-feedback');
+    const submitPostBtn = document.getElementById('submit-post-btn');
+    
+    if (createBlogForm) {
+      createBlogForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validation basique du formulaire
+        const title = document.getElementById('post-title').value.trim();
+        const content = document.getElementById('post-content').value.trim();
+        const category = document.getElementById('post-category').value;
+        
+        if (!title || !content || !category) {
+          showFeedback(createPostFeedback, 'Veuillez remplir tous les champs obligatoires.', 'error');
+          return;
+        }
+        
+        // Préparation des données avec FormData pour gérer les fichiers
+        const formData = new FormData(createBlogForm);
+        
+        // Animation de chargement
+        submitPostBtn.innerHTML = 'Création en cours...';
+        submitPostBtn.disabled = true;
+        
+        // Requête AJAX
+        fetch(createBlogForm.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Erreur serveur');
+          }
+          
+          // Vérifier si la réponse est du JSON (pour le traitement ajax) ou une redirection
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            return response.json();
+          } else {
+            // Si c'est une redirection, suivre l'URL
+            window.location.href = response.url;
+            return { status: 'redirect' };
+          }
+        })
+        .then(data => {
+          if (data.status === 'redirect') {
+            // Déjà géré par le changement de window.location
+            return;
+          }
+          
+          if (data.status === 'success') {
+            // Réinitialiser le formulaire
+            createBlogForm.reset();
+            
+            // Afficher le message de succès
+            showFeedback(createPostFeedback, data.message || 'Article créé avec succès!', 'success');
+            
+            // Rafraîchir la liste des articles après 2 secondes
+            setTimeout(function() {
+              window.location.reload();
+            }, 2000);
+          } else {
+            showFeedback(createPostFeedback, data.message || 'Une erreur est survenue.', 'error');
+          }
+          
+          // Réinitialiser le bouton
+          submitPostBtn.innerHTML = 'Créer l\'article';
+          submitPostBtn.disabled = false;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showFeedback(createPostFeedback, 'Une erreur est survenue lors de la création de l\'article.', 'error');
+          
+          // Réinitialiser le bouton
+          submitPostBtn.innerHTML = 'Créer l\'article';
+          submitPostBtn.disabled = false;
+        });
+      });
+    }
+    
+    // Fonction pour afficher les messages de feedback
+    function showFeedback(element, message, type) {
+      if (!element) return;
+      
+      element.textContent = message;
+      element.style.display = 'block';
+      
+      if (type === 'success') {
+        element.style.backgroundColor = 'rgba(0, 255, 65, 0.2)';
+        element.style.color = '#00cc00';
+      } else if (type === 'error') {
+        element.style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
+        element.style.color = '#ff4444';
+      } else {
+        element.style.backgroundColor = 'rgba(0, 0, 255, 0.2)';
+        element.style.color = '#0088ff';
+      }
+      
+      // Faire défiler jusqu'au message
+      element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
+</script>
+{% endblock %}

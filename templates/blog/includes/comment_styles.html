@@ -1,0 +1,536 @@
+<style>
+/* Style du contenu du blog */
+.blog-post {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  color: #fff;
+}
+
+.blog-meta {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  color: hsl(240, 5%, 64.9%);
+  font-size: 0.9rem;
+}
+
+.blog-content {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: hsl(0, 0%, 100%);
+}
+
+.blog-content p {
+  margin-bottom: 1.5rem;
+}
+
+.blog-content h1,
+.blog-content h2,
+.blog-content h3,
+.blog-content h4,
+.blog-content h5,
+.blog-content h6 {
+  color: hsl(0, 0%, 100%);
+  margin: 2rem 0 1rem;
+  line-height: 1.3;
+}
+
+.blog-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 2rem 0;
+}
+
+.blog-content a {
+  color: hsl(142, 100%, 50%);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.blog-content a:hover {
+  border-bottom-color: hsl(142, 100%, 50%);
+}
+
+.blog-content ul,
+.blog-content ol {
+  margin: 1.5rem 0;
+  padding-left: 2rem;
+}
+
+.blog-content li {
+  margin-bottom: 0.5rem;
+}
+
+.blog-content blockquote {
+  margin: 2rem 0;
+  padding: 1rem 2rem;
+  border-left: 4px solid hsl(142, 100%, 50%);
+  background-color: hsla(142, 100%, 50%, 0.1);
+  font-style: italic;
+}
+
+.blog-content pre {
+  background-color: hsl(240, 3.7%, 10%);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 2rem 0;
+}
+
+.blog-content code {
+  background-color: hsl(240, 3.7%, 15%);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+/* Style des commentaires */
+.comments-section {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid hsl(240, 3.7%, 15.9%);
+}
+
+.comments-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  color: #fff;
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.comment {
+  background-color: hsl(240, 3.7%, 10%);
+  border: 1px solid hsl(240, 3.7%, 15.9%);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: box-shadow 0.2s;
+}
+
+.comment:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.comment-author {
+  font-weight: bold;
+  color: hsl(142, 100%, 50%);
+}
+
+.comment-date {
+  color: hsl(240, 5%, 64.9%);
+  font-size: 0.875rem;
+}
+
+.comment-body {
+  color: #fff;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.comment-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-reply {
+  background: none;
+  border: none;
+  color: hsl(142, 100%, 50%);
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.btn-reply:hover {
+  background-color: hsla(142, 100%, 50%, 0.1);
+}
+
+.reply-form-container {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: hsl(240, 3.7%, 12%);
+  border-radius: 0.5rem;
+}
+
+.reply-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 0.75rem;
+  background-color: hsl(240, 3.7%, 15%);
+  border: 1px solid hsl(240, 3.7%, 20%);
+  border-radius: 0.5rem;
+  color: #fff;
+  resize: vertical;
+  margin-bottom: 1rem;
+}
+
+.reply-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.btn-reply-submit,
+.btn-reply-cancel {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.btn-reply-submit {
+  background-color: hsl(142, 100%, 50%);
+  color: hsl(240, 3.7%, 10%);
+}
+
+.btn-reply-submit:hover {
+  background-color: hsl(142, 100%, 45%);
+}
+
+.btn-reply-cancel {
+  background-color: transparent;
+  color: hsl(240, 5%, 64.9%);
+}
+
+.btn-reply-cancel:hover {
+  background-color: hsl(240, 3.7%, 15%);
+}
+
+/* Style des tags */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 2rem 0;
+}
+
+.tag-link {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: hsla(142, 100%, 50%, 0.1);
+  color: hsl(142, 100%, 50%);
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.tag-link:hover {
+  background-color: hsla(142, 100%, 50%, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Style des messages de feedback */
+.feedback-message {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.feedback-message.error {
+  background-color: hsla(0, 100%, 50%, 0.1);
+  color: hsl(0, 100%, 70%);
+  border: 1px solid hsla(0, 100%, 50%, 0.2);
+}
+
+.feedback-message.success {
+  background-color: hsla(142, 100%, 50%, 0.1);
+  color: hsl(142, 100%, 70%);
+  border: 1px solid hsla(142, 100%, 50%, 0.2);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Menu à trois points et actions */
+.comment-dropdown {
+  position: relative;
+  margin-left: auto;
+}
+
+.dropdown-toggle {
+  background: none;
+  border: none;
+  color: hsl(240, 5%, 64.9%);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropdown-toggle:hover {
+  background-color: hsl(240, 3.7%, 15%);
+  color: #fff;
+}
+
+.dots {
+  font-size: 1.25rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: hsl(240, 3.7%, 12%);
+  border: 1px solid hsl(240, 3.7%, 20%);
+  border-radius: 0.5rem;
+  min-width: 150px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: none;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: hsl(240, 3.7%, 15%);
+}
+
+.dropdown-item i {
+  font-size: 1rem;
+  opacity: 0.7;
+}
+
+/* Style spécifique pour les boutons d'action */
+.btn-edit-comment:hover {
+  color: hsl(210, 100%, 70%);
+}
+
+.btn-delete-comment {
+  color: hsl(0, 100%, 70%);
+}
+
+.btn-delete-comment:hover {
+  background-color: hsla(0, 100%, 50%, 0.1);
+}
+
+/* Modal pour l'édition et la suppression */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal[style*="flex"] {
+  opacity: 1;
+}
+
+.modal-content {
+  background-color: hsl(240, 3.7%, 10%);
+  padding: 2rem;
+  border-radius: 0.75rem;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  border: 1px solid hsl(240, 3.7%, 20%);
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.modal[style*="flex"] .modal-content {
+  transform: translateY(0);
+}
+
+.modal h3 {
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+
+.close-modal {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: hsl(240, 5%, 64.9%);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.close-modal:hover {
+  background-color: hsl(240, 3.7%, 15%);
+  color: #fff;
+}
+
+#edit-comment-body {
+  width: 100%;
+  min-height: 120px;
+  padding: 1rem;
+  background-color: hsl(240, 3.7%, 15%);
+  border: 1px solid hsl(240, 3.7%, 20%);
+  border-radius: 0.5rem;
+  color: #fff;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+#edit-comment-body:focus {
+  outline: none;
+  border-color: hsl(142, 100%, 50%);
+  box-shadow: 0 0 0 2px hsla(142, 100%, 50%, 0.2);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid hsl(240, 5%, 40%);
+  color: hsl(240, 5%, 70%);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: hsl(240, 3.7%, 15%);
+  color: #fff;
+}
+
+.btn-primary {
+  background-color: hsl(142, 100%, 30%);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: hsl(142, 100%, 35%);
+}
+
+/* Notifications */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    color: white;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notification.success {
+    background-color: hsl(142, 76%, 36%);
+}
+
+.notification.error {
+    background-color: hsl(346, 87%, 43%);
+}
+
+.notification.info {
+    background-color: hsl(200, 98%, 39%);
+}
+
+/* Animation de fondu pour les notifications */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style> 

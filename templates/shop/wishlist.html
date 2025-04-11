@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Liste de souhaits - Hackerz{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Votre liste de produits préférés dans la boutique Hackerz.">
+{% endblock %}
+
+{% block content %}
+  <!-- Wishlist Section -->
+  <section class="section">
+    <div class="container">
+      <h1 style="font-size: 2rem; margin-bottom: 2rem;">Ma <span style="color: hsl(142, 100%, 50%);">Liste de Souhaits</span></h1>
+      
+      {% if wishlist_products %}
+        <div class="grid grid-3">
+          {% for product in wishlist_products %}
+            <div class="card wishlist-card" data-product-id="{{ product.id }}">
+              <button class="remove-wishlist" data-product-id="{{ product.id }}" style="position: absolute; top: 10px; right: 10px; background-color: rgba(255, 0, 0, 0.2); border: none; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+              <a href="{% url 'shop:product_detail' product.slug %}">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img">
+              </a>
+              <div class="card-body">
+                <h3 class="card-title">
+                  <a href="{% url 'shop:product_detail' product.slug %}">{{ product.name }}</a>
+                </h3>
+                <p class="card-text">{{ product.category.name }}</p>
+                <p class="card-price">{{ product.price }} €</p>
+                <button class="card-btn add-to-cart" data-product-id="{{ product.id }}">
+                  Ajouter au panier
+                </button>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <div style="text-align: center; padding: 3rem; background-color: hsl(240, 5%, 10%); border-radius: 0.5rem; margin-bottom: 2rem; border: 1px solid hsl(240, 5%, 15%);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="hsl(142, 100%, 50%)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Votre liste de souhaits est vide</h2>
+            <p style="color: hsl(240, 5%, 64.9%); margin-bottom: 1.5rem;">Parcourez notre boutique et marquez vos produits préférés d'un cœur pour les ajouter à votre liste de souhaits.</p>
+            <a href="{% url 'shop:shop' %}" class="btn-primary">Explorer la boutique</a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+  
+  <!-- Notification -->
+  <div id="notification" style="position: fixed; bottom: 20px; right: 20px; background-color: hsl(142, 100%, 15%); color: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); display: none; z-index: 1000; max-width: 300px;">
+    <p id="notification-message" style="margin: 0;"></p>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Fonction pour afficher une notification
+    function showNotification(message, isError = false) {
+      const notification = document.getElementById('notification');
+      const notificationMessage = document.getElementById('notification-message');
+      
+      notification.style.backgroundColor = isError ? 'rgba(255, 0, 0, 0.9)' : 'rgba(0, 255, 65, 0.2)';
+      notificationMessage.textContent = message;
+      notification.style.display = 'block';
+      
+      setTimeout(function() {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+    
+    // Gestion de la suppression des articles de la liste de souhaits
+    const removeButtons = document.querySelectorAll('.remove-wishlist');
+    
+    removeButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const productId = this.getAttribute('data-product-id');
+        const card = this.closest('.wishlist-card');
+        
+        fetch(`/wishlist/remove/${productId}/`, {
+          method: 'GET',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Animer la disparition de la carte
+            card.style.opacity = '0';
+            setTimeout(() => {
+              card.style.display = 'none';
+              
+              // Vérifier si c'était le dernier élément
+              const remainingCards = document.querySelectorAll('.wishlist-card:not([style*="display: none"])');
+              if (remainingCards.length === 0) {
+                // Si plus de produits, afficher le message vide
+                const container = document.querySelector('.container');
+                container.innerHTML = `
+                <h1 style="font-size: 2rem; margin-bottom: 2rem;">Ma <span style="color: hsl(142, 100%, 50%);">Liste de Souhaits</span></h1>
+                <div class="empty-state">
+                  <div style="text-align: center; padding: 3rem; background-color: hsl(240, 5%, 10%); border-radius: 0.5rem; margin-bottom: 2rem; border: 1px solid hsl(240, 5%, 15%);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="hsl(142, 100%, 50%)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Votre liste de souhaits est vide</h2>
+                    <p style="color: hsl(240, 5%, 64.9%); margin-bottom: 1.5rem;">Parcourez notre boutique et marquez vos produits préférés d'un cœur pour les ajouter à votre liste de souhaits.</p>
+                    <a href="/shop/" class="btn-primary">Explorer la boutique</a>
+                  </div>
+                </div>`;
+              }
+            }, 300);
+            
+            showNotification(data.message);
+          } else {
+            showNotification(data.message, true);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showNotification('Une erreur est survenue lors de la suppression du produit.', true);
+        });
+      });
+    });
+    
+    // Gestion de l'ajout au panier
+    const addToCartButtons = document.querySelectorAll('.add-to-cart');
+    
+    addToCartButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const productId = this.getAttribute('data-product-id');
+        
+        fetch(`/shop/add/${productId}/`, {
+          method: 'GET',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            showNotification(data.message);
+            
+            // Mettre à jour le compteur du panier
+            const cartCounter = document.querySelector('.cart-counter');
+            if (cartCounter) {
+              cartCounter.textContent = data.cart_count;
+            }
+          } else {
+            showNotification(data.message, true);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showNotification('Une erreur est survenue lors de l\'ajout au panier.', true);
+        });
+      });
+    });
+  });
+</script>
+{% endblock %} 

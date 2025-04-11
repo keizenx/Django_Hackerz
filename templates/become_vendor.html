@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Devenir Vendeur - Hackerz{% endblock %}
+
+{% block meta %}
+  <meta name="description" content="Vendez vos produits et services de sécurité informatique sur la plateforme Hackerz.">
+{% endblock %}
+
+{% block content %}
+  <!-- Become Vendor Section -->
+  <section class="section">
+    <div class="container">
+      <h1 style="font-size: 2rem; margin-bottom: 2rem;">Devenir <span style="color: hsl(142, 100%, 50%);">Vendeur</span></h1>
+      
+      <div class="grid grid-2" style="gap: 2rem;">
+        <div class="card" style="padding: 2rem;">
+          <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Pourquoi devenir vendeur?</h2>
+          
+          <div style="margin-bottom: 1.5rem;">
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem; align-items: flex-start;">
+              <div style="background-color: rgba(0, 255, 65, 0.1); padding: 0.5rem; border-radius: 50%;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(142, 100%, 50%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+              </div>
+              <div>
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Visibilité</h3>
+                <p>Accédez à une communauté d'experts et de professionnels en sécurité informatique.</p>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem; align-items: flex-start;">
+              <div style="background-color: rgba(0, 255, 65, 0.1); padding: 0.5rem; border-radius: 50%;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(142, 100%, 50%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 9V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"></path><rect x="9" y="9" width="10" height="10" rx="2"></rect></svg>
+              </div>
+              <div>
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Crédibilité</h3>
+                <p>Bénéficiez de la confiance accordée à notre plateforme par les professionnels du secteur.</p>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+              <div style="background-color: rgba(0, 255, 65, 0.1); padding: 0.5rem; border-radius: 50%;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="hsl(142, 100%, 50%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </div>
+              <div>
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Revenus</h3>
+                <p>Générez des revenus en vendant vos produits, services ou formations en sécurité informatique.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div style="padding: 1rem; background-color: rgba(0, 255, 65, 0.05); border-radius: 0.5rem;">
+            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: hsl(142, 100%, 50%);">Comment ça marche?</h3>
+            <p style="margin-bottom: 0.5rem;">1. Remplissez le formulaire de demande</p>
+            <p style="margin-bottom: 0.5rem;">2. Notre équipe examine votre demande</p>
+            <p style="margin-bottom: 0.5rem;">3. Une fois approuvé, vous pouvez commencer à vendre</p>
+            <p>4. Recevez vos paiements directement sur votre compte bancaire</p>
+          </div>
+        </div>
+        
+        <div class="card" style="padding: 2rem;">
+          <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Demande de compte vendeur</h2>
+          
+          <div id="form-messages" style="margin-bottom: 1.5rem;"></div>
+          
+          {% if messages %}
+            <div class="messages" style="margin-bottom: 1.5rem;">
+              {% for message in messages %}
+                <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          
+          <form id="vendor-form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="shop_name" class="form-label">Nom de votre boutique *</label>
+              <input type="text" id="shop_name" name="shop_name" class="form-input" required>
+              <small>Ce nom sera visible par les clients.</small>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="description" class="form-label">Description de votre boutique *</label>
+              <textarea id="description" name="description" class="form-input" rows="4" required></textarea>
+              <small>Décrivez votre activité et vos produits/services.</small>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="identity_document" class="form-label">Pièce d'identité *</label>
+              <input type="file" id="identity_document" name="identity_document" class="form-input" required>
+              <small>Carte d'identité, passeport ou permis de conduire (format PDF, JPG ou PNG).</small>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="logo" class="form-label">Logo de votre boutique</label>
+              <input type="file" id="logo" name="logo" class="form-input">
+              <small>Format recommandé: PNG ou JPG, 512x512px minimum.</small>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+              <label for="phone" class="form-label">Téléphone (optionnel)</label>
+              <input type="tel" id="phone" name="phone" class="form-input">
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+              <label class="form-label">
+                <input type="checkbox" id="terms-checkbox" required>
+                J'accepte les <a href="{% url 'terms' %}" target="_blank">conditions d'utilisation</a> pour les vendeurs
+              </label>
+            </div>
+            
+            <div class="form-actions">
+              <button type="submit" id="submit-button" class="button primary">Soumettre ma demande</button>
+              <a href="{% url 'profile' %}" class="button secondary">Annuler</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('vendor-form');
+      const formMessages = document.getElementById('form-messages');
+      const submitButton = document.getElementById('submit-button');
+      
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Vider les messages précédents
+        formMessages.innerHTML = '';
+        
+        // Vérifier si les conditions sont acceptées
+        const termsCheckbox = document.getElementById('terms-checkbox');
+        if (!termsCheckbox.checked) {
+          formMessages.innerHTML = '<div class="alert error">Vous devez accepter les conditions d\'utilisation.</div>';
+          return;
+        }
+        
+        // Vérifier la présence du document d'identité
+        const identityDocument = document.getElementById('identity_document');
+        if (identityDocument.files.length === 0) {
+          formMessages.innerHTML = '<div class="alert error">Veuillez télécharger une pièce d\'identité.</div>';
+          return;
+        }
+        
+        // Vérifier que le nom de la boutique est renseigné
+        const shopName = document.getElementById('shop_name');
+        if (!shopName.value.trim()) {
+          formMessages.innerHTML = '<div class="alert error">Le nom de la boutique est obligatoire.</div>';
+          return;
+        }
+        
+        // Vérifier que la description est renseignée
+        const description = document.getElementById('description');
+        if (!description.value.trim()) {
+          formMessages.innerHTML = '<div class="alert error">La description de votre boutique est obligatoire.</div>';
+          return;
+        }
+        
+        // Afficher un indicateur de chargement
+        formMessages.innerHTML = '<div class="alert info">Envoi en cours, veuillez patienter...</div>';
+        
+        // Désactiver le bouton pendant la soumission
+        submitButton.disabled = true;
+        submitButton.innerHTML = 'Traitement en cours...';
+        
+        // Créer un FormData pour envoyer les fichiers
+        const formData = new FormData(form);
+        
+        // Ajouter le token CSRF
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        formData.append('csrfmiddlewaretoken', csrfToken);
+        
+        // Envoyer les données via AJAX
+        fetch('{% url "become_vendor" %}', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+          credentials: 'same-origin'
+        })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error(`Erreur ${response.status}: ${response.statusText}`);
+          }
+        })
+        .then(data => {
+          // Réactiver le bouton
+          submitButton.disabled = false;
+          submitButton.innerHTML = 'Soumettre ma demande';
+          
+          if (data.success) {
+            // Afficher un message de succès
+            formMessages.innerHTML = '<div class="alert success">' + data.message + '</div>';
+            // Réinitialiser le formulaire
+            form.reset();
+            // Rediriger vers la page de profil après 2 secondes
+            setTimeout(function() {
+              window.location.href = '{% url "profile" %}';
+            }, 2000);
+          } else {
+            // Afficher les erreurs
+            formMessages.innerHTML = '<div class="alert error">' + data.message + '</div>';
+          }
+        })
+        .catch(error => {
+          // Réactiver le bouton
+          submitButton.disabled = false;
+          submitButton.innerHTML = 'Soumettre ma demande';
+          
+          // Afficher un message d'erreur
+          formMessages.innerHTML = '<div class="alert error">Une erreur s\'est produite lors de la soumission du formulaire. Veuillez réessayer.</div>';
+          console.error('Erreur:', error);
+        });
+      });
+    });
+  </script>
+{% endblock %} 

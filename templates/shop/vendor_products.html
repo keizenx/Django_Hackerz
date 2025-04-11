@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mes produits - Hackerz{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="header-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+      <h1 style="font-size: 2rem;">Mes <span style="color: hsl(142, 100%, 50%);">Produits</span></h1>
+      <a href="{% url 'shop:add_product' %}" class="btn-primary">
+        <i class="bi bi-plus-lg"></i> Ajouter un produit
+      </a>
+    </div>
+
+    {% if products %}
+    <div class="grid grid-3" style="gap: 1.5rem;">
+      {% for product in products %}
+      <div class="card product-card">
+        <div class="product-image">
+          <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        </div>
+        <div class="product-info">
+          <h3>{{ product.name }}</h3>
+          <div class="product-meta">
+            <span class="price">{{ product.price }} €</span>
+            <span class="stock">Stock: {{ product.stock }}</span>
+          </div>
+          <div class="product-status">
+            {% if product.available %}
+            <span class="badge success">En vente</span>
+            {% else %}
+            <span class="badge warning">Non disponible</span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="product-actions">
+          <a href="{% url 'shop:edit_product' product.id %}" class="btn-secondary btn-sm">
+            <i class="bi bi-pencil"></i> Modifier
+          </a>
+          <button onclick="deleteProduct({{ product.id }})" class="btn-danger btn-sm">
+            <i class="bi bi-trash"></i> Supprimer
+          </button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state card" style="text-align: center; padding: 3rem;">
+      <img src="{% static 'images/empty-products.svg' %}" alt="Aucun produit" style="width: 200px; margin-bottom: 1.5rem;">
+      <h2 style="margin-bottom: 1rem;">Aucun produit</h2>
+      <p style="margin-bottom: 1.5rem; color: hsl(240, 5%, 64.9%);">Vous n'avez pas encore ajouté de produits à votre boutique.</p>
+      <a href="{% url 'shop:add_product' %}" class="btn-primary">
+        <i class="bi bi-plus-lg"></i> Ajouter votre premier produit
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Modal de confirmation de suppression -->
+<div id="delete-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <h3>Confirmer la suppression</h3>
+    <p>Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible.</p>
+    <div class="modal-actions">
+      <button onclick="closeDeleteModal()" class="btn-secondary">Annuler</button>
+      <button onclick="confirmDelete()" class="btn-danger">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let productToDelete = null;
+
+function deleteProduct(productId) {
+  productToDelete = productId;
+  document.getElementById('delete-modal').style.display = 'flex';
+}
+
+function closeDeleteModal() {
+  document.getElementById('delete-modal').style.display = 'none';
+  productToDelete = null;
+}
+
+function confirmDelete() {
+  if (!productToDelete) return;
+  
+  fetch(`/shop/product/${productToDelete}/delete/`, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken'),
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      window.location.reload();
+    } else {
+      alert(data.message || 'Une erreur est survenue.');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Une erreur est survenue lors de la suppression du produit.');
+  });
+}
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+</script>
+
+{% block extra_css %}
+<style>
+.product-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+}
+
+.product-image {
+  aspect-ratio: 16/9;
+  overflow: hidden;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-info {
+  padding: 1rem;
+  flex: 1;
+}
+
+.product-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.125rem;
+}
+
+.product-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.price {
+  font-weight: 600;
+  color: hsl(142, 100%, 50%);
+}
+
+.stock {
+  color: hsl(240, 5%, 64.9%);
+}
+
+.product-status {
+  margin-bottom: 1rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.badge.success {
+  background-color: rgba(0, 255, 65, 0.1);
+  color: hsl(142, 100%, 50%);
+}
+
+.badge.warning {
+  background-color: rgba(255, 166, 0, 0.1);
+  color: hsl(39, 100%, 50%);
+}
+
+.product-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: hsl(240, 5%, 8%);
+}
+
+.btn-sm {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: hsl(0, 100%, 40%);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.btn-danger:hover {
+  background-color: hsl(0, 100%, 35%);
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: hsl(240, 5%, 12%);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  max-width: 400px;
+  width: 90%;
+}
+
+.modal-content h3 {
+  margin: 0 0 1rem 0;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.modal-actions button {
+  flex: 1;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+</style>
+{% endblock %}
+{% endblock %} 

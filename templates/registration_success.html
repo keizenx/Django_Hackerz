@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inscription réussie - Hackerz{% endblock %}
+
+{% block content %}
+<section class="matrix-bg" style="min-height: calc(100vh - 64px); display: flex; align-items: center; justify-content: center; padding: 2rem 1rem;">
+  <div style="width: 100%; max-width: 500px; z-index: 1;">
+    <div class="card" style="padding: 2rem;">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#00ff41" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+        </svg>
+        <h1 style="font-size: 2rem; margin: 1rem 0; color: #00ff41;"><span style="color: #00ff41;">I</span>nscription réussie!</h1>
+        <p style="color: hsl(240, 5%, 64.9%); margin-bottom: 1rem;">Veuillez vérifier votre boîte de réception pour confirmer votre adresse email.</p>
+      </div>
+      
+      <div style="background-color: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem;">
+        <h2 style="font-size: 1.25rem; margin-bottom: 1rem; color: #00ff41;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem; vertical-align: middle;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg> Prochaines étapes</h2>
+        <ul style="list-style-type: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+            <span style="position: absolute; left: 0; top: 0.25rem; color: #00ff41;">1.</span>
+            Un email de confirmation a été envoyé à l'adresse que vous avez fournie.
+          </li>
+          <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative;">
+            <span style="position: absolute; left: 0; top: 0.25rem; color: #00ff41;">2.</span>
+            Cliquez sur le lien dans l'email pour confirmer votre adresse et activer votre compte.
+          </li>
+          <li style="padding-left: 1.5rem; position: relative;">
+            <span style="position: absolute; left: 0; top: 0.25rem; color: #00ff41;">3.</span>
+            Une fois confirmé, vous pourrez vous connecter à votre compte.
+          </li>
+        </ul>
+      </div>
+      
+      <div style="background-color: rgba(255, 255, 0, 0.1); border: 1px solid rgba(255, 255, 0, 0.3); border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 2rem;">
+        <h2 style="font-size: 1.25rem; margin-bottom: 1rem; color: #ffff00;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem; vertical-align: middle;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> Note importante</h2>
+        <p style="margin: 0;">
+          Le lien de confirmation est valable pendant 24 heures. Si vous ne recevez pas l'email, veuillez vérifier votre dossier de spam ou <a href="{% url 'resend_confirmation' %}" style="color: #00ff41; text-decoration: none;">demander un nouveau lien</a>.
+        </p>
+      </div>
+      
+      <div style="text-align: center;">
+        <a href="{% url 'home' %}" class="form-btn" style="display: inline-block; text-decoration: none; padding: 0.75rem 1.5rem;">Retour à l'accueil</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %} 

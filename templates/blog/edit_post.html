@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Éditer l'article - {{ post.title }}{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Éditez votre article de blog sur Hackerz.">
+{% endblock %}
+
+{% block content %}
+  <!-- Edit Post Section -->
+  <section class="section">
+    <div class="container">
+      <h1 style="font-size: 2rem; margin-bottom: 2rem;">Éditer l'<span style="color: hsl(142, 100%, 50%);">Article</span></h1>
+      
+      <div class="card" style="padding: 2rem; margin-bottom: 2rem;">
+        <form method="POST" action="{% url 'blog:edit_post' post.slug %}" enctype="multipart/form-data" id="edit-blog-form">
+          {% csrf_token %}
+          
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="post-title" class="form-label">Titre de l'article</label>
+            <input type="text" id="post-title" name="title" class="form-input" value="{{ post.title }}" required>
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="post-category" class="form-label">Catégorie</label>
+            <select id="post-category" name="category" class="form-input" required>
+              {% for category in categories %}
+                <option value="{{ category.id }}" {% if category.id == post.category.id %}selected{% endif %}>{{ category.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="post-tags" class="form-label">Tags (séparés par des virgules)</label>
+            <input type="text" id="post-tags" name="tags" class="form-input" value="{{ post_tags }}" placeholder="security, python, tutorial">
+            {% if all_tags %}
+              <div class="tags-selector" style="margin-top: 0.5rem;">
+                <p style="font-size: 0.875rem; color: var(--color-text-muted); margin-bottom: 0.5rem;">
+                  Tags existants (cliquez pour ajouter):
+                </p>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                  {% for tag in all_tags %}
+                    <button type="button" class="tag-option" data-tag="{{ tag.name }}" style="background-color: rgba(0, 255, 65, 0.1); border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; cursor: pointer; color: var(--color-text); transition: all 0.2s;">
+                      {{ tag.name }}
+                    </button>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="post-image" class="form-label">Image</label>
+            {% if post.image %}
+              <div style="margin-bottom: 1rem;">
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width: 200px; border-radius: 0.25rem;">
+              </div>
+              <p style="font-size: 0.875rem; color: var(--color-text-muted); margin-bottom: 0.5rem;">
+                Sélectionner une nouvelle image pour remplacer l'existante (optionnel)
+              </p>
+            {% endif %}
+            <input type="file" id="post-image" name="image" class="form-input" accept="image/*">
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="post-content" class="form-label">Contenu</label>
+            <textarea id="post-content" name="content" class="form-input" rows="20" required>{{ post.content }}</textarea>
+            <p class="form-hint" style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--color-text-muted);">
+              Le contenu peut être rédigé en Markdown.
+            </p>
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="post-status" class="form-label">Statut</label>
+            <select id="post-status" name="status" class="form-input" required>
+              <option value="draft" {% if post.status == 'draft' %}selected{% endif %}>Brouillon</option>
+              <option value="published" {% if post.status == 'published' %}selected{% endif %}>Publié</option>
+            </select>
+          </div>
+          
+          {% if messages %}
+            <div class="messages" style="margin-bottom: 1.5rem;">
+              {% for message in messages %}
+                <div class="message {% if message.tags %}{{ message.tags }}{% endif %}" style="padding: 0.75rem; margin-bottom: 0.75rem; border-radius: 0.25rem; font-size: 0.875rem; background-color: {% if message.tags == 'success' %}rgba(0, 255, 65, 0.2){% elif message.tags == 'error' %}rgba(255, 0, 0, 0.2){% else %}rgba(0, 0, 255, 0.2){% endif %};">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          
+          <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-primary" style="background-color: var(--color-primary); color: var(--color-background); padding: 0.75rem 1.5rem; border-radius: 0.25rem; border: none; cursor: pointer; font-weight: 500;">
+              Enregistrer les modifications
+            </button>
+            
+            <a href="{% url 'blog:post_detail' post.slug %}" class="btn btn-secondary" style="padding: 0.75rem 1.5rem; border-radius: 0.25rem; text-decoration: none; background-color: var(--color-card); border: 1px solid var(--color-border); color: var(--color-text);">
+              Annuler
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('edit-blog-form');
+    const tagsInput = document.getElementById('post-tags');
+    const tagButtons = document.querySelectorAll('.tag-option');
+    
+    // Ajouter la fonctionnalité pour les boutons de tags
+    if (tagButtons.length > 0 && tagsInput) {
+      tagButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const tagName = this.getAttribute('data-tag');
+          let currentTags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t !== '');
+          
+          // Vérifier si le tag existe déjà
+          if (!currentTags.includes(tagName)) {
+            // Ajouter le tag
+            if (currentTags.length > 0) {
+              tagsInput.value = currentTags.join(', ') + ', ' + tagName;
+            } else {
+              tagsInput.value = tagName;
+            }
+            
+            // Ajouter une classe pour indiquer que le tag est sélectionné
+            this.style.backgroundColor = 'rgba(0, 255, 65, 0.3)';
+          } else {
+            // Supprimer le tag s'il est déjà là
+            currentTags = currentTags.filter(t => t !== tagName);
+            tagsInput.value = currentTags.join(', ');
+            
+            // Enlever la classe de sélection
+            this.style.backgroundColor = 'rgba(0, 255, 65, 0.1)';
+          }
+        });
+        
+        // Vérifier si le tag est déjà dans la valeur initiale
+        const tagName = button.getAttribute('data-tag');
+        const initialTags = tagsInput.value.split(',').map(t => t.trim());
+        
+        if (initialTags.includes(tagName)) {
+          button.style.backgroundColor = 'rgba(0, 255, 65, 0.3)';
+        }
+      });
+    }
+    
+    // Validation du formulaire
+    if (form) {
+      form.addEventListener('submit', function(event) {
+        const title = document.getElementById('post-title').value.trim();
+        const content = document.getElementById('post-content').value.trim();
+        const category = document.getElementById('post-category').value;
+        
+        if (!title || !content || !category) {
+          event.preventDefault();
+          alert('Veuillez remplir tous les champs obligatoires.');
+        }
+      });
+    }
+  });
+</script>
+{% endblock %} 

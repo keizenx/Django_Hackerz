@@ -1,0 +1,32 @@
+<!-- Modal pour édition de commentaire -->
+<div id="edit-comment-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h3>Modifier votre commentaire</h3>
+    <div class="form-group">
+      <textarea id="edit-comment-body" rows="5" class="form-control"></textarea>
+      <input type="hidden" id="edit-comment-id" value="">
+    </div>
+    <div class="modal-actions">
+      <button id="cancel-edit-comment" class="btn-secondary">Annuler</button>
+      <button id="save-edit-comment" class="btn-primary">Enregistrer</button>
+    </div>
+    <div id="edit-comment-feedback"></div>
+  </div>
+</div>
+
+<!-- Modal pour suppression de commentaire -->
+<div id="delete-comment-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h3>Supprimer le commentaire</h3>
+    <p>Êtes-vous sûr de vouloir supprimer ce commentaire ? Cette action est irréversible.</p>
+    <div id="comment-to-delete"></div>
+    <input type="hidden" id="delete-comment-id" value="">
+    <div class="modal-actions">
+      <button id="cancel-delete-comment" class="btn-secondary">Annuler</button>
+      <button id="confirm-delete-comment" class="btn-danger">Supprimer</button>
+    </div>
+    <div id="delete-comment-feedback"></div>
+  </div>
+</div> 

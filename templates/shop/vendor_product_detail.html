@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Gestion du produit{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="header-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+      <h1 style="font-size: 2rem;">Détails du <span style="color: hsl(142, 100%, 50%);">Produit</span></h1>
+      <div class="actions">
+        <a href="{% url 'shop:vendor_products' %}" class="btn-secondary">
+          <i class="bi bi-arrow-left"></i> Retour aux produits
+        </a>
+        <a href="{% url 'shop:edit_product' product.id %}" class="btn-primary">
+          <i class="bi bi-pencil"></i> Modifier
+        </a>
+      </div>
+    </div>
+
+    <div class="product-grid">
+      <!-- Image du produit -->
+      <div class="product-image-container">
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+      </div>
+
+      <!-- Informations du produit -->
+      <div class="product-info">
+        <div class="product-header">
+          <h2>{{ product.name }}</h2>
+          <div class="product-status">
+            {% if product.available %}
+            <span class="badge success">En vente</span>
+            {% else %}
+            <span class="badge warning">Non disponible</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="product-meta">
+          <div class="meta-item">
+            <span class="meta-label">Catégorie</span>
+            <span class="meta-value">{{ product.category.name }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Prix</span>
+            <span class="meta-value price">{{ product.price }} €</span>
+          </div>
+          {% if product.regular_price != product.price %}
+          <div class="meta-item">
+            <span class="meta-label">Prix régulier</span>
+            <span class="meta-value regular-price">{{ product.regular_price }} €</span>
+          </div>
+          {% endif %}
+          <div class="meta-item">
+            <span class="meta-label">Stock</span>
+            <span class="meta-value">{{ product.stock }} unités</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Date d'ajout</span>
+            <span class="meta-value">{{ product.created|date:"d/m/Y" }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Dernière mise à jour</span>
+            <span class="meta-value">{{ product.updated|date:"d/m/Y" }}</span>
+          </div>
+        </div>
+
+        <div class="product-description">
+          <h3>Description</h3>
+          {{ product.description|linebreaks }}
+        </div>
+
+        <div class="product-stats">
+          <div class="stat-card">
+            <div class="stat-value">{{ product.total_sales|default:"0" }}</div>
+            <div class="stat-label">Ventes totales</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ product.reviews.count }}</div>
+            <div class="stat-label">Avis clients</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ product.average_rating|default:"0" }}/5</div>
+            <div class="stat-label">Note moyenne</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section des avis -->
+    {% if product.reviews.exists %}
+    <div class="reviews-section">
+      <h3>Avis des clients</h3>
+      <div class="reviews-list">
+        {% for review in product.reviews.all %}
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-rating">
+              {% for i in "12345" %}
+              <i class="bi bi-star{% if i|add:"0" <= review.rating %}-fill{% endif %} star"></i>
+              {% endfor %}
+            </div>
+            <div class="review-meta">
+              Par {{ review.user.username }} le {{ review.created|date:"d/m/Y" }}
+            </div>
+          </div>
+          <h4 class="review-title">{{ review.title }}</h4>
+          <div class="review-content">
+            {{ review.comment|linebreaks }}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% block extra_css %}
+<style>
+.header-actions {
+  margin-bottom: 2rem;
+}
+
+.header-actions .actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.product-image-container {
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  border: 1px solid hsl(240, 5%, 15%);
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.product-header h2 {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.product-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: hsl(240, 5%, 10%);
+  border-radius: 0.5rem;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.meta-label {
+  font-size: 0.875rem;
+  color: hsl(240, 5%, 64.9%);
+}
+
+.meta-value {
+  font-weight: 500;
+}
+
+.meta-value.price {
+  color: hsl(142, 100%, 50%);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.meta-value.regular-price {
+  text-decoration: line-through;
+  color: hsl(240, 5%, 64.9%);
+}
+
+.product-description {
+  margin-bottom: 2rem;
+}
+
+.product-description h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.product-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.stat-card {
+  padding: 1.5rem;
+  background-color: hsl(240, 5%, 10%);
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 600;
+  color: hsl(142, 100%, 50%);
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: hsl(240, 5%, 64.9%);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.badge.success {
+  background-color: rgba(0, 255, 65, 0.1);
+  color: hsl(142, 100%, 50%);
+}
+
+.badge.warning {
+  background-color: rgba(255, 166, 0, 0.1);
+  color: hsl(39, 100%, 50%);
+}
+
+.reviews-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid hsl(240, 5%, 15%);
+}
+
+.reviews-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.review-card {
+  background-color: hsl(240, 5%, 10%);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.review-rating {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.star {
+  color: hsl(142, 100%, 50%);
+}
+
+.review-meta {
+  font-size: 0.875rem;
+  color: hsl(240, 5%, 64.9%);
+}
+
+.review-title {
+  font-size: 1.125rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.review-content {
+  color: hsl(240, 5%, 84.9%);
+}
+
+@media (max-width: 768px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .product-stats {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+{% endblock %}
+{% endblock %} 

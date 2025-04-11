@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenue sur Hackerz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .header h1 {
+            color: #00ff41;
+            margin: 0;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #eee;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #00ff41;
+            color: #000 !important;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Bienvenue sur Hackerz!</h1>
+        </div>
+        <div class="content">
+            <p>Bonjour {{ user.username }},</p>
+            <p>Merci de vous être inscrit sur Hackerz, votre référence pour la cybersécurité et le hacking éthique.</p>
+            <p>Votre compte a été créé avec succès et vous pouvez maintenant profiter de toutes nos fonctionnalités:</p>
+            <ul>
+                <li>Accès à notre boutique d'équipements spécialisés</li>
+                <li>Articles exclusifs sur la cybersécurité</li>
+                <li>Possibilité de créer une liste de souhaits</li>
+                <li>Participation à notre communauté de passionnés</li>
+            </ul>
+            <p style="text-align: center; margin: 30px 0;">
+                <a href="http://{{ site_domain }}" class="btn">Visiter le site</a>
+            </p>
+            <p>Si vous avez des questions ou besoin d'assistance, n'hésitez pas à nous contacter.</p>
+            <p>Cordialement,</p>
+            <p>L'équipe Hackerz</p>
+        </div>
+        <div class="footer">
+            <p>© 2025 Hackerz. Tous droits réservés.</p>
+            <p>Cet email a été envoyé à {{ user.email }}</p>
+        </div>
+    </div>
+</body>
+</html> 

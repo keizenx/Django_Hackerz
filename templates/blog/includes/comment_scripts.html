@@ -1,0 +1,434 @@
+<script>
+// Fonction utilitaire pour obtenir le token CSRF
+function getCsrfToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+// Fonction pour afficher les notifications
+function afficherNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Déclencher le reflow pour que la transition fonctionne
+    notification.offsetHeight;
+    
+    // Afficher la notification
+    setTimeout(() => notification.classList.add('show'), 10);
+    
+    // Supprimer la notification après 3 secondes
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Fonction pour formater la date
+function formaterDate(date) {
+    return new Date(date).toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Gestionnaire d'erreurs AJAX
+function gererErreurAjax(error) {
+    console.error('Erreur AJAX:', error);
+    afficherNotification('Une erreur est survenue. Veuillez réessayer.', 'error');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion des menus déroulants
+    document.querySelectorAll('.dropdown-toggle').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const menu = this.nextElementSibling;
+            
+            // Fermer tous les autres menus
+            document.querySelectorAll('.dropdown-menu').forEach(item => {
+                if (item !== menu) item.style.display = 'none';
+            });
+            
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        });
+    });
+
+    // Fermer les menus lors d'un clic à l'extérieur
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+            menu.classList.remove('show');
+        });
+    });
+
+    // Édition de commentaire
+    document.querySelectorAll('.btn-edit-comment').forEach(button => {
+        button.addEventListener('click', function() {
+            const commentId = this.dataset.commentId;
+            const commentBody = document.querySelector(`#comment-${commentId} .comment-body`).textContent.trim();
+            
+            // Remplir le modal
+            document.getElementById('edit-comment-id').value = commentId;
+            document.getElementById('edit-comment-body').value = commentBody;
+            
+            // Afficher le modal
+            const modal = document.getElementById('edit-comment-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                // Focus sur le textarea
+                document.getElementById('edit-comment-body').focus();
+            }
+        });
+    });
+
+    // Gestion de la soumission du formulaire d'édition
+    document.getElementById('save-edit-comment').addEventListener('click', async function() {
+        const commentId = document.getElementById('edit-comment-id').value;
+        const newBody = document.getElementById('edit-comment-body').value.trim();
+        
+        if (!newBody) {
+            afficherNotification('Le commentaire ne peut pas être vide.', 'error');
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/blog/comment/${commentId}/edit/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ body: newBody })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                // Mettre à jour le contenu du commentaire
+                const commentBody = document.querySelector(`#comment-${commentId} .comment-body`);
+                if (commentBody) {
+                    commentBody.innerHTML = newBody.replace(/\n/g, '<br>');
+                    
+                    // Mettre à jour la date si disponible
+                    const dateElement = document.querySelector(`#comment-${commentId} .comment-date`);
+                    if (dateElement && data.comment && data.comment.updated) {
+                        dateElement.textContent = `${data.comment.created} (Modifié le ${data.comment.updated})`;
+                    }
+                    
+                    // Fermer le modal
+                    const modal = document.getElementById('edit-comment-modal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                    }
+                    
+                    afficherNotification('Commentaire modifié avec succès', 'success');
+                } else {
+                    throw new Error('Élément commentaire non trouvé');
+                }
+            } else {
+                throw new Error(data.message || 'Erreur lors de la modification');
+            }
+        } catch (error) {
+            console.error('Erreur lors de la modification:', error);
+            afficherNotification(error.message || 'Une erreur est survenue lors de la modification', 'error');
+        }
+    });
+
+    // Fermeture des modals
+    document.querySelectorAll('.close-modal, .btn-secondary').forEach(button => {
+        button.addEventListener('click', function() {
+            this.closest('.modal').style.display = 'none';
+        });
+    });
+
+    // Gestion des boutons de réponse
+    document.querySelectorAll('.btn-reply').forEach(button => {
+        button.addEventListener('click', function() {
+            const commentId = this.getAttribute('data-comment-id');
+            const replyForm = document.getElementById(`reply-form-${commentId}`);
+            
+            // Fermer tous les autres formulaires de réponse
+            document.querySelectorAll('.reply-form-container').forEach(form => {
+                if (form !== replyForm) {
+                    form.style.display = 'none';
+                }
+            });
+            
+            // Basculer l'affichage du formulaire actuel
+            replyForm.style.display = replyForm.style.display === 'block' ? 'none' : 'block';
+            
+            // Focus sur le textarea
+            if (replyForm.style.display === 'block') {
+                replyForm.querySelector('.reply-textarea').focus();
+            }
+        });
+    });
+    
+    // Gestion des boutons d'annulation de réponse
+    document.querySelectorAll('.btn-reply-cancel').forEach(button => {
+        button.addEventListener('click', function() {
+            const commentId = this.getAttribute('data-comment-id');
+            const replyForm = document.getElementById(`reply-form-${commentId}`);
+            replyForm.style.display = 'none';
+            replyForm.querySelector('.reply-textarea').value = '';
+        });
+    });
+
+    // Gestion de la suppression des commentaires
+    document.querySelectorAll('.btn-delete-comment').forEach(button => {
+        button.addEventListener('click', function() {
+            const commentId = this.getAttribute('data-comment-id');
+            const commentBody = document.querySelector(`#comment-${commentId} .comment-body`).textContent.trim();
+            
+            document.getElementById('delete-comment-id').value = commentId;
+            document.getElementById('comment-to-delete').textContent = commentBody;
+            
+            // Afficher le modal de suppression
+            const deleteModal = document.getElementById('delete-comment-modal');
+            if (deleteModal) {
+                deleteModal.style.display = 'flex';
+            }
+        });
+    });
+
+    // Confirmer la suppression d'un commentaire
+    document.getElementById('confirm-delete-comment').addEventListener('click', async function() {
+        const commentId = document.getElementById('delete-comment-id').value;
+        
+        try {
+            const response = await fetch(`/blog/comment/${commentId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCsrfToken(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                const commentElement = document.getElementById(`comment-${commentId}`);
+                if (commentElement) {
+                    commentElement.style.animation = 'fadeOut 0.3s ease forwards';
+                    setTimeout(() => {
+                        commentElement.remove();
+                        // Fermer le modal
+                        const deleteModal = document.getElementById('delete-comment-modal');
+                        if (deleteModal) {
+                            deleteModal.style.display = 'none';
+                        }
+                        // Mettre à jour le compteur de commentaires
+                        updateCommentCount(-1);
+                        // Afficher la notification de succès
+                        afficherNotification('Commentaire supprimé avec succès', 'success');
+                    }, 300);
+                }
+            } else {
+                throw new Error(data.message || 'Erreur lors de la suppression');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            afficherNotification(error.message || 'Une erreur est survenue lors de la suppression', 'error');
+        }
+    });
+
+    // Gestion des réponses aux commentaires
+    document.querySelectorAll('.btn-reply-submit').forEach(button => {
+        button.addEventListener('click', function() {
+            const commentId = this.getAttribute('data-comment-id');
+            const replyForm = document.getElementById(`reply-form-${commentId}`);
+            const replyContent = replyForm.querySelector('.reply-textarea').value.trim();
+            const postSlug = document.querySelector('[data-post-slug]').getAttribute('data-post-slug');
+            
+            if (!replyContent) {
+                showFeedback(replyForm, 'Le commentaire ne peut pas être vide', 'error');
+                return;
+            }
+            
+            fetch(`/blog/post/${postSlug}/comment/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ body: replyContent })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur réseau');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    // Créer et insérer le nouveau commentaire
+                    const newComment = createCommentElement(data.comment);
+                    const parentComment = document.getElementById(`comment-${commentId}`);
+                    parentComment.insertAdjacentElement('afterend', newComment);
+                    
+                    // Réinitialiser le formulaire
+                    replyForm.querySelector('.reply-textarea').value = '';
+                    replyForm.style.display = 'none';
+                    
+                    // Mettre à jour le compteur de commentaires
+                    updateCommentCount(1);
+                    
+                    // Afficher un message de succès
+                    showFeedback(replyForm, 'Votre réponse a été ajoutée avec succès', 'success');
+                } else {
+                    showFeedback(replyForm, data.message || 'Une erreur est survenue', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showFeedback(replyForm, 'Une erreur est survenue lors de l\'envoi de la réponse', 'error');
+            });
+        });
+    });
+
+    // Fonction utilitaire pour afficher les messages de feedback
+    function showFeedback(container, message, type = 'error') {
+        let feedbackDiv = container.querySelector('.feedback-message');
+        if (!feedbackDiv) {
+            feedbackDiv = document.createElement('div');
+            feedbackDiv.className = 'feedback-message';
+            container.appendChild(feedbackDiv);
+        }
+        
+        feedbackDiv.textContent = message;
+        feedbackDiv.className = `feedback-message ${type}`;
+        
+        // Effacer le message après 5 secondes
+        setTimeout(() => {
+            feedbackDiv.remove();
+        }, 5000);
+    }
+
+    // Fonction pour créer un élément de commentaire
+    function createCommentElement(comment) {
+        const div = document.createElement('div');
+        div.className = 'comment';
+        div.id = `comment-${comment.id}`;
+        
+        div.innerHTML = `
+            <div class="comment-header">
+                <span class="comment-author">${comment.name}</span>
+                <span class="comment-date">${comment.created}</span>
+                ${comment.can_edit ? `
+                    <div class="comment-dropdown">
+                        <button class="dropdown-toggle" aria-label="Options du commentaire">
+                            <span class="dots">⋮</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item btn-edit-comment" data-comment-id="${comment.id}">Modifier</button>
+                            <button class="dropdown-item btn-delete-comment" data-comment-id="${comment.id}">Supprimer</button>
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+            <div class="comment-body">${comment.body}</div>
+            <div class="comment-footer">
+                <button class="btn-reply" data-comment-id="${comment.id}">Répondre</button>
+            </div>
+            <div class="reply-form-container" id="reply-form-${comment.id}" style="display: none;">
+                <textarea class="reply-textarea" rows="3" placeholder="Votre réponse..."></textarea>
+                <div class="reply-actions">
+                    <button class="btn-reply-cancel" data-comment-id="${comment.id}">Annuler</button>
+                    <button class="btn-reply-submit" data-comment-id="${comment.id}">Envoyer</button>
+                </div>
+            </div>
+        `;
+        
+        return div;
+    }
+
+    // Fonction pour mettre à jour le compteur de commentaires
+    function updateCommentCount(increment = 0) {
+        const countElement = document.querySelector('.comments-section h3');
+        const currentCount = parseInt(countElement.textContent.match(/\d+/)[0]) + increment;
+        countElement.textContent = `Commentaires (${currentCount})`;
+    }
+
+    // Gestion du formulaire de commentaire principal
+    document.getElementById('ajax-submit').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const postSlug = document.querySelector('[data-post-slug]').getAttribute('data-post-slug');
+        const commentBody = document.getElementById('ajax-body').value.trim();
+        const name = document.getElementById('ajax-name').value;
+        const email = document.getElementById('ajax-email').value;
+        
+        if (!commentBody) {
+            showFeedback(document.getElementById('ajax-response'), 'Le commentaire ne peut pas être vide', 'error');
+            return;
+        }
+        
+        fetch(`/blog/post/${postSlug}/comment/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                body: commentBody,
+                name: name,
+                email: email
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur réseau');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                // Créer et ajouter le nouveau commentaire
+                const newComment = createCommentElement(data.comment);
+                const commentsList = document.querySelector('.comments-list');
+                
+                if (commentsList) {
+                    commentsList.appendChild(newComment);
+                } else {
+                    // S'il n'y a pas encore de liste de commentaires, la créer
+                    const newList = document.createElement('div');
+                    newList.className = 'comments-list';
+                    newList.appendChild(newComment);
+                    document.querySelector('.comments-section').insertBefore(
+                        newList,
+                        document.querySelector('.comment-form')
+                    );
+                    
+                    // Supprimer le message "Aucun commentaire"
+                    const noCommentMessage = document.querySelector('.comments-section > p');
+                    if (noCommentMessage) {
+                        noCommentMessage.remove();
+                    }
+                }
+                
+                // Réinitialiser le formulaire
+                document.getElementById('ajax-body').value = '';
+                
+                // Mettre à jour le compteur
+                updateCommentCount(1);
+                
+                // Afficher un message de succès
+                showFeedback(document.getElementById('ajax-response'), 'Votre commentaire a été ajouté avec succès', 'success');
+            } else {
+                showFeedback(document.getElementById('ajax-response'), data.message || 'Une erreur est survenue', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showFeedback(document.getElementById('ajax-response'), 'Une erreur est survenue lors de l\'envoi du commentaire', 'error');
+        });
+    });
+});
+</script> 

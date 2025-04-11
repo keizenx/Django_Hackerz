@@ -1,0 +1,998 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <meta name="description" content="{{ product.meta_description }}">
+    <meta name="keywords" content="{{ product.meta_keywords }}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{{ product.name }} | Hackerz</title>
+{% endblock %}
+
+{% block meta %}
+<meta name="description" content="{{ product.description|truncatewords:20 }}">
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Styles pour les avis */
+  .reviews-section {
+    margin-top: 3rem;
+    border-top: 1px solid hsl(240, 5%, 15%);
+    padding-top: 2rem;
+  }
+  
+  .reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .rating-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .stars {
+    display: flex;
+    gap: 0.25rem;
+  }
+  
+  .star {
+    color: hsl(142, 100%, 50%);
+  }
+  
+  .star-empty {
+    color: hsl(240, 5%, 30%);
+  }
+  
+  .review-card {
+    background-color: hsl(240, 5%, 10%);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid hsl(240, 5%, 15%);
+  }
+  
+  .review-card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  
+  .review-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .review-meta {
+    font-size: 0.875rem;
+    color: hsl(240, 5%, 64.9%);
+    margin-bottom: 1rem;
+  }
+  
+  .review-content {
+    line-height: 1.6;
+  }
+  
+  .review-form {
+    background-color: hsl(240, 5%, 10%);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    border: 1px solid hsl(240, 5%, 15%);
+  }
+  
+  .review-form-header {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: hsl(240, 5%, 8%);
+    border: 1px solid hsl(240, 5%, 20%);
+    border-radius: 0.25rem;
+    color: white;
+    transition: border-color 0.2s;
+  }
+  
+  .form-control:focus {
+    border-color: hsl(142, 100%, 50%);
+    outline: none;
+  }
+  
+  .rating-input {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .rating-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: hsl(240, 5%, 30%);
+    cursor: pointer;
+  }
+  
+  .rating-btn.active {
+    color: hsl(142, 100%, 50%);
+  }
+  
+  .submit-review-btn {
+    background-color: hsl(142, 100%, 50%);
+    color: black;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .submit-review-btn:hover {
+    background-color: hsl(142, 100%, 45%);
+  }
+  
+  .login-to-review {
+    text-align: center;
+    padding: 2rem;
+    background-color: hsl(240, 5%, 10%);
+    border-radius: 0.5rem;
+    border: 1px solid hsl(240, 5%, 15%);
+  }
+  
+  .login-to-review a {
+    color: hsl(142, 100%, 50%);
+    text-decoration: none;
+  }
+  
+  .login-to-review a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Styles pour les boutons d'achat */
+  .product-actions {
+    margin-top: 1.5rem;
+  }
+  
+  .product-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .add-to-cart-btn, .buy-now-btn {
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.25rem;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .add-to-cart-btn {
+    background-color: hsl(142, 100%, 50%);
+    color: black;
+    flex: 2;
+  }
+  
+  .add-to-cart-btn:hover {
+    background-color: hsl(142, 100%, 45%);
+  }
+  
+  .buy-now-btn {
+    background-color: hsl(240, 5%, 15%);
+    color: white;
+    border: 1px solid hsl(142, 100%, 50%);
+    flex: 1;
+  }
+  
+  .buy-now-btn:hover {
+    background-color: hsl(240, 5%, 20%);
+    border-color: hsl(142, 100%, 60%);
+  }
+  
+  .out-of-stock {
+    margin-top: 1.5rem;
+    border: 1px solid hsl(0, 100%, 65%);
+    padding: 1rem;
+    border-radius: 0.25rem;
+    background-color: hsla(0, 100%, 65%, 0.1);
+    text-align: center;
+  }
+  
+  .out-of-stock p {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: hsl(0, 100%, 75%);
+  }
+  
+  .notify-btn {
+    background-color: transparent;
+    border: 1px solid hsl(0, 100%, 65%);
+    color: hsl(0, 100%, 75%);
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .notify-btn:hover {
+    background-color: hsla(0, 100%, 65%, 0.2);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+  {% csrf_token %}
+  <div class="container">
+    <a href="{% url 'shop:shop' %}" style="display: inline-flex; align-items: center; color: hsl(240, 5%, 64.9%); margin-bottom: 2rem; text-decoration: none;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      <span>Retour à la boutique</span>
+    </a>
+    
+    <div class="product-detail">
+      <div class="product-image">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+        <img src="{% static 'images/default-product.jpg' %}" alt="{{ product.name }}">
+        {% endif %}
+      </div>
+      
+      <div class="product-info">
+        <div class="product-meta">
+          <span class="product-category">{{ product.category.name }}</span>
+          <div class="product-rating">
+            <span class="stars">
+              {% for i in "12345" %}
+                {% if forloop.counter <= product.get_rating %}
+                  <svg class="star-filled" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="hsl(142, 100%, 50%)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                {% else %}
+                  <svg class="star-empty" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="hsl(240, 5%, 64.9%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                {% endif %}
+              {% endfor %}
+            </span>
+            <span class="rating-count">({{ product.review_count }} avis)</span>
+          </div>
+        </div>
+        <h1 class="product-title">{{ product.name }}</h1>
+        <p class="product-price">{{ product.price }} €</p>
+        
+        <div class="product-description">
+          <p>{{ product.description }}</p>
+          {% if product.long_description %}
+          <p>{{ product.long_description }}</p>
+          {% endif %}
+        </div>
+        
+        {% if product.features %}
+        <div class="product-features">
+          <h3 class="feature-title">Caractéristiques</h3>
+          <ul class="feature-list">
+            {% for feature in product.features %}
+            <li class="feature-item">
+              <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>{{ feature }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        
+        {% if product.modules %}
+        <div class="product-features">
+          <h3 class="feature-title">Modules inclus</h3>
+          <ul class="feature-list">
+            {% for module in product.modules %}
+            <li class="feature-item">
+              <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>{{ module }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        
+        <div class="product-stock">
+          {% if product.stock > 0 %}
+            <span class="in-stock">En stock</span>
+          {% else %}
+            <span class="out-of-stock">Rupture de stock</span>
+          {% endif %}
+        </div>
+        
+        <div class="product-actions">
+          <div class="quantity">
+            <button type="button" class="quantity-btn decrement">-</button>
+            <input type="number" class="quantity-input" value="1" min="1" max="{{ product.stock }}" id="quantity-input">
+            <button type="button" class="quantity-btn increment">+</button>
+          </div>
+          
+          <div class="product-buttons">
+            <button type="button" id="add-to-cart-btn" class="add-to-cart-btn" data-product-id="{{ product.id }}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+              <span>Ajouter au panier</span>
+            </button>
+            
+            <button type="button" id="buy-now-btn" class="buy-now-btn" data-product-id="{{ product.id }}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>
+              <span>Acheter maintenant</span>
+            </button>
+          </div>
+          
+          <button type="button" id="wishlist-btn" class="wishlist-btn" data-product-id="{{ product.id }}" style="display: flex; align-items: center; gap: 0.5rem; background: none; border: none; color: white; margin-top: 1rem; cursor: pointer; font-weight: 600;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="{% if product in user.wishlist.products.all %}hsl(142, 100%, 50%){% else %}none{% endif %}" stroke="hsl(142, 100%, 50%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="wishlist-icon"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span>Ajouter à ma liste de souhaits</span>
+          </button>
+        </div>
+        
+        {% if product.note %}
+        <div style="margin-top: 2rem;">
+          <p style="font-size: 0.875rem; color: hsl(240, 5%, 64.9%);">Note : {{ product.note }}</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    
+    {% if related_products %}
+    <div style="margin-top: 4rem;">
+      <h2 style="margin-bottom: 2rem; font-size: 1.75rem;">Produits similaires</h2>
+      
+      <div class="grid grid-4">
+        {% for similar in related_products %}
+        <div class="card">
+          {% if similar.image %}
+          <img src="{{ similar.image.url }}" alt="{{ similar.name }}" class="card-img">
+          {% else %}
+          <img src="{% static 'images/default-product.jpg' %}" alt="{{ similar.name }}" class="card-img">
+          {% endif %}
+          <div class="card-body">
+            {% if similar.on_sale %}
+            <span class="card-badge sale">Promo</span>
+            {% endif %}
+            <h3 class="card-title">{{ similar.name }}</h3>
+            <p class="card-text">{{ similar.category }}</p>
+            <p class="card-price">{{ similar.price }} €</p>
+            <form method="post" action="{% url 'shop:cart_add' similar.id %}">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" name="action" value="add_to_cart" class="card-btn">Ajouter au panier</button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    
+    <!-- Reviews Section -->
+    <div class="reviews-section">
+      <div class="reviews-header">
+        <h2>Avis Clients</h2>
+        <div class="rating-summary">
+          <div class="stars">
+            {% for i in "12345" %}
+              {% if forloop.counter <= avg_rating|floatformat:"0" %}
+                <span class="star">★</span>
+              {% else %}
+                <span class="star-empty">★</span>
+              {% endif %}
+            {% endfor %}
+            <span style="margin-left: 0.5rem;">{{ avg_rating|floatformat:1 }}/5 ({{ reviews|length }} avis)</span>
+          </div>
+        </div>
+      </div>
+      
+      {% if reviews %}
+        {% for review in reviews %}
+          <div class="review-card" id="review-{{ review.id }}">
+            <div class="review-card-header">
+              <div>
+                <h3 class="review-title">{{ review.title }}</h3>
+                <div class="review-meta">
+                  Par {{ review.user.username }} le {{ review.created|date:"d/m/Y" }}
+                  {% if review.user == user %}
+                    <button type="button" class="edit-review-btn" 
+                            data-id="{{ review.id }}" 
+                            data-rating="{{ review.rating }}" 
+                            data-title="{{ review.title }}" 
+                            data-comment="{{ review.comment }}"
+                            style="background: none; border: none; color: hsl(142, 100%, 50%); cursor: pointer; margin-left: 1rem; font-size: 0.875rem;">
+                      Modifier
+                    </button>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="stars">
+                {% for i in "12345" %}
+                  {% if forloop.counter <= review.rating %}
+                    <span class="star">★</span>
+                  {% else %}
+                    <span class="star-empty">★</span>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+            <div class="review-content">
+              {{ review.comment|linebreaks }}
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p style="text-align: center; padding: 2rem; color: hsl(240, 5%, 64.9%);">
+          Aucun avis pour ce produit. Soyez le premier à donner votre avis !
+        </p>
+      {% endif %}
+      
+      <!-- Review Form -->
+      {% if user.is_authenticated %}
+        <div class="review-form">
+          <h3 class="review-form-header" id="review-form-title">Ajouter un avis</h3>
+          <form id="review-form" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              <label class="form-label">Note</label>
+              <div class="rating-input">
+                {% for i in "12345" %}
+                  <button type="button" class="rating-btn" data-rating="{{ forloop.counter }}">★</button>
+                {% endfor %}
+              </div>
+              <input type="hidden" name="rating" id="rating-value" value="5">
+            </div>
+            
+            <div class="form-group">
+              <label for="{{ review_form.title.id_for_label }}" class="form-label">{{ review_form.title.label }}</label>
+              {{ review_form.title }}
+            </div>
+            
+            <div class="form-group">
+              <label for="{{ review_form.comment.id_for_label }}" class="form-label">{{ review_form.comment.label }}</label>
+              {{ review_form.comment }}
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+              <button type="submit" class="submit-review-btn">Soumettre mon avis</button>
+              <button type="button" id="cancel-edit-btn" style="display: none; background-color: hsl(240, 5%, 30%); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.25rem; font-weight: 600; cursor: pointer;">Annuler</button>
+            </div>
+          </form>
+          <div id="review-response" style="margin-top: 1rem; display: none;"></div>
+        </div>
+      {% else %}
+        <div class="login-to-review">
+          <p>Vous devez être connecté pour laisser un avis.</p>
+          <a href="{% url 'login' %}?next={{ request.path }}">Se connecter</a> ou 
+          <a href="{% url 'register' %}?next={{ request.path }}">Créer un compte</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- Notification -->
+<div id="notification" style="position: fixed; bottom: 20px; right: 20px; background-color: hsl(142, 100%, 15%); color: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); display: none; z-index: 1000; max-width: 300px;">
+  <p id="notification-message" style="margin: 0;"></p>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Initialisation simple des contrôles de quantité
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log("Initialisation des contrôles de quantité (nouvelle version)");
+    
+    // Éléments DOM
+    const quantityInput = document.getElementById('quantity-input');
+    const decrementBtn = document.querySelector('.quantity-btn.decrement');
+    const incrementBtn = document.querySelector('.quantity-btn.increment');
+    const maxStock = parseInt("{{ product.stock }}") || 100;
+    
+    // Vérifier que les éléments existent
+    if (!quantityInput || !decrementBtn || !incrementBtn) {
+      console.error("Éléments de contrôle de quantité non trouvés");
+      return;
+    }
+    
+    // Fonction pour décrémenter
+    function decrement(e) {
+      if (e) e.preventDefault();
+      let value = parseInt(quantityInput.value);
+      if (isNaN(value) || value <= 1) {
+        quantityInput.value = 1;
+      } else {
+        quantityInput.value = value - 1;
+      }
+      console.log("Quantité: " + quantityInput.value);
+    }
+    
+    // Fonction pour incrémenter
+    function increment(e) {
+      if (e) e.preventDefault();
+      let value = parseInt(quantityInput.value);
+      if (isNaN(value)) {
+        quantityInput.value = 1;
+      } else if (value < maxStock) {
+        quantityInput.value = value + 1;
+      }
+      console.log("Quantité: " + quantityInput.value);
+    }
+    
+    // Fonction pour valider la saisie manuelle
+    function validate() {
+      let value = parseInt(quantityInput.value);
+      if (isNaN(value) || value < 1) {
+        quantityInput.value = 1;
+      } else if (value > maxStock) {
+        quantityInput.value = maxStock;
+      }
+      console.log("Quantité validée: " + quantityInput.value);
+    }
+    
+    // Remplacer les gestionnaires d'événements existants
+    decrementBtn.onclick = decrement;
+    incrementBtn.onclick = increment;
+    quantityInput.onchange = validate;
+    
+    // Valider la valeur initiale
+    validate();
+    
+    console.log("Contrôles de quantité initialisés avec succès");
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Variables
+    const quantityInput = document.getElementById('quantity-input');
+    const addToCartBtn = document.getElementById('add-to-cart-btn');
+    const buyNowBtn = document.getElementById('buy-now-btn');
+    const maxStock = parseInt("{{ product.stock }}");
+    
+    // Fonction pour mettre à jour le compteur du panier
+    function updateCartCountDisplay(count) {
+      const cartCount = document.querySelector('.cart-count');
+      if (cartCount) {
+        cartCount.textContent = count || '0';
+      }
+    }
+    
+    function showMessage(message, isError) {
+      const notification = document.getElementById('notification');
+      const notificationMessage = document.getElementById('notification-message');
+      
+      notification.style.backgroundColor = isError ? 'rgba(255, 0, 0, 0.9)' : 'rgba(0, 255, 65, 0.2)';
+      notificationMessage.textContent = message;
+      notification.style.display = 'block';
+      
+      setTimeout(function() {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+    
+    function handleAddToCart() {
+      if (!addToCartBtn || !quantityInput) return;
+      
+      const productId = addToCartBtn.getAttribute('data-product-id');
+      const quantity = quantityInput.value;
+      
+      // Animation de chargement
+      addToCartBtn.innerHTML = '<span>Ajout en cours...</span>';
+      addToCartBtn.disabled = true;
+      
+      // Récupérer le token CSRF
+      const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+      
+      // Requête AJAX
+      fetch('/shop/cart/add/' + productId + '/', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrfToken,
+          'X-Requested-With': 'XMLHttpRequest',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'quantity=' + quantity
+      })
+      .then(function(response) { 
+        if (!response.ok) {
+          throw new Error('Erreur réseau');
+        }
+        return response.json(); 
+      })
+      .then(function(data) {
+        // Réinitialiser le bouton
+        addToCartBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span>Ajouter au panier</span>';
+        addToCartBtn.disabled = false;
+        
+        if (data.status === 'success') {
+          // Afficher un message de succès
+          showMessage(data.message || 'Produit ajouté au panier', false);
+          
+          // Mettre à jour le compteur de panier
+          updateCartCountDisplay(data.cart_items_count);
+        } else {
+          // Afficher un message d'erreur
+          showMessage(data.message || 'Erreur lors de l\'ajout au panier', true);
+        }
+      })
+      .catch(function(error) {
+        console.error('Error:', error);
+        addToCartBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span>Ajouter au panier</span>';
+        addToCartBtn.disabled = false;
+        
+        // Afficher un message d'erreur
+        showMessage('Une erreur est survenue lors de l\'ajout au panier.', true);
+      });
+    }
+    
+    function handleBuyNow() {
+      if (!buyNowBtn || !quantityInput) return;
+      
+      const productId = buyNowBtn.getAttribute('data-product-id');
+      const quantity = quantityInput.value;
+      
+      // Animation de chargement
+      buyNowBtn.innerHTML = '<span>Traitement...</span>';
+      buyNowBtn.disabled = true;
+      
+      // Récupérer le token CSRF
+      const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+      
+      // Requête AJAX
+      fetch('/shop/buy_now/' + productId + '/', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrfToken,
+          'X-Requested-With': 'XMLHttpRequest',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'quantity=' + quantity
+      })
+      .then(function(response) {
+        if(!response.ok) {
+          throw new Error('Erreur réseau');
+        }
+        window.location.href = '/shop/checkout/';
+      })
+      .catch(function(error) {
+        console.error('Error:', error);
+        buyNowBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg><span>Acheter maintenant</span>';
+        buyNowBtn.disabled = false;
+        
+        // Afficher un message d'erreur
+        showMessage('Erreur lors de la préparation de l\'achat', true);
+      });
+    }
+    
+    // Gestionnaires d'événements
+    if (addToCartBtn) {
+      addToCartBtn.addEventListener('click', handleAddToCart);
+    }
+    
+    if (buyNowBtn) {
+      buyNowBtn.addEventListener('click', handleBuyNow);
+    }
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Gestion de l'ajout à la liste de souhaits
+    const wishlistBtn = document.getElementById('wishlist-btn');
+    
+    wishlistBtn.addEventListener('click', function() {
+      const productId = this.getAttribute('data-product-id');
+      const wishlistIcon = this.querySelector('.wishlist-icon');
+      
+      fetch('/wishlist/add/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+          'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+        },
+        body: `product_id=${productId}`
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          if (typeof showMessage === 'function') {
+            showMessage(`${data.message}`, false);
+          }
+          
+          // Changer l'apparence du bouton
+          if (data.action === 'added') {
+            wishlistIcon.setAttribute('fill', 'hsl(142, 100%, 50%)');
+            this.querySelector('span').textContent = 'Retiré de ma liste de souhaits';
+          } else {
+            wishlistIcon.setAttribute('fill', 'none');
+            this.querySelector('span').textContent = 'Ajouter à ma liste de souhaits';
+          }
+        } else {
+          if (typeof showMessage === 'function') {
+            showMessage(data.message, true);
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        if (typeof showMessage === 'function') {
+          showMessage('Une erreur est survenue.', true);
+        }
+      });
+    });
+  });
+</script>
+
+<script>
+  // Rating functionality
+  function setRating(rating) {
+    document.getElementById('rating-value').value = rating;
+    
+    const stars = document.querySelectorAll('.rating-btn');
+    stars.forEach((star, index) => {
+      if (index < rating) {
+        star.classList.add('active');
+      } else {
+        star.classList.remove('active');
+      }
+    });
+  }
+  
+  // Initialize with 5 stars
+  document.addEventListener('DOMContentLoaded', function() {
+    setRating(5);
+    
+    // Ajouter les gestionnaires d'événements pour les boutons de notation
+    document.querySelectorAll('.rating-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const rating = parseInt(this.dataset.rating);
+        setRating(rating);
+      });
+    });
+    
+    // Handle review form submission
+    const reviewForm = document.getElementById('review-form');
+    const formTitle = document.getElementById('review-form-title');
+    const cancelEditBtn = document.getElementById('cancel-edit-btn');
+    let isEditing = false;
+    let editingReviewId = null;
+    
+    // Gérer les boutons de modification d'avis
+    const editButtons = document.querySelectorAll('.edit-review-btn');
+    editButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const reviewId = this.dataset.id;
+        const rating = parseInt(this.dataset.rating);
+        const title = this.dataset.title;
+        const comment = this.dataset.comment;
+        
+        // Remplir le formulaire avec les données existantes
+        setRating(rating);
+        document.querySelector('input[name="title"]').value = title;
+        document.querySelector('textarea[name="comment"]').value = comment;
+        
+        // Changer le titre du formulaire et afficher le bouton d'annulation
+        formTitle.textContent = 'Modifier votre avis';
+        cancelEditBtn.style.display = 'block';
+        
+        // Faire défiler jusqu'au formulaire
+        reviewForm.scrollIntoView({ behavior: 'smooth' });
+        
+        // Définir le mode d'édition
+        isEditing = true;
+        editingReviewId = reviewId;
+      });
+    });
+    
+    // Gérer le bouton d'annulation
+    cancelEditBtn.addEventListener('click', function() {
+      // Réinitialiser le formulaire
+      reviewForm.reset();
+      setRating(5);
+      
+      // Réinitialiser l'interface
+      formTitle.textContent = 'Ajouter un avis';
+      cancelEditBtn.style.display = 'none';
+      
+      // Réinitialiser le mode d'édition
+      isEditing = false;
+      editingReviewId = null;
+    });
+    
+    if (reviewForm) {
+      reviewForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+        const rating = document.getElementById('rating-value').value;
+        const title = document.querySelector('input[name="title"]').value;
+        const comment = document.querySelector('textarea[name="comment"]').value;
+        
+        fetch('/shop/add_review/{{ product.id }}/', {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            rating: rating,
+            title: title,
+            comment: comment
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          const responseDiv = document.getElementById('review-response');
+          
+          if (data.status === 'success') {
+            if (isEditing) {
+              // Mettre à jour l'avis existant dans le DOM
+              const reviewCard = document.getElementById(`review-${editingReviewId}`);
+              if (reviewCard) {
+                const reviewTitle = reviewCard.querySelector('.review-title');
+                const reviewContent = reviewCard.querySelector('.review-content');
+                const reviewStars = reviewCard.querySelectorAll('.stars > span');
+                
+                reviewTitle.textContent = title;
+                reviewContent.innerHTML = comment.replace(/\n/g, '<br>');
+                
+                // Mettre à jour les étoiles
+                reviewStars.forEach((star, index) => {
+                  if (index < rating) {
+                    star.className = 'star';
+                  } else {
+                    star.className = 'star-empty';
+                  }
+                });
+                
+                // Revenir en mode ajout
+                formTitle.textContent = 'Ajouter un avis';
+                cancelEditBtn.style.display = 'none';
+                isEditing = false;
+                editingReviewId = null;
+              }
+            } else {
+              // Création d'un nouvel avis et ajout au DOM
+              const reviewsContainer = document.querySelector('.reviews-section');
+              const noReviewsMessage = document.querySelector('.reviews-section p');
+              
+              if (noReviewsMessage) {
+                noReviewsMessage.remove();
+              }
+              
+              // Créer un nouvel élément de carte d'avis
+              const newReview = document.createElement('div');
+              newReview.className = 'review-card';
+              newReview.id = `review-new-${Date.now()}`;
+              
+              // Créer les étoiles
+              let starsHtml = '';
+              for (let i = 0; i < 5; i++) {
+                if (i < rating) {
+                  starsHtml += '<span class="star">★</span>';
+                } else {
+                  starsHtml += '<span class="star-empty">★</span>';
+                }
+              }
+              
+              // Ajouter le bouton de modification pour le nouvel avis
+              const editButton = `
+                <button type="button" class="edit-review-btn" 
+                        data-id="new-${Date.now()}" 
+                        data-rating="${rating}" 
+                        data-title="${title}" 
+                        data-comment="${comment}"
+                        style="background: none; border: none; color: hsl(142, 100%, 50%); cursor: pointer; margin-left: 1rem; font-size: 0.875rem;">
+                  Modifier
+                </button>
+              `;
+              
+              newReview.innerHTML = `
+                <div class="review-card-header">
+                  <div>
+                    <h3 class="review-title">${title}</h3>
+                    <div class="review-meta">
+                      Par ${data.user} maintenant
+                      ${editButton}
+                    </div>
+                  </div>
+                  <div class="stars">
+                    ${starsHtml}
+                  </div>
+                </div>
+                <div class="review-content">
+                  ${comment.replace(/\n/g, '<br>')}
+                </div>
+              `;
+              
+              // Insérer juste après le header
+              const reviewsHeader = document.querySelector('.reviews-header');
+              reviewsHeader.insertAdjacentElement('afterend', newReview);
+              
+              // Ajouter l'écouteur d'événement au nouveau bouton de modification
+              const newEditButton = newReview.querySelector('.edit-review-btn');
+              newEditButton.addEventListener('click', function() {
+                setRating(parseInt(this.dataset.rating));
+                document.querySelector('input[name="title"]').value = this.dataset.title;
+                document.querySelector('textarea[name="comment"]').value = this.dataset.comment;
+                
+                formTitle.textContent = 'Modifier votre avis';
+                cancelEditBtn.style.display = 'block';
+                
+                reviewForm.scrollIntoView({ behavior: 'smooth' });
+                
+                isEditing = true;
+                editingReviewId = this.dataset.id;
+              });
+            }
+            
+            // Mise à jour du compteur et de la note moyenne
+            const reviewCountElement = document.querySelector('.stars > span:last-child');
+            const count = parseInt(data.count);
+            const avgRating = parseFloat(data.avg_rating).toFixed(1);
+            reviewCountElement.textContent = `${avgRating}/5 (${count} avis)`;
+            
+            // Mise à jour des étoiles de la note moyenne
+            const avgStars = document.querySelectorAll('.rating-summary .stars > span.star, .rating-summary .stars > span.star-empty');
+            avgStars.forEach((star, index) => {
+              if (index < Math.round(avgRating)) {
+                star.className = 'star';
+              } else {
+                star.className = 'star-empty';
+              }
+            });
+            
+            // Réinitialiser le formulaire
+            reviewForm.reset();
+            setRating(5);
+            
+            // Afficher un message de succès
+            responseDiv.textContent = data.message;
+            responseDiv.style.color = 'hsl(142, 100%, 50%)';
+          } else {
+            // Afficher un message d'erreur
+            responseDiv.textContent = data.message || 'Une erreur est survenue.';
+            responseDiv.style.color = 'hsl(0, 100%, 65%)';
+          }
+          
+          responseDiv.style.display = 'block';
+          
+          // Masquer le message après 3 secondes
+          setTimeout(() => {
+            responseDiv.style.display = 'none';
+          }, 3000);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          const responseDiv = document.getElementById('review-response');
+          responseDiv.textContent = 'Une erreur est survenue lors de la communication avec le serveur.';
+          responseDiv.style.color = 'hsl(0, 100%, 65%)';
+          responseDiv.style.display = 'block';
+        });
+      });
+    }
+  });
+</script>
+{% endblock %} 

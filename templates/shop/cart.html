@@ -1,0 +1,383 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Panier - Hackerz{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="section-title">Votre Panier</h1>
+        
+        {% if cart_items %}
+            <div class="cart-container">
+                <div class="cart-items">
+                    {% for item in cart_items %}
+                        <div class="cart-item">
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="cart-item-img">
+                            <div class="cart-item-details">
+                                <h3>{{ item.product.name }}</h3>
+                                <p class="cart-item-price">{{ item.product.price }} €</p>
+                            </div>
+                            <div class="cart-item-quantity">
+                                <form method="post" action="{% url 'shop:cart_update' item.product.id %}" class="quantity-form">
+                                    {% csrf_token %}
+                                    <button type="button" class="quantity-btn minus">-</button>
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" class="quantity-input">
+                                    <button type="button" class="quantity-btn plus">+</button>
+                                </form>
+                            </div>
+                            <div class="cart-item-subtotal">
+                                <p>{{ item.sub_total|floatformat:2 }} €</p>
+                            </div>
+                            <div class="cart-item-remove">
+                                <a href="{% url 'shop:cart_remove' item.product.id %}" class="remove-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="cart-summary">
+                    <h3>Résumé de la commande</h3>
+                    <div class="summary-row">
+                        <span>Sous-total</span>
+                        <span>{{ cart_total|floatformat:2 }} €</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Livraison</span>
+                        <span>Gratuite</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span>{{ cart_total|floatformat:2 }} €</span>
+                    </div>
+                    <a href="{% url 'shop:checkout' %}" class="btn-primary">Procéder au paiement</a>
+                    <a href="{% url 'shop:shop' %}" class="btn-outline">Continuer les achats</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-cart">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-muted); margin-bottom: 1rem;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <h2>Votre panier est vide</h2>
+                <p>Découvrez nos produits et commencez vos achats !</p>
+                <a href="{% url 'shop:shop' %}" class="btn-primary" style="display: inline-block; padding: 0.75rem 1.5rem; margin-top: 1rem; text-decoration: none; background-color: var(--color-primary); color: var(--color-background); border-radius: 0.25rem;">Voir la boutique</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+  --color-primary: #00ff00;
+  --color-secondary: #1a1a1a;
+  --color-accent: #00cc00;
+  --color-background: #0a0a0a;
+  --color-card: #1a1a1a;
+  --color-text: #ffffff;
+  --color-text-muted: #888888;
+  --color-border: #333333;
+  --color-danger: #ff4444;
+  --color-success: #00cc00;
+}
+
+.section {
+  padding: 4rem 0;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  color: var(--color-primary);
+}
+
+.cart-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  background: var(--color-card);
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.cart-item-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+.quantity-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quantity-btn {
+  background: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-btn:hover {
+  background: var(--color-accent);
+  color: var(--color-background);
+}
+
+.quantity-input {
+  width: 50px;
+  text-align: center;
+  background: var(--color-background);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+}
+
+.cart-summary {
+  background: var(--color-card);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  position: sticky;
+  top: 2rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.summary-row.total {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.remove-btn {
+  color: var(--color-danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.remove-btn:hover {
+  background-color: rgba(255, 68, 68, 0.1);
+}
+
+.btn-primary {
+  display: block;
+  width: 100%;
+  background-color: var(--color-primary);
+  color: var(--color-background);
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-outline {
+  display: block;
+  width: 100%;
+  background-color: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  padding: 0.75rem 1rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-accent);
+}
+
+.btn-outline:hover {
+  border-color: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .cart-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .cart-item {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "image"
+      "details"
+      "quantity"
+      "subtotal"
+      "remove";
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .cart-item-img {
+    grid-area: image;
+    width: 100%;
+    height: auto;
+  }
+  
+  .cart-item-details {
+    grid-area: details;
+  }
+  
+  .cart-item-quantity {
+    grid-area: quantity;
+    justify-self: center;
+  }
+  
+  .cart-item-subtotal {
+    grid-area: subtotal;
+    text-align: center;
+  }
+  
+  .cart-item-remove {
+    grid-area: remove;
+    justify-self: center;
+  }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mettre à jour le compteur du panier lors du chargement
+    updateCartCount();
+    
+    function updateCartCount() {
+      fetch('/shop/cart/count/', {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        const cartCount = document.querySelector('.cart-count');
+        if (cartCount && data.count !== undefined) {
+          cartCount.textContent = data.count;
+        }
+      })
+      .catch(error => console.error('Error updating cart count:', error));
+    }
+
+    // Gestion des boutons + et - pour les quantités
+    document.querySelectorAll('.quantity-form').forEach(form => {
+        const input = form.querySelector('.quantity-input');
+        const minus = form.querySelector('.minus');
+        const plus = form.querySelector('.plus');
+        
+        // Drapeau pour éviter les soumissions multiples
+        let isSubmitting = false;
+        
+        // Désactiver tout événement existant et réappliquer
+        minus.replaceWith(minus.cloneNode(true));
+        plus.replaceWith(plus.cloneNode(true));
+        
+        // Récupérer les nouvelles références
+        const newMinus = form.querySelector('.minus');
+        const newPlus = form.querySelector('.plus');
+        
+        newMinus.addEventListener('click', function() {
+            if (isSubmitting) return;
+            
+            const value = parseInt(input.value);
+            if (value > 1) {
+                input.value = value - 1;
+                
+                // Désactiver le bouton visuellement
+                this.style.opacity = '0.5';
+                this.style.pointerEvents = 'none';
+                isSubmitting = true;
+                
+                console.log('Diminuer quantité à:', input.value);
+                
+                // Soumettre le formulaire
+                form.submit();
+            }
+        });
+        
+        newPlus.addEventListener('click', function() {
+            if (isSubmitting) return;
+            
+            const value = parseInt(input.value);
+            const max = parseInt(input.getAttribute('max') || 100);
+            if (value < max) {
+                input.value = value + 1;
+                
+                // Désactiver le bouton visuellement
+                this.style.opacity = '0.5';
+                this.style.pointerEvents = 'none';
+                isSubmitting = true;
+                
+                console.log('Augmenter quantité à:', input.value);
+                
+                // Soumettre le formulaire
+                form.submit();
+            }
+        });
+        
+        // Gérer les changements directs
+        input.addEventListener('change', function() {
+            if (isSubmitting) return;
+            
+            // Valider la valeur
+            let value = parseInt(input.value);
+            const min = parseInt(input.getAttribute('min') || 1);
+            const max = parseInt(input.getAttribute('max') || 100);
+            
+            if (isNaN(value) || value < min) {
+                value = min;
+            } else if (value > max) {
+                value = max;
+            }
+            
+            input.value = value;
+            isSubmitting = true;
+            
+            console.log('Changement direct de quantité à:', input.value);
+            
+            // Soumettre le formulaire
+            form.submit();
+        });
+    });
+});
+</script>
+{% endblock %} 

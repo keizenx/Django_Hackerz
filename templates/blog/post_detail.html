@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ post.title }} | Hackerz Blog{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="blog-post">
+      {% if post %}
+      <h1 style="font-size: 2.5rem; margin-bottom: 1.5rem; margin-top: 2rem;">{{ post.title }}</h1>
+      
+      <div class="blog-meta">
+        <div class="blog-meta-item">
+          <span>{{ post.publish|date:"d M Y" }}</span>
+        </div>
+        <div class="blog-meta-item">
+          <span>{{ post.author }}</span>
+        </div>
+        <div class="blog-meta-item">
+          <span>{{ post.category.name }}</span>
+        </div>
+      </div>
+      
+      {% if post.image %}
+      <img src="{{ post.image.url }}" alt="{{ post.title }}" style="width: 100%; height: auto; border-radius: 0.5rem; margin-bottom: 2rem;">
+      {% endif %}
+      
+      <div class="blog-content">
+        {{ post.formatted_content|safe }}
+      </div>
+      
+      {% if post.tags.all %}
+      <div class="tags" style="margin-top: 2rem;">
+        {% for tag in post.tags.all %}
+        <a href="{% url 'blog:tag_view' tag.slug %}" class="tag-link">{{ tag.name }}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
+      
+      <!-- Section commentaires -->
+      <div class="comments-section" data-post-slug="{{ post.slug }}">
+        <h3>Commentaires ({{ comments.count }})</h3>
+        
+        <!-- Liste des commentaires -->
+        {% if comments %}
+          <div class="comments-list">
+            {% for comment in comments %}
+              <div class="comment" id="comment-{{ comment.id }}">
+                <div class="comment-header">
+                  <div class="comment-author">{{ comment.name }}</div>
+                  <div class="comment-date">{{ comment.created|date:"d M Y" }}{% if comment.updated > comment.created %} (Modifié){% endif %}</div>
+                  {% if user.is_authenticated and user.email == comment.email or user.is_staff %}
+                  <div class="comment-dropdown">
+                    <button class="dropdown-toggle" aria-label="Options du commentaire">
+                      <span class="dots">⋮</span>
+                    </button>
+                    <div class="dropdown-menu">
+                      <button class="dropdown-item btn-edit-comment" data-comment-id="{{ comment.id }}">
+                        <i class="bi bi-pencil"></i> Modifier
+                      </button>
+                      <button class="dropdown-item btn-delete-comment" data-comment-id="{{ comment.id }}">
+                        <i class="bi bi-trash"></i> Supprimer
+                      </button>
+                    </div>
+                  </div>
+                  {% endif %}
+                </div>
+                <div class="comment-body">{{ comment.body|linebreaks }}</div>
+                <div class="comment-footer">
+                  <button class="btn-reply" data-comment-id="{{ comment.id }}">Répondre</button>
+                </div>
+                <div class="reply-form-container" id="reply-form-{{ comment.id }}" style="display: none;">
+                  <textarea class="reply-textarea" rows="3" placeholder="Votre réponse..."></textarea>
+                  <div class="reply-actions">
+                    <button class="btn-reply-cancel" data-comment-id="{{ comment.id }}">Annuler</button>
+                    <button class="btn-reply-submit" data-comment-id="{{ comment.id }}">Envoyer</button>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p>Aucun commentaire pour l'instant. Soyez le premier à commenter !</p>
+        {% endif %}
+        
+        <!-- Formulaire de commentaire avec AJAX -->
+        <div class="comment-form">
+          <h4>Ajouter un commentaire</h4>
+          
+          {% if comment_success or 'comment_added' in request.GET %}
+            <div class="success-message">
+              Votre commentaire a été ajouté avec succès !
+            </div>
+          {% endif %}
+          
+          {% if 'error' in request.GET %}
+            <div class="error-message">
+              {% if request.GET.error == 'empty' %}
+                Le commentaire ne peut pas être vide.
+              {% else %}
+                Une erreur s'est produite lors de l'ajout de votre commentaire.
+              {% endif %}
+            </div>
+          {% endif %}
+          
+          <div id="ajax-comment-form">
+            {% csrf_token %}
+            {% if user.is_authenticated %}
+            <input type="hidden" id="ajax-name" value="{{ user.username }}">
+            <input type="hidden" id="ajax-email" value="{{ user.email }}">
+            {% else %}
+            <input type="hidden" id="ajax-name" value="Anonyme">
+            <input type="hidden" id="ajax-email" value="anonyme@example.com">
+            {% endif %}
+            <div class="form-group">
+              <label for="ajax-body">Votre commentaire</label>
+              <textarea id="ajax-body" rows="5" class="form-control" required></textarea>
+            </div>
+            <button id="ajax-submit" class="btn">Publier votre commentaire</button>
+            <div id="ajax-response"></div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- Modals pour édition et suppression -->
+{% include "blog/includes/comment_modals.html" %}
+{% endblock %}
+
+{% block extra_css %}
+{% include "blog/includes/comment_styles.html" %}
+{% endblock %}
+
+{% block extra_js %}
+{% include "blog/includes/comment_scripts.html" %}
+{% endblock %} 

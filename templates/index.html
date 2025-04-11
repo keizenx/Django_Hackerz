@@ -1,0 +1,297 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hackerz - Gadgets de Hacking et Blog Cybersécurité</title>
+  <meta name="description" content="Boutique de gadgets pour le hacking éthique et blog de cybersécurité avec tutoriels CTF et guides pour débutants">
+  <meta name="author" content="Hackerz">
+  
+  <meta property="og:title" content="Hackerz - Gadgets de Hacking et Blog Cybersécurité">
+  <meta property="og:description" content="Boutique de gadgets pour le hacking éthique et blog de cybersécurité avec tutoriels CTF et guides pour débutants">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@hackerz">
+  <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png">
+  
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+  <link rel="icon" href="{% static 'favicon.ico' %}">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <a href="{% url 'home' %}" class="navbar-logo"><span>H</span>ackerz</a>
+      
+      <button class="navbar-toggle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      
+      <ul class="navbar-menu">
+        <li class="navbar-item"><a href="{% url 'home' %}" class="navbar-link">Accueil</a></li>
+        <li class="navbar-item"><a href="{% url 'shop:shop' %}" class="navbar-link">Boutique</a></li>
+        <li class="navbar-item"><a href="{% url 'blog:post_list' %}" class="navbar-link">Blog</a></li>
+        <li class="navbar-item"><a href="{% url 'contact' %}" class="navbar-link">Contact</a></li>
+        {% if user.is_authenticated %}
+          <li class="navbar-item"><a href="{% url 'profile' %}" class="navbar-link">Profil</a></li>
+          <li class="navbar-item"><a href="{% url 'logout' %}" class="navbar-link">Déconnexion</a></li>
+        {% else %}
+          <li class="navbar-item"><a href="{% url 'login' %}" class="navbar-link">Connexion</a></li>
+          <li class="navbar-item"><a href="{% url 'register' %}" class="navbar-cta">S'inscrire</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+  
+  <!-- Hero Section -->
+  <section class="hero with-bg">
+    <div class="container hero-content">
+      <h1 class="hero-title">Gadgets de <span>Hacking</span> et Cybersécurité</h1>
+      <p class="hero-subtitle">Équipement professionnel et ressources éducatives pour la sécurité informatique et les tests d'intrusion éthiques.</p>
+      <a href="{% url 'shop:shop' %}" class="hero-cta">Découvrir notre boutique</a>
+    </div>
+  </section>
+  
+  <!-- Services Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title"><span>Nos</span> Services</h2>
+      
+      <div class="grid grid-4">
+        <div class="card">
+          <div class="card-body text-center">
+            <div style="width: 64px; height: 64px; background-color: rgba(0, 255, 65, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="hsl(142, 100%, 50%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <h3 class="card-title">Équipement Éthique</h3>
+            <p class="card-text">Outils professionnels pour la sécurité informatique et tests d'intrusion.</p>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-body text-center">
+            <div style="width: 64px; height: 64px; background-color: rgba(0, 255, 65, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="hsl(142, 100%, 50%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+            </div>
+            <h3 class="card-title">Tutoriels CTF</h3>
+            <p class="card-text">Apprenez la cybersécurité avec nos guides pratiques et challenges.</p>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-body text-center">
+            <div style="width: 64px; height: 64px; background-color: rgba(0, 255, 65, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="hsl(142, 100%, 50%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+            </div>
+            <h3 class="card-title">Hardware Spécialisé</h3>
+            <p class="card-text">Matériel conçu pour les besoins spécifiques des professionnels en sécurité.</p>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-body text-center">
+            <div style="width: 64px; height: 64px; background-color: rgba(0, 255, 65, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="hsl(142, 100%, 50%)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            </div>
+            <h3 class="card-title">Actualités</h3>
+            <p class="card-text">Restez informé des dernières tendances et vulnérabilités en cybersécurité.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Featured Products -->
+  <section class="section">
+    <div class="container">
+      <div class="mb-8 flex" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 class="section-title" style="margin-bottom: 0;"><span>Produits</span> Populaires</h2>
+        <a href="{% url 'shop:shop' %}" style="display: flex; align-items: center; color: hsl(142, 100%, 50%); text-decoration: none;">
+          <span>Voir tout</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </div>
+      
+      <div class="grid grid-4">
+        {% for product in featured_products %}
+        <div class="card">
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img">
+          <div class="card-body">
+            {% if product.is_new %}
+            <span class="card-badge new">Nouveau</span>
+            {% endif %}
+            {% if product.is_on_sale %}
+            <span class="card-badge sale">Promo</span>
+            {% endif %}
+            <h3 class="card-title">{{ product.name }}</h3>
+            <p class="card-text">{{ product.category }}</p>
+            <p class="card-price">{{ product.price }} €</p>
+            <form method="post" action="{% url 'shop:cart_add' product.id %}">
+              {% csrf_token %}
+              <button type="submit" class="card-btn">Ajouter au panier</button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  
+  <!-- CTA Banner -->
+  <section class="section matrix-bg">
+    <div class="container" style="position: relative; z-index: 1;">
+      <div class="card" style="text-align: center; padding: 2rem;">
+        <h2 class="section-title"><span>Rejoignez</span> notre communauté</h2>
+        <p style="color: hsl(240, 5%, 64.9%); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">Inscrivez-vous pour recevoir des tutoriels exclusifs, des offres spéciales et des invitations à nos événements de cybersécurité.</p>
+        <form method="post" action="{% url 'newsletter_subscribe' %}" style="display: flex; flex-wrap: wrap; gap: 1rem; max-width: 500px; margin: 0 auto;">
+          {% csrf_token %}
+          <input type="email" name="email" placeholder="Votre email" class="form-input" style="flex: 1;" required>
+          <button type="submit" class="form-btn">S'inscrire</button>
+        </form>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Blog Posts -->
+  <section class="section">
+    <div class="container">
+      <div class="mb-8 flex" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 class="section-title" style="margin-bottom: 0;"><span>Articles</span> Récents</h2>
+        <a href="{% url 'blog:post_list' %}" style="display: flex; align-items: center; color: hsl(142, 100%, 50%); text-decoration: none;">
+          <span>Voir tout</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </div>
+      
+      <div class="grid grid-3">
+        {% for post in recent_posts %}
+        <div class="card">
+          <img src="{{ post.image.url }}" alt="{{ post.title }}" class="card-img">
+          <div class="card-body">
+            <div style="display: flex; gap: 1rem; color: hsl(240, 5%, 64.9%); font-size: 0.875rem; margin-bottom: 0.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.25rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>{{ post.created_at|date:"d M Y" }}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.25rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>{{ post.author.username }}</span>
+              </div>
+            </div>
+            <h3 class="card-title">{{ post.title }}</h3>
+            <p class="card-text">{{ post.excerpt }}</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
+              {% for tag in post.tags.all %}
+              <span class="tag">{{ tag.name }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  
+  <!-- Why Choose Us -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center mb-8">
+        <h2 class="section-title"><span>Pourquoi</span> Nous Choisir</h2>
+        <p style="color: hsl(240, 5%, 64.9%); max-width: 600px; margin-left: auto; margin-right: auto;">Hackerz s'engage à fournir des outils de qualité et des connaissances précieuses pour la communauté de la cybersécurité.</p>
+      </div>
+      
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Éthique & Légal</h3>
+            <p class="card-text">Tous nos produits sont destinés à un usage éthique et légal. Nous encourageons la sécurité responsable.</p>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Expertise</h3>
+            <p class="card-text">Notre équipe est composée d'experts en cybersécurité avec des années d'expérience dans le domaine.</p>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Communauté</h3>
+            <p class="card-text">Rejoignez une communauté active de passionnés et professionnels partageant connaissances et expériences.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-container">
+        <div class="footer-section">
+          <h3>À propos</h3>
+          <p style="color: hsl(240, 5%, 64.9%); margin-bottom: 1rem;">Hackerz est votre destination pour l'équipement de hacking éthique et les ressources en cybersécurité.</p>
+          <div class="footer-social">
+            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a>
+            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg></a>
+          </div>
+        </div>
+        
+        <div class="footer-section">
+          <h3>Liens Rapides</h3>
+          <ul class="footer-links">
+            <li><a href="{% url 'home' %}" class="footer-link">Accueil</a></li>
+            <li><a href="{% url 'shop:shop' %}" class="footer-link">Boutique</a></li>
+            <li><a href="{% url 'blog:post_list' %}" class="footer-link">Blog</a></li>
+            <li><a href="{% url 'contact' %}" class="footer-link">Contact</a></li>
+            <li><a href="{% url 'profile' %}" class="footer-link">Mon Compte</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h3>Catégories</h3>
+          <ul class="footer-links">
+            <li><a href="{% url 'shop:shop' %}?category=reseau" class="footer-link">Réseau</a></li>
+            <li><a href="{% url 'shop:shop' %}?category=multitool" class="footer-link">Multitools</a></li>
+            <li><a href="{% url 'shop:shop' %}?category=sbc" class="footer-link">SBC</a></li>
+            <li><a href="{% url 'shop:shop' %}?category=rfid" class="footer-link">RFID</a></li>
+            <li><a href="{% url 'shop:shop' %}?category=usb" class="footer-link">USB</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h3>Contact</h3>
+          <ul class="footer-links">
+            <li class="footer-link" style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <span>contact@hackerz.com</span>
+            </li>
+            <li class="footer-link" style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              <span>+33 1 23 45 67 89</span>
+            </li>
+            <li class="footer-link" style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span>123 Rue du Hacking, Paris</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2025 Hackerz. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+  
+  <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
+

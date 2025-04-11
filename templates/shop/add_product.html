@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ajouter un produit - Hackerz{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="header-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+      <h1 style="font-size: 2rem;">Ajouter un <span style="color: hsl(142, 100%, 50%);">Produit</span></h1>
+      <a href="{% url 'shop:vendor_products' %}" class="btn-secondary">
+        <i class="bi bi-arrow-left"></i> Retour aux produits
+      </a>
+    </div>
+
+    <div class="card" style="padding: 1.5rem; max-width: 800px; margin: 0 auto;">
+      <form method="POST" action="{% url 'shop:add_product' %}" enctype="multipart/form-data" id="add-product-form">
+        {% csrf_token %}
+        
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="product-name" class="form-label">Nom du produit</label>
+          <input type="text" id="product-name" name="name" class="form-input" required>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="product-category" class="form-label">Catégorie</label>
+          <select id="product-category" name="category" class="form-input" required>
+            <option value="">Sélectionner une catégorie</option>
+            {% for category in categories %}
+              <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <div class="grid grid-2" style="gap: 1rem; margin-bottom: 1rem;">
+          <div class="form-group">
+            <label for="product-price" class="form-label">Prix</label>
+            <input type="number" id="product-price" name="price" class="form-input" step="0.01" min="0" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="product-regular-price" class="form-label">Prix régulier (optionnel)</label>
+            <input type="number" id="product-regular-price" name="regular_price" class="form-input" step="0.01" min="0">
+          </div>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="product-stock" class="form-label">Stock</label>
+          <input type="number" id="product-stock" name="stock" class="form-input" min="0" required>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="product-image" class="form-label">Image du produit</label>
+          <input type="file" id="product-image" name="image" class="form-input" accept="image/*" required>
+          <div class="image-preview" style="margin-top: 1rem; display: none;">
+            <img id="preview-image" src="" alt="Aperçu" style="max-width: 200px; border-radius: 0.5rem;">
+          </div>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="product-description" class="form-label">Description</label>
+          <textarea id="product-description" name="description" class="form-input" rows="6" required></textarea>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <div class="switch-container" style="display: flex; align-items: center; gap: 1rem;">
+            <label class="switch">
+              <input type="checkbox" id="product-available" name="available" checked>
+              <span class="slider round"></span>
+            </label>
+            <label for="product-available">Disponible à la vente</label>
+          </div>
+        </div>
+        
+        <div id="add-product-feedback" class="feedback" style="display: none; margin-bottom: 1rem;"></div>
+        
+        <div class="form-actions" style="display: flex; gap: 1rem;">
+          <button type="submit" class="btn-primary" style="flex: 1;">
+            <i class="bi bi-plus-lg"></i> Ajouter le produit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('add-product-form');
+  const feedback = document.getElementById('add-product-feedback');
+  const imageInput = document.getElementById('product-image');
+  const imagePreview = document.querySelector('.image-preview');
+  const previewImage = document.getElementById('preview-image');
+  
+  // Prévisualisation de l'image
+  imageInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        previewImage.src = e.target.result;
+        imagePreview.style.display = 'block';
+      }
+      reader.readAsDataURL(file);
+    }
+  });
+  
+  // Gestion du formulaire
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    // Désactiver le bouton pendant l'envoi
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="bi bi-hourglass"></i> Ajout en cours...';
+    
+    fetch(this.action, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        showFeedback('Produit ajouté avec succès!', 'success');
+        // Rediriger vers la liste des produits après 2 secondes
+        setTimeout(() => {
+          window.location.href = "{% url 'shop:vendor_products' %}";
+        }, 2000);
+      } else {
+        showFeedback(data.message || 'Une erreur est survenue.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      showFeedback('Une erreur est survenue lors de l\'ajout du produit.', 'error');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalText;
+    });
+  });
+  
+  function showFeedback(message, type) {
+    feedback.textContent = message;
+    feedback.className = 'feedback ' + type;
+    feedback.style.display = 'block';
+    feedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+});
+</script>
+
+{% block extra_css %}
+<style>
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: hsl(240, 5%, 8%);
+  border: 1px solid hsl(240, 5%, 20%);
+  border-radius: 0.25rem;
+  color: white;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  border-color: hsl(142, 100%, 50%);
+  outline: none;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: hsl(142, 100%, 50%);
+  color: black;
+  border: none;
+  border-radius: 0.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: hsl(142, 100%, 45%);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: hsl(240, 5%, 20%);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: hsl(240, 5%, 25%);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: hsl(240, 5%, 15%);
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: hsl(142, 100%, 25%);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px hsl(142, 100%, 50%);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.feedback {
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.feedback.success {
+  background-color: rgba(0, 255, 65, 0.1);
+  border: 1px solid hsl(142, 100%, 30%);
+  color: hsl(142, 100%, 50%);
+}
+
+.feedback.error {
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid hsl(0, 100%, 30%);
+  color: hsl(0, 100%, 60%);
+}
+</style>
+{% endblock %}
+{% endblock %} 

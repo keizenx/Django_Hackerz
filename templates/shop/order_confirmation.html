@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% load static %}
+{% load shop_tags %}
+
+{% block title %}Commande confirmée | Hackerz{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="confirmation-header">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: hsl(142, 100%, 50%); margin-bottom: 1rem;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      <h1>Commande confirmée</h1>
+      <p>Merci pour votre achat ! Votre commande a été enregistrée avec succès.</p>
+    </div>
+    
+    <div class="order-details">
+      <div class="order-info">
+        <h2>Informations de commande</h2>
+        <div class="info-grid">
+          <div>
+            <p><strong>Numéro de commande:</strong></p>
+            <p>{{ order.id }}</p>
+          </div>
+          <div>
+            <p><strong>Date:</strong></p>
+            <p>{{ order.created|date:"d/m/Y H:i" }}</p>
+          </div>
+          <div>
+            <p><strong>Nom:</strong></p>
+            <p>{{ order.first_name }} {{ order.last_name }}</p>
+          </div>
+          <div>
+            <p><strong>Email:</strong></p>
+            <p>{{ order.email }}</p>
+          </div>
+          <div>
+            <p><strong>Adresse:</strong></p>
+            <p>{{ order.address }}, {{ order.postal_code }} {{ order.city }}</p>
+          </div>
+          <div>
+            <p><strong>Statut:</strong></p>
+            <p class="status-badge">{{ order.get_status_display }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="order-summary">
+        <h2>Récapitulatif de la commande</h2>
+        <table class="order-table">
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Prix unitaire</th>
+              <th>Quantité</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order_items %}
+            <tr>
+              <td>{{ item.product.name }}</td>
+              <td>{{ item.price }} €</td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.get_cost|floatformat:2 }} €</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3">Sous-total</td>
+              <td>{{ total|floatformat:2 }} €</td>
+            </tr>
+            <tr>
+              <td colspan="3">TVA (20%)</td>
+              <td>{{ total|floatformat:2|mult:0.2 }} €</td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="3">Total</td>
+              <td>{{ total|floatformat:2|mult:1.2 }} €</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+    
+    <div class="confirmation-actions">
+      <a href="{% url 'shop:shop' %}" class="btn-primary">Continuer vos achats</a>
+      {% if user.is_authenticated %}
+      <a href="{% url 'profile' %}" class="btn-secondary">Voir mes commandes</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .confirmation-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .confirmation-header h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .confirmation-header p {
+    color: hsl(240, 5%, 64.9%);
+    font-size: 1.1rem;
+  }
+  
+  .order-details {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+  
+  @media (max-width: 768px) {
+    .order-details {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .order-info, .order-summary {
+    background-color: hsl(240, 5%, 10%);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid hsl(240, 5%, 15%);
+  }
+  
+  .order-info h2, .order-summary h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid hsl(240, 5%, 15%);
+  }
+  
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .info-grid div {
+    margin-bottom: 0.5rem;
+  }
+  
+  .info-grid p {
+    margin: 0;
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background-color: hsl(25, 100%, 65%);
+    color: black;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  
+  .order-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .order-table th, .order-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid hsl(240, 5%, 15%);
+  }
+  
+  .order-table th {
+    font-weight: 600;
+    color: hsl(240, 5%, 64.9%);
+    font-size: 0.875rem;
+  }
+  
+  .order-table tfoot td {
+    font-weight: 600;
+  }
+  
+  .order-table .total-row td {
+    padding-top: 1rem;
+    font-size: 1.25rem;
+    border-bottom: none;
+  }
+  
+  .confirmation-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .btn-primary, .btn-secondary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  
+  .btn-primary {
+    background-color: hsl(142, 100%, 50%);
+    color: black;
+  }
+  
+  .btn-primary:hover {
+    background-color: hsl(142, 100%, 45%);
+  }
+  
+  .btn-secondary {
+    background-color: hsl(240, 5%, 15%);
+    color: white;
+    border: 1px solid hsl(142, 100%, 50%);
+  }
+  
+  .btn-secondary:hover {
+    background-color: hsl(240, 5%, 20%);
+    border-color: hsl(142, 100%, 60%);
+  }
+</style>
+{% endblock %} 

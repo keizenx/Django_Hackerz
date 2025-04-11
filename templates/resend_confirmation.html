@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Renvoyer l'email de confirmation - Hackerz{% endblock %}
+
+{% block content %}
+<section class="matrix-bg" style="min-height: calc(100vh - 64px); display: flex; align-items: center; justify-content: center; padding: 2rem 1rem;">
+  <div style="width: 100%; max-width: 500px; z-index: 1;">
+    <div class="card" style="padding: 2rem;">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#00ff41" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+        <h1 style="font-size: 2rem; margin: 1rem 0;"><span style="color: #00ff41;">R</span>envoyer l'email de confirmation</h1>
+        <p style="color: hsl(240, 5%, 64.9%); margin-bottom: 1rem;">Si vous n'avez pas reçu l'email de confirmation ou si le lien a expiré, veuillez saisir votre adresse email ci-dessous pour recevoir un nouveau lien.</p>
+      </div>
+      
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% endif %}" style="margin-bottom: 1.5rem;">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+      
+      <form method="post" action="{% url 'resend_confirmation' %}" class="form">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <div style="position: relative;">
+            <svg style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: hsl(240, 5%, 64.9%);" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <input type="email" id="email" name="email" class="form-input" style="padding-left: 2.5rem;" placeholder="votre@email.com" required>
+          </div>
+        </div>
+        
+        <button type="submit" class="form-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1.5rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+          <span>Envoyer</span>
+        </button>
+        
+        <div style="text-align: center; margin-top: 1.5rem;">
+          <p style="font-size: 0.875rem; color: hsl(240, 5%, 64.9%);">
+            Retour à la <a href="{% url 'login' %}" style="color: hsl(142, 100%, 50%); text-decoration: none;">page de connexion</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %} 
