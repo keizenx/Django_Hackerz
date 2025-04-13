@@ -2,7 +2,7 @@
 
 Une plateforme e-commerce et blog sécurisée développée avec Django.
 
-## 🚀 Fonctionnalités
+##  Fonctionnalités
 
 ### E-commerce
 - Système de panier d'achat
@@ -24,7 +24,7 @@ Une plateforme e-commerce et blog sécurisée développée avec Django.
 - Protection contre les attaques CSRF
 - Validation des données
 
-## 🛠️ Technologies
+##  Technologies
 
 - Python 3.x
 - Django
