@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.views.decorators.http import require_POST
-from .models import Profile, Wishlist, EmailConfirmationToken
+from .models import Profile, Wishlist, EmailConfirmationToken, NewsletterSubscriber
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -46,8 +46,8 @@ def contact_view(request):
             # Formez le corps du message
             email_message = f"Nom: {name}\nEmail: {email}\nSujet: {subject}\nMessage: {message}"
             
-            # Envoi d'email désactivé en mode développement
-            # send_mail(subject, email_message, email, [settings.DEFAULT_FROM_EMAIL])
+            # Envoi d'email - Activation de l'envoi d'email
+            send_mail(subject, email_message, settings.DEFAULT_FROM_EMAIL, [settings.DEFAULT_FROM_EMAIL], fail_silently=False)
             
             # Ajoutez un message de succès
             messages.success(request, 'Votre message a été envoyé avec succès! Nous vous répondrons bientôt.')
@@ -319,23 +319,116 @@ def profile_view(request):
 def newsletter_signup(request):
     if request.method == 'POST':
         email = request.POST.get('email')
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        
         if email:
-            # Ici, vous pouvez ajouter la logique pour sauvegarder l'email dans votre base de données
-            # ou l'envoyer à votre service de newsletter
-            messages.success(request, "Merci de votre inscription à notre newsletter!")
+            try:
+                subscriber, created = NewsletterSubscriber.objects.get_or_create(email=email)
+                
+                if created:
+                    message = "Merci de votre inscription à notre newsletter!"
+                    messages.success(request, message)
+                    if is_ajax:
+                        return JsonResponse({'success': True, 'message': message})
+                else:
+                    message = "Vous êtes déjà inscrit à notre newsletter."
+                    messages.info(request, message)
+                    if is_ajax:
+                        return JsonResponse({'success': True, 'message': message})
+            except Exception as e:
+                message = f"Erreur lors de l'inscription: {str(e)}"
+                messages.error(request, message)
+                if is_ajax:
+                    return JsonResponse({'success': False, 'message': message}, status=400)
         else:
-            messages.error(request, "Veuillez fournir une adresse email valide.")
-    return redirect('home') 
+            message = "Veuillez fournir une adresse email valide."
+            messages.error(request, message)
+            if is_ajax:
+                return JsonResponse({'success': False, 'message': message}, status=400)
+    
+    return redirect('home')
 
 
 def newsletter_subscribe(request):
     if request.method == 'POST':
         email = request.POST.get('email')
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        
         if email:
-            # TODO: Implémenter la logique d'inscription à la newsletter
-            messages.success(request, 'Merci de votre inscription à notre newsletter !')
+            try:
+                subscriber, created = NewsletterSubscriber.objects.get_or_create(email=email)
+                
+                if created:
+                    # Envoyer un e-mail de confirmation
+                    try:
+                        subject = "Confirmation d'inscription à la newsletter Hackerz"
+                        message = f"Bonjour,\n\nMerci de vous être inscrit à notre newsletter. Vous recevrez désormais nos dernières actualités et offres spéciales.\n\nL'équipe Hackerz"
+                        html_message = f"""
+                        <html>
+                            <head>
+                                <style>
+                                    body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                                    .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                                    .header {{ text-align: center; padding: 20px 0; }}
+                                    .header h1 {{ color: #00ff41; margin: 0; }}
+                                    .content {{ padding: 20px 0; }}
+                                    .footer {{ text-align: center; font-size: 12px; color: #999; }}
+                                </style>
+                            </head>
+                            <body>
+                                <div class="container">
+                                    <div class="header">
+                                        <h1>Hackerz Newsletter</h1>
+                                    </div>
+                                    <div class="content">
+                                        <p>Bonjour,</p>
+                                        <p>Merci de vous être inscrit à notre newsletter. Vous recevrez désormais nos dernières actualités, tutoriels, et offres spéciales.</p>
+                                        <p>Si vous n'avez pas demandé cette inscription, veuillez ignorer ce message.</p>
+                                        <p>Cordialement,<br>L'équipe Hackerz</p>
+                                    </div>
+                                    <div class="footer">
+                                        <p>&copy; 2025 Hackerz. Tous droits réservés.</p>
+                                        <p>Cet email a été envoyé à {email}</p>
+                                    </div>
+                                </div>
+                            </body>
+                        </html>
+                        """
+                        from django.core.mail import send_mail
+                        from django.utils.html import strip_tags
+                        
+                        send_mail(
+                            subject,
+                            strip_tags(html_message),  # Version texte du message
+                            settings.DEFAULT_FROM_EMAIL,
+                            [email],
+                            html_message=html_message,
+                            fail_silently=False,
+                        )
+                        print(f"Email de confirmation envoyé à {email}")
+                    except Exception as e:
+                        print(f"Erreur lors de l'envoi de l'email: {str(e)}")
+                    
+                    message = "Merci de votre inscription à notre newsletter! Un e-mail de confirmation a été envoyé."
+                    messages.success(request, message)
+                    if is_ajax:
+                        return JsonResponse({'success': True, 'message': message})
+                else:
+                    message = "Vous êtes déjà inscrit à notre newsletter."
+                    messages.info(request, message)
+                    if is_ajax:
+                        return JsonResponse({'success': True, 'message': message})
+            except Exception as e:
+                message = f"Erreur lors de l'inscription: {str(e)}"
+                messages.error(request, message)
+                if is_ajax:
+                    return JsonResponse({'success': False, 'message': message}, status=400)
         else:
-            messages.error(request, 'Veuillez fournir une adresse email valide.')
+            message = "Veuillez fournir une adresse email valide."
+            messages.error(request, message)
+            if is_ajax:
+                return JsonResponse({'success': False, 'message': message}, status=400)
+    
     return redirect('home')
 
 

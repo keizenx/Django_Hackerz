@@ -1,17 +1,18 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Post, Category, Tag, Comment, PostView
-from django.db.models import Count
-from django import forms
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-from django.utils.text import slugify
-from django.contrib import messages
+from .models import Post, Category, Tag, Comment, PostView, CommentLike
+from django import forms
 import markdown
 import re
 import json
+import html
+import bleach
+import traceback
 
 
 def convert_markdown(content):
@@ -91,7 +92,7 @@ def post_list(request, category_slug=None):
         posts = posts.filter(category=category)
     
     # Pagination
-    paginator = Paginator(posts, 6)  # 6 posts per page
+    paginator = Paginator(posts, 4)  # 4 posts per page
     page = request.GET.get('page')
     
     try:
@@ -120,28 +121,123 @@ def post_list(request, category_slug=None):
 
 
 def post_detail(request, post_slug):
+    """Vue pour afficher le détail d'un post de blog et gérer les commentaires"""
+    
+    # Récupérer l'article
     post = get_object_or_404(Post, slug=post_slug)
     
     # Enregistrer la vue si l'utilisateur est connecté
     if request.user.is_authenticated:
         PostView.objects.get_or_create(user=request.user, post=post)
     
-    comments = post.comments.filter(active=True)
-    new_comment = None
+    # Récupérer les commentaires actifs (commentaires parents uniquement)
+    comments = post.comments.filter(active=True, parent=None).order_by('-created')
     
+    # Vérifier si c'est une requête AJAX
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    
+    # Débogage détaillé
+    print(f"\n{'='*50}")
+    print(f"DÉTAIL DE LA REQUÊTE - {timezone.now()}")
+    print(f"{'='*50}")
+    print(f"Méthode: {request.method}")
+    print(f"Est AJAX: {is_ajax}")
+    print(f"URL: {request.path}")
+    print(f"Utilisateur: {request.user.username if request.user.is_authenticated else 'Anonyme'}")
+    
+    # Afficher les en-têtes
+    print("\nEN-TÊTES:")
+    for header, value in request.headers.items():
+        print(f"  {header}: {value}")
+    
+    # Afficher les cookies
+    print("\nCOOKIES:")
+    for key, value in request.COOKIES.items():
+        print(f"  {key}: {value}")
+    
+    # Afficher les données POST si applicable
     if request.method == 'POST':
-        # Un commentaire a été posté
-        comment_form = CommentForm(data=request.POST)
-        if comment_form.is_valid():
-            # Créer l'objet Comment mais ne pas l'enregistrer encore dans la base de données
-            new_comment = comment_form.save(commit=False)
-            # Assigner le post actuel au commentaire
-            new_comment.post = post
-            # Enregistrer le commentaire dans la base de données
-            new_comment.save()
-            return redirect('blog:post_detail', post_slug=post.slug)
-    else:
-        comment_form = CommentForm()
+        print("\nDONNÉES POST:")
+        for key, value in request.POST.items():
+            print(f"  {key}: {value}")
+        
+        # Afficher les fichiers si présents
+        if request.FILES:
+            print("\nFICHIERS:")
+            for key, value in request.FILES.items():
+                print(f"  {key}: {value}")
+    
+    # Gérer la soumission de commentaire
+    if request.method == 'POST':
+        action = request.POST.get('action', '')
+        print(f"\nAction demandée: {action}")
+        
+        # Traitement AJAX
+        if is_ajax:
+            print("Traitement AJAX du commentaire")
+            # Code existant pour AJAX...
+            pass
+        
+        # Traitement standard de formulaire (non-AJAX)
+        elif action == 'add_comment':
+            print("Traitement standard du commentaire")
+            
+            try:
+                # Récupérer les données du formulaire
+                if request.user.is_authenticated:
+                    name = request.user.username
+                    email = request.user.email
+                    print(f"Utilisateur authentifié: {name} ({email})")
+                else:
+                    name = request.POST.get('name', 'Anonyme').strip()
+                    email = request.POST.get('email', 'anonyme@example.com').strip()
+                    print(f"Utilisateur anonyme: {name} ({email})")
+                
+                body = request.POST.get('body', '').strip()
+                parent_id = request.POST.get('parent_id')
+                print(f"Contenu du commentaire: {body}")
+                if parent_id:
+                    print(f"En réponse au commentaire: {parent_id}")
+                
+                # Vérifier que le corps du message n'est pas vide
+                if not body:
+                    print("ERREUR: Corps du commentaire vide")
+                    messages.error(request, "Le commentaire ne peut pas être vide")
+                    return redirect('blog:post_detail', post_slug=post_slug)
+                
+                # Gérer le commentaire parent si spécifié
+                parent = None
+                if parent_id:
+                    try:
+                        parent = Comment.objects.get(id=parent_id, post=post)
+                    except Comment.DoesNotExist:
+                        messages.error(request, "Commentaire parent introuvable")
+                        return redirect('blog:post_detail', post_slug=post_slug)
+                
+                # Créer le commentaire
+                comment = Comment.objects.create(
+                    post=post,
+                    name=name,
+                    email=email,
+                    body=body,
+                    parent=parent,
+                    active=True
+                )
+                
+                print(f"SUCCÈS: Commentaire créé avec ID {comment.id}")
+                messages.success(request, "Votre commentaire a été ajouté avec succès!")
+                
+                # Réserver le traitement AJAX pour la version future et rediriger 
+                # directement pour la version standard
+                return redirect('blog:post_detail', post_slug=post_slug)
+                
+            except Exception as e:
+                print(f"EXCEPTION: {str(e)}")
+                print("Traceback complet:")
+                traceback.print_exc()
+                
+                messages.error(request, f"Erreur lors de l'ajout du commentaire: {str(e)}")
+                return redirect('blog:post_detail', post_slug=post_slug)
     
     # Convertir le contenu Markdown en HTML
     post_content_html = convert_markdown(post.content)
@@ -149,14 +245,13 @@ def post_detail(request, post_slug):
     # Trouver des articles similaires
     similar_posts = Post.objects.filter(status='published', category=post.category).exclude(id=post.id)[:3]
     
+    # Rendu de la page
     return render(request,
-                 'blog/post_detail.html',
-                 {'post': post,
-                  'post_content_html': post_content_html,
-                  'comments': comments,
-                  'new_comment': new_comment,
-                  'comment_form': comment_form,
-                  'similar_posts': similar_posts})
+                'blog/post_detail.html',
+                {'post': post,
+                'post_content_html': post_content_html,
+                'comments': comments,
+                'similar_posts': similar_posts})
 
 
 def tag_view(request, tag_slug):
@@ -164,7 +259,7 @@ def tag_view(request, tag_slug):
     posts = Post.objects.filter(tags=tag, status='published')
     
     # Pagination
-    paginator = Paginator(posts, 6)  # 6 posts per page
+    paginator = Paginator(posts, 4)  # 4 posts per page
     page = request.GET.get('page')
     
     try:
@@ -195,7 +290,7 @@ def category_view(request, category_slug):
     posts = Post.objects.filter(category=category, status='published')
     
     # Pagination
-    paginator = Paginator(posts, 6)  # 6 posts per page
+    paginator = Paginator(posts, 4)  # 4 posts per page
     page = request.GET.get('page')
     
     try:
@@ -247,18 +342,21 @@ def add_comment(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug, status='published')
     
     # Récupérer les données du commentaire
-    if is_ajax:
+    if is_ajax and request.content_type == 'application/json':
         try:
             data = json.loads(request.body)
             name = data.get('name', request.user.username).strip()
             email = data.get('email', request.user.email).strip()
             body = data.get('body', '').strip()
+            parent_id = data.get('parent_id')
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'}, status=400)
     else:
+        # Utiliser request.POST pour les formulaires
         name = request.POST.get('name', request.user.username).strip()
         email = request.POST.get('email', request.user.email).strip()
         body = request.POST.get('body', '').strip()
+        parent_id = request.POST.get('parent_id')
     
     # Vérifier que le corps du message n'est pas vide
     if not body:
@@ -270,11 +368,24 @@ def add_comment(request, post_slug):
     
     # Créer le commentaire
     try:
+        # Trouver le commentaire parent si nécessaire
+        parent = None
+        if parent_id:
+            try:
+                parent = Comment.objects.get(id=parent_id, post=post)
+            except Comment.DoesNotExist:
+                if is_ajax:
+                    return JsonResponse({'status': 'error', 'message': 'Commentaire parent introuvable'}, status=404)
+                else:
+                    messages.error(request, "Commentaire parent introuvable")
+                    return redirect('blog:post_detail', post_slug=post_slug)
+        
         comment = Comment.objects.create(
             post=post,
             name=name,
             email=email,
             body=body,
+            parent=parent,
             active=True
         )
         
@@ -286,8 +397,12 @@ def add_comment(request, post_slug):
                     'id': comment.id,
                     'name': comment.name,
                     'body': comment.body,
-                    'created': comment.created.strftime('%d/%m/%Y %H:%M')
-                }
+                    'created': comment.created.strftime('%d/%m/%Y %H:%M'),
+                    'is_owner': True,
+                    'is_reply': parent is not None,
+                    'parent_id': parent.id if parent else None
+                },
+                'post_id': post.id
             })
         else:
             messages.success(request, "Votre commentaire a été ajouté avec succès!")
@@ -304,11 +419,7 @@ def add_comment_direct(request, post_slug):
     """
     Ajoute directement un commentaire et redirige vers l'article
     """
-    # Vérifier si l'utilisateur est connecté
-    if not request.user.is_authenticated:
-        messages.warning(request, "Veuillez vous connecter pour laisser un commentaire.")
-        return redirect('login')
-        
+    # Accepter les commentaires anonymes si le site le permet
     if request.method != 'POST':
         return redirect('blog:post_detail', post_slug=post_slug)
     
@@ -316,8 +427,13 @@ def add_comment_direct(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug, status='published')
     
     # Récupérer les données du formulaire
-    name = request.POST.get('name', request.user.username).strip()
-    email = request.POST.get('email', request.user.email).strip()
+    if request.user.is_authenticated:
+        name = request.user.username
+        email = request.user.email
+    else:
+        name = request.POST.get('name', 'Anonyme').strip()
+        email = request.POST.get('email', 'anonyme@example.com').strip()
+    
     body = request.POST.get('body', '').strip()
     
     # Vérifier que le corps du message n'est pas vide
@@ -531,6 +647,9 @@ def edit_post(request, post_slug):
     categories = Category.objects.all()
     all_tags = Tag.objects.all()
     
+    # Vérifier si c'est une requête AJAX
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    
     if request.method == 'POST':
         title = request.POST.get('title')
         content = request.POST.get('content')
@@ -540,44 +659,101 @@ def edit_post(request, post_slug):
         
         # Validation de base
         if not title or not content or not category_id:
-            messages.error(request, 'Veuillez remplir tous les champs obligatoires')
-            return render(request, 'blog/edit_post.html', {'post': post, 'categories': categories, 'all_tags': all_tags})
+            if is_ajax:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Veuillez remplir tous les champs obligatoires'
+                }, status=400)
+            else:
+                messages.error(request, 'Veuillez remplir tous les champs obligatoires')
+                return render(request, 'blog/edit_post.html', {'post': post, 'categories': categories, 'all_tags': all_tags})
+        
+        # Vérifier si le titre a changé
+        title_changed = post.title != title
         
         # Mise à jour des champs de base
         post.title = title
         post.content = content
+        old_status = post.status
         post.status = status
+        
+        # Si le statut passe de brouillon à publié, mettre à jour la date de publication
+        if old_status == 'draft' and status == 'published':
+            post.publish = timezone.now()
+        
+        # Si le titre a changé, mettre à jour le slug
+        if title_changed:
+            # Création du slug basé sur le nouveau titre
+            base_slug = slugify(title)
+            slug = base_slug
+            counter = 1
+            
+            # Vérifier que le slug est unique (en excluant l'article actuel)
+            while Post.objects.filter(slug=slug).exclude(id=post.id).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            
+            post.slug = slug
+            
+            # Mettre à jour la date de publication pour éviter les conflits avec unique_for_date
+            post.publish = timezone.now()
         
         # Mise à jour de la catégorie
         try:
             post.category = Category.objects.get(id=category_id)
         except Category.DoesNotExist:
-            messages.error(request, 'Catégorie invalide')
-            return render(request, 'blog/edit_post.html', {'post': post, 'categories': categories, 'all_tags': all_tags})
+            if is_ajax:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Catégorie invalide'
+                }, status=400)
+            else:
+                messages.error(request, 'Catégorie invalide')
+                return render(request, 'blog/edit_post.html', {'post': post, 'categories': categories, 'all_tags': all_tags})
         
         # Mise à jour de l'image si nécessaire
         if 'image' in request.FILES:
             post.image = request.FILES['image']
+            # Mettre à jour la date de publication si une nouvelle image est ajoutée
+            post.publish = timezone.now()
         
-        # Enregistrement des modifications
-        post.save()
-        
-        # Mise à jour des tags
-        post.tags.clear()
-        
-        if tags_input:
-            tag_names = [tag.strip() for tag in tags_input.split(',')]
-            for tag_name in tag_names:
-                if tag_name:
-                    tag_slug = slugify(tag_name)
-                    tag, created = Tag.objects.get_or_create(
-                        slug=tag_slug,
-                        defaults={'name': tag_name}
-                    )
-                    post.tags.add(tag)
-        
-        messages.success(request, 'Article mis à jour avec succès')
-        return redirect('blog:post_detail', post_slug=post.slug)
+        try:
+            # Enregistrement des modifications
+            post.save()
+            
+            # Mise à jour des tags
+            post.tags.clear()
+            
+            if tags_input:
+                tag_names = [tag.strip() for tag in tags_input.split(',')]
+                for tag_name in tag_names:
+                    if tag_name:
+                        tag_slug = slugify(tag_name)
+                        tag, created = Tag.objects.get_or_create(
+                            slug=tag_slug,
+                            defaults={'name': tag_name}
+                        )
+                        post.tags.add(tag)
+            
+            if is_ajax:
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'Article mis à jour avec succès',
+                    'post_slug': post.slug,
+                    'redirect_url': reverse('blog:post_detail', args=[post.slug])
+                })
+            else:
+                messages.success(request, 'Article mis à jour avec succès')
+                return redirect('blog:post_detail', post_slug=post.slug)
+        except Exception as e:
+            if is_ajax:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': f'Erreur lors de la mise à jour: {str(e)}'
+                }, status=500)
+            else:
+                messages.error(request, f'Erreur lors de la mise à jour: {str(e)}')
+                return render(request, 'blog/edit_post.html', {'post': post, 'categories': categories, 'all_tags': all_tags})
     
     # Préparer la liste des tags pour l'affichage
     post_tags = ', '.join([tag.name for tag in post.tags.all()])
@@ -638,147 +814,264 @@ def profile_view(request):
 
 def edit_comment(request, comment_id):
     """
-    Permet de modifier un commentaire existant
+    Vue pour éditer un commentaire existant
     """
-    comment = get_object_or_404(Comment, id=comment_id)
-    post_slug = comment.post.slug
+    comment = get_object_or_404(Comment, id=comment_id, active=True)
+    post = comment.post
     
-    # Vérifier si c'est une requête AJAX
-    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    # Vérifier si l'utilisateur a le droit de modifier ce commentaire
+    if request.user.is_authenticated:
+        is_owner = request.user.username == comment.name
+        is_staff = request.user.is_staff
+    else:
+        is_owner = False
+        is_staff = False
     
-    # Vérifier si l'utilisateur est authentifié et son email correspond à celui du commentaire
-    user_email = request.user.email if request.user.is_authenticated else None
-    if user_email != comment.email and not request.user.is_staff:
-        if is_ajax:
-            return JsonResponse({
-                'status': 'error',
-                'message': "Vous n'êtes pas autorisé à modifier ce commentaire"
-            }, status=403)
-        else:
-            messages.error(request, "Vous n'êtes pas autorisé à modifier ce commentaire")
-            return redirect('blog:post_detail', post_slug=post_slug)
+    if not (is_owner or is_staff):
+        messages.error(request, "Vous n'êtes pas autorisé à modifier ce commentaire.")
+        return redirect('blog:post_detail', post_slug=post.slug)
     
     if request.method == 'POST':
+        body = request.POST.get('body', '').strip()
+        
+        if not body:
+            messages.error(request, "Le commentaire ne peut pas être vide.")
+            return render(request, 'blog/edit_comment.html', {'comment': comment})
+        
         try:
-            # Pour les requêtes AJAX, récupérer les données JSON
-            if is_ajax:
-                data = json.loads(request.body)
-                body = data.get('body', '').strip()
-            else:
-                body = request.POST.get('body', '').strip()
-            
-            # Vérifier que le commentaire n'est pas vide
-            if not body:
-                if is_ajax:
-                    return JsonResponse({
-                        'status': 'error',
-                        'message': 'Le commentaire ne peut pas être vide'
-                    }, status=400)
-                else:
-                    messages.error(request, 'Le commentaire ne peut pas être vide')
-                    return redirect('blog:post_detail', post_slug=post_slug)
-            
             # Mettre à jour le commentaire
             comment.body = body
             comment.updated = timezone.now()
             comment.save()
             
-            if is_ajax:
-                return JsonResponse({
-                    'status': 'success',
-                    'message': 'Commentaire mis à jour avec succès',
-                    'comment': {
-                        'id': comment.id,
-                        'name': comment.name,
-                        'body': comment.body,
-                        'created': comment.created.strftime('%d/%m/%Y %H:%M'),
-                        'updated': comment.updated.strftime('%d/%m/%Y %H:%M')
-                    }
-                })
-            else:
-                messages.success(request, 'Commentaire mis à jour avec succès')
-                return redirect('blog:post_detail', post_slug=post_slug)
-                
-        except json.JSONDecodeError:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Format JSON invalide'
-            }, status=400)
+            messages.success(request, "Votre commentaire a été modifié avec succès.")
+            return redirect('blog:post_detail', post_slug=post.slug)
         except Exception as e:
-            if is_ajax:
-                return JsonResponse({
-                    'status': 'error',
-                    'message': f'Une erreur est survenue: {str(e)}'
-                }, status=500)
-            else:
-                messages.error(request, f'Une erreur est survenue: {str(e)}')
-                return redirect('blog:post_detail', post_slug=post_slug)
+            messages.error(request, f"Erreur lors de la mise à jour: {str(e)}")
     
-    # GET request: préparer le contexte pour le formulaire d'édition
-    if is_ajax:
-        return JsonResponse({
-            'status': 'success',
-            'comment': {
-                'id': comment.id,
-                'name': comment.name,
-                'body': comment.body
-            }
-        })
-    else:
-        return render(request, 'blog/edit_comment.html', {
-            'comment': comment,
-            'post': comment.post
-        })
+    # Si méthode GET ou erreur lors de la modification
+    return render(request, 'blog/edit_comment.html', {'comment': comment})
 
 
 def delete_comment(request, comment_id):
     """
-    Permet de supprimer un commentaire
+    Vue pour supprimer un commentaire
     """
-    comment = get_object_or_404(Comment, id=comment_id)
-    post_slug = comment.post.slug
+    comment = get_object_or_404(Comment, id=comment_id, active=True)
+    post = comment.post
     
-    # Vérifier si c'est une requête AJAX
-    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    # Vérifier si l'utilisateur a le droit de supprimer ce commentaire
+    if request.user.is_authenticated:
+        is_owner = request.user.username == comment.name
+        is_staff = request.user.is_staff
+    else:
+        is_owner = False
+        is_staff = False
     
-    # Vérifier si l'utilisateur est authentifié et son email correspond à celui du commentaire
-    user_email = request.user.email if request.user.is_authenticated else None
-    if user_email != comment.email and not request.user.is_staff:
-        if is_ajax:
-            return JsonResponse({
-                'status': 'error',
-                'message': "Vous n'êtes pas autorisé à supprimer ce commentaire"
-            }, status=403)
-        else:
-            messages.error(request, "Vous n'êtes pas autorisé à supprimer ce commentaire")
-            return redirect('blog:post_detail', post_slug=post_slug)
+    if not (is_owner or is_staff):
+        messages.error(request, "Vous n'êtes pas autorisé à supprimer ce commentaire.")
+        return redirect('blog:post_detail', post_slug=post.slug)
     
     if request.method == 'POST':
-        # Supprimer le commentaire
-        comment.delete()
-        
-        if is_ajax:
+        try:
+            comment.delete()
+            messages.success(request, "Le commentaire a été supprimé avec succès.")
+        except Exception as e:
+            messages.error(request, f"Erreur lors de la suppression: {str(e)}")
+    
+    return redirect('blog:post_detail', post_slug=post.slug)
+
+
+def comment_action(request):
+    """
+    Point d'entrée central pour les actions sur les commentaires via AJAX:
+    - add: Ajoute un commentaire
+    - edit: Modifie un commentaire existant
+    - delete: Supprime un commentaire existant
+    - reply: Répond à un commentaire existant
+    """
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Méthode non autorisée'}, status=405)
+    
+    # Vérifier si la requête est AJAX
+    if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
+        return JsonResponse({'success': False, 'message': 'Requête AJAX attendue'}, status=400)
+    
+    # Vérifier si l'utilisateur est authentifié
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            'success': False, 
+            'message': 'Veuillez vous connecter pour cette action',
+            'redirect': '/login/'
+        }, status=401)
+    
+    # Récupérer les données JSON
+    try:
+        data = json.loads(request.body)
+        action = data.get('action')
+        post_id = data.get('post_id')
+        post_slug = data.get('post_slug')
+        comment_id = data.get('comment_id')
+        content = data.get('content')
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'message': 'Format JSON invalide'}, status=400)
+    
+    # Traiter l'action
+    try:
+        if action == 'add':
+            # Récupérer l'article
+            post = get_object_or_404(Post, id=post_id)
+            
+            # Vérifier si l'utilisateur est authentifié ou anonyme
+            if request.user.is_authenticated:
+                name = request.user.username
+                email = request.user.email
+            else:
+                name = data.get('name', 'Anonyme')
+                email = data.get('email', 'anonyme@example.com')
+            
+            # Vérifier le contenu
+            if not content or content.strip() == '':
+                return JsonResponse({'success': False, 'message': 'Le commentaire ne peut pas être vide'}, status=400)
+            
+            # Créer le commentaire
+            comment = Comment.objects.create(
+                post=post,
+                name=name,
+                email=email,
+                body=content,
+                active=True
+            )
+            
+            # Retourner les informations du commentaire
             return JsonResponse({
-                'status': 'success',
+                'success': True,
+                'message': 'Commentaire ajouté avec succès',
+                'comment': {
+                    'id': comment.id,
+                    'name': comment.name,
+                    'body': comment.body,
+                    'created': comment.created.strftime('%d %b %Y'),
+                    'is_owner': request.user.is_authenticated and request.user.username == comment.name
+                }
+            })
+        
+        elif action == 'edit':
+            # Récupérer le commentaire
+            comment = get_object_or_404(Comment, id=comment_id)
+            
+            # Vérifier les permissions
+            if request.user.is_authenticated and request.user.username != comment.name and not request.user.is_staff:
+                return JsonResponse({'success': False, 'message': 'Vous n\'êtes pas autorisé à modifier ce commentaire'}, status=403)
+            
+            # Vérifier le contenu
+            if not content or content.strip() == '':
+                return JsonResponse({'success': False, 'message': 'Le commentaire ne peut pas être vide'}, status=400)
+            
+            # Mettre à jour le commentaire
+            comment.body = content
+            comment.updated = timezone.now()
+            comment.save()
+            
+            # Retourner le commentaire mis à jour
+            return JsonResponse({
+                'success': True,
+                'message': 'Commentaire mis à jour avec succès',
+                'comment': {
+                    'id': comment.id,
+                    'body': comment.body,
+                    'updated': comment.updated.strftime('%d %b %Y')
+                }
+            })
+        
+        elif action == 'delete':
+            # Récupérer le commentaire
+            comment = get_object_or_404(Comment, id=comment_id)
+            
+            # Vérifier les permissions
+            if request.user.is_authenticated and request.user.username != comment.name and not request.user.is_staff:
+                return JsonResponse({'success': False, 'message': 'Vous n\'êtes pas autorisé à supprimer ce commentaire'}, status=403)
+            
+            # Supprimer le commentaire
+            comment.delete()
+            
+            # Retourner un message de succès
+            return JsonResponse({
+                'success': True,
                 'message': 'Commentaire supprimé avec succès'
             })
+            
+        elif action == 'reply':
+            # Récupérer le commentaire parent
+            parent_comment = get_object_or_404(Comment, id=comment_id)
+            post = parent_comment.post
+            
+            # Vérifier les permissions
+            if not request.user.is_authenticated:
+                return JsonResponse({'success': False, 'message': 'Vous devez être connecté pour répondre à un commentaire'}, status=403)
+            
+            # Vérifier le contenu
+            if not content or content.strip() == '':
+                return JsonResponse({'success': False, 'message': 'La réponse ne peut pas être vide'}, status=400)
+            
+            # Créer la réponse comme un commentaire enfant
+            reply = Comment.objects.create(
+                post=post,
+                name=request.user.username,
+                email=request.user.email,
+                body=content,
+                parent=parent_comment,
+                active=True
+            )
+            
+            # Retourner les informations de la réponse
+            return JsonResponse({
+                'success': True,
+                'message': 'Réponse ajoutée avec succès',
+                'comment': {
+                    'id': reply.id,
+                    'name': reply.name,
+                    'body': reply.body,
+                    'created': reply.created.strftime('%d/%m/%Y %H:%M'),
+                    'is_owner': True
+                }
+            })
+            
+        elif action == 'like':
+            # Récupérer le commentaire
+            comment = get_object_or_404(Comment, id=comment_id)
+            
+            # Vérifier si l'utilisateur a déjà liké ce commentaire
+            like, created = CommentLike.objects.get_or_create(
+                user=request.user,
+                comment=comment
+            )
+            
+            # Si le like existait déjà, on le supprime (unlike)
+            if not created:
+                like.delete()
+                liked = False
+                message = 'Like retiré avec succès'
+            else:
+                liked = True
+                message = 'Commentaire liké avec succès'
+            
+            # Récupérer le nombre total de likes
+            likes_count = comment.likes_count()
+            
+            # Retourner les informations sur le like
+            return JsonResponse({
+                'success': True,
+                'message': message,
+                'liked': liked,
+                'likes_count': likes_count,
+                'comment_id': comment.id
+            })
+            
         else:
-            messages.success(request, 'Commentaire supprimé avec succès')
-            return redirect('blog:post_detail', post_slug=post_slug)
+            return JsonResponse({'success': False, 'message': 'Action inconnue'}, status=400)
     
-    # GET request: demander confirmation
-    if is_ajax:
-        return JsonResponse({
-            'status': 'confirm',
-            'message': 'Êtes-vous sûr de vouloir supprimer ce commentaire ?',
-            'comment': {
-                'id': comment.id,
-                'name': comment.name,
-                'body': comment.body[:100] + '...' if len(comment.body) > 100 else comment.body
-            }
-        })
-    else:
-        return render(request, 'blog/delete_comment.html', {
-            'comment': comment,
-            'post': comment.post
-        })
+    except Exception as e:
+        print(f"Erreur dans comment_action: {str(e)}")
+        print(traceback.format_exc())
+        return JsonResponse({'success': False, 'message': f'Erreur serveur: {str(e)}'}, status=500)

@@ -16,6 +16,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('blog/', include('Hackerz_blog.urls', namespace='blog')),
     path('shop/', include('Hackerz_E_commerce.urls', namespace='shop')),
+    
+    # API URLs
+    path('api/v1/', include('api.urls')),
+    
     path('', home_view, name='home'),
     path('contact/', contact_view, name='contact'),
     path('login/', login_view, name='login'),

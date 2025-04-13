@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}{{ post.title }} | Hackerz Blog{% endblock %}
+
 {% block content %}
 <section class="section">
   <div class="container">
@@ -31,93 +33,112 @@
       {% if post.tags.all %}
       <div class="tags" style="margin-top: 2rem;">
         {% for tag in post.tags.all %}
-        <a href="{% url 'blog:tag_view' tag.slug %}" style="display: inline-block; background-color: hsl(240, 3.7%, 15.9%); color: hsl(142, 100%, 50%); padding: 0.5rem 1rem; border-radius: 9999px; margin-right: 0.5rem; margin-bottom: 0.5rem; text-decoration: none; font-size: 0.875rem;">{{ tag.name }}</a>
+        <a href="{% url 'blog:tag_view' tag.slug %}" class="tag-link">{{ tag.name }}</a>
         {% endfor %}
       </div>
       {% endif %}
       
       <!-- Section commentaires -->
       <div class="comments-section">
-        <h3>Commentaires ({{ comments.count }})</h3>
+        <h3 class="comments-count">Commentaires ({{ comments.count }})</h3>
         
-        <!-- Liste des commentaires -->
         {% if comments %}
-          <div class="comments-list">
-            {% for comment in comments %}
-              <div class="comment" id="comment-{{ comment.id }}">
-                <div class="comment-header">
-                  <span class="comment-author">{{ comment.name }}</span>
-                  <span class="comment-date">{{ comment.created|date:"d M Y" }}{% if comment.updated > comment.created %} (Modifié le {{ comment.updated|date:"d M Y" }}){% endif %}</span>
+        <div class="comments-list">
+          {% for comment in comments %}
+          <div class="comment" id="comment-{{ comment.id }}">
+            <div class="comment-header">
+              <span class="comment-author">{{ comment.name }}</span>
+              <span class="comment-date">{{ comment.created|date:"d M Y" }}</span>
+              {% if user.is_authenticated and user.username == comment.name or user.is_staff %}
+              <div class="dropdown">
+                <button type="button" class="dropdown-toggle" aria-label="Menu actions">⋮</button>
+                <div class="dropdown-menu">
+                  <button class="dropdown-item edit-comment-btn" data-comment-id="{{ comment.id }}">Modifier</button>
+                  <button class="dropdown-item delete-comment-btn" data-comment-id="{{ comment.id }}">Supprimer</button>
                 </div>
-                <div class="comment-body">
-                  {{ comment.body|linebreaks }}
-                </div>
-                {% if user.is_authenticated and user.email == comment.email or user.is_staff %}
-                <div class="comment-actions">
-                  <button class="btn-edit-comment" data-comment-id="{{ comment.id }}">Modifier</button>
-                  <button class="btn-delete-comment" data-comment-id="{{ comment.id }}">Supprimer</button>
-                </div>
-                {% endif %}
               </div>
-            {% endfor %}
-          </div>
-        {% else %}
-          <p>Aucun commentaire pour l'instant. Soyez le premier à commenter !</p>
-        {% endif %}
-        
-        <!-- Formulaire de commentaire avec AJAX -->
-        <div class="comment-form">
-          <h4>Ajouter un commentaire</h4>
-          
-          {% if comment_success or 'comment_added' in request.GET %}
-            <div class="success-message" style="background-color: rgba(0, 255, 0, 0.1); border: 1px solid #00ff00; color: #00ff00; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
-              Votre commentaire a été ajouté avec succès !
-            </div>
-          {% endif %}
-          
-          {% if 'error' in request.GET %}
-            <div class="error-message" style="background-color: rgba(255, 0, 0, 0.1); border: 1px solid #ff0000; color: #ff0000; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
-              {% if request.GET.error == 'empty' %}
-                Le commentaire ne peut pas être vide.
-              {% else %}
-                Une erreur s'est produite lors de l'ajout de votre commentaire.
               {% endif %}
             </div>
-          {% endif %}
-          
-          <div id="ajax-comment-form" style="background-color: rgba(0, 0, 0, 0.1); padding: 1.5rem; border-radius: 0.5rem; border: 1px solid hsl(240, 3.7%, 15.9%);">
-            {% csrf_token %}
-            {% if user.is_authenticated %}
-            <input type="hidden" id="ajax-name" value="{{ user.username }}">
-            <input type="hidden" id="ajax-email" value="{{ user.email }}">
-            {% else %}
-            <input type="hidden" id="ajax-name" value="Anonyme">
-            <input type="hidden" id="ajax-email" value="anonyme@example.com">
-            {% endif %}
-            <div class="form-group">
-              <label for="ajax-body">Votre commentaire</label>
-              <textarea id="ajax-body" rows="5" class="form-control" required></textarea>
+            <div class="comment-body">{{ comment.body }}</div>
+            <div class="comment-footer">
+              <button class="reply-toggle" data-parent="{{ comment.id }}">Répondre</button>
             </div>
-            <button id="ajax-submit" class="btn" style="background-color: hsl(142, 100%, 50%); color: black;">Publier votre commentaire</button>
-            <div id="ajax-response" style="margin-top: 1rem; padding: 0.75rem; display: none; border-radius: 0.25rem;"></div>
+            <div class="reply-form-container" id="reply-form-{{ comment.id }}" style="display: none;">
+              <form method="post" class="reply-form" data-parent="{{ comment.id }}">
+                {% csrf_token %}
+                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                <textarea name="body" rows="3" class="form-control" placeholder="Votre réponse..." required></textarea>
+                <div class="form-actions">
+                  <button type="button" class="btn-secondary cancel-reply">Annuler</button>
+                  <button type="submit" class="btn-primary">Répondre</button>
+                </div>
+              </form>
+            </div>
+            
+            <!-- Affichage des réponses -->
+            {% if comment.replies.all %}
+            <div class="replies" id="replies-{{ comment.id }}">
+              {% for reply in comment.replies.all %}
+              <div class="reply" id="comment-{{ reply.id }}">
+                <div class="comment-header">
+                  <span class="comment-author">{{ reply.name }}</span>
+                  <span class="comment-date">{{ reply.created|date:"d M Y" }}</span>
+                  {% if user.is_authenticated and user.username == reply.name or user.is_staff %}
+                  <div class="dropdown">
+                    <button type="button" class="dropdown-toggle" aria-label="Menu actions">⋮</button>
+                    <div class="dropdown-menu">
+                      <button class="dropdown-item edit-comment-btn" data-comment-id="{{ reply.id }}">Modifier</button>
+                      <button class="dropdown-item delete-comment-btn" data-comment-id="{{ reply.id }}">Supprimer</button>
+                    </div>
+                  </div>
+                  {% endif %}
+                </div>
+                <div class="comment-body">{{ reply.body }}</div>
+              </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="replies" id="replies-{{ comment.id }}"></div>
+            {% endif %}
           </div>
+          {% endfor %}
         </div>
+        {% else %}
+        <p>Aucun commentaire pour l'instant. Soyez le premier à commenter !</p>
+        {% endif %}
+        
+        <h3>Ajouter un commentaire</h3>
+        <div class="alert alert-success comment-success-alert" style="display:none;">
+            Votre commentaire a été ajouté avec succès.
+        </div>
+
+        {% if user.is_authenticated %}
+            <form method="post" id="comment-form" class="comment-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <textarea name="body" id="body" rows="4" class="form-control" placeholder="Votre commentaire..." required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Ajouter un commentaire</button>
+            </form>
+        {% else %}
+            <p class="login-prompt">
+                <a href="{% url 'login' %}?next={{ request.path }}">Connectez-vous</a> pour laisser un commentaire.
+            </p>
+        {% endif %}
+        
+        {% include "blog/includes/comment_scripts.html" %}
       </div>
       
       {% if similar_posts %}
-      <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid hsl(240, 3.7%, 15.9%);">
-        <h3 style="margin-bottom: 1.5rem;">Articles similaires</h3>
-        
-        <div class="grid grid-3">
+      <div class="similar-posts">
+        <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Articles similaires</h3>
+        <div class="similar-posts-grid">
           {% for similar in similar_posts %}
-          <div class="card">
-            {% if similar.image %}
-            <img src="{{ similar.image.url }}" alt="{{ similar.title }}" class="card-img">
-            {% endif %}
-            <div class="card-body">
-              <h3 class="card-title"><a href="{% url 'blog:post_detail' similar.slug %}" style="color: inherit; text-decoration: none;">{{ similar.title }}</a></h3>
-              <p class="card-text">{{ similar.content|truncatewords:20 }}</p>
-            </div>
+          <div class="similar-post-card">
+            <a href="{% url 'blog:post_detail' similar.slug %}">
+              <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">{{ similar.title }}</h4>
+              <span style="font-size: 0.8rem; color: #888;">{{ similar.publish|date:"d M Y" }}</span>
+            </a>
           </div>
           {% endfor %}
         </div>
@@ -127,773 +148,634 @@
     </div>
   </div>
 </section>
-
-<!-- Modal pour édition de commentaire -->
-<div id="edit-comment-modal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center;">
-  <div class="modal-content" style="background-color: hsl(240, 3.7%, 10%); padding: 2rem; border-radius: 0.5rem; width: 90%; max-width: 600px; position: relative;">
-    <span class="close-modal" style="position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; cursor: pointer; color: hsl(240, 5%, 64.9%);">&times;</span>
-    <h3 style="margin-bottom: 1.5rem;">Modifier votre commentaire</h3>
-    <div class="form-group">
-      <label for="edit-comment-body">Commentaire</label>
-      <textarea id="edit-comment-body" rows="5" class="form-control" style="width: 100%; padding: 0.75rem; background-color: hsl(240, 3.7%, 10%); border: 1px solid hsl(240, 3.7%, 15.9%); border-radius: 0.25rem; color: hsl(0, 0%, 100%); font-family: inherit; font-size: 1rem;"></textarea>
-      <input type="hidden" id="edit-comment-id" value="">
-    </div>
-    <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
-      <button id="cancel-edit-comment" class="btn" style="background-color: transparent; border: 1px solid hsl(240, 5%, 64.9%); color: hsl(240, 5%, 64.9%);">Annuler</button>
-      <button id="save-edit-comment" class="btn" style="background-color: hsl(142, 100%, 50%); color: black;">Enregistrer</button>
-    </div>
-    <div id="edit-comment-feedback" style="margin-top: 1rem; padding: 0.75rem; display: none; border-radius: 0.25rem;"></div>
-  </div>
-</div>
-
-<!-- Modal pour suppression de commentaire -->
-<div id="delete-comment-modal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center;">
-  <div class="modal-content" style="background-color: hsl(240, 3.7%, 10%); padding: 2rem; border-radius: 0.5rem; width: 90%; max-width: 500px; position: relative;">
-    <span class="close-modal" style="position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; cursor: pointer; color: hsl(240, 5%, 64.9%);">&times;</span>
-    <h3 style="margin-bottom: 1.5rem;">Supprimer le commentaire</h3>
-    <p>Êtes-vous sûr de vouloir supprimer ce commentaire ? Cette action est irréversible.</p>
-    <div id="comment-to-delete" style="margin: 1rem 0; padding: 1rem; background-color: hsl(240, 3.7%, 15%); border-radius: 0.25rem;"></div>
-    <input type="hidden" id="delete-comment-id" value="">
-    <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
-      <button id="cancel-delete-comment" class="btn" style="background-color: transparent; border: 1px solid hsl(240, 5%, 64.9%); color: hsl(240, 5%, 64.9%);">Annuler</button>
-      <button id="confirm-delete-comment" class="btn" style="background-color: hsl(0, 100%, 50%); color: white;">Supprimer</button>
-    </div>
-    <div id="delete-comment-feedback" style="margin-top: 1rem; padding: 0.75rem; display: none; border-radius: 0.25rem;"></div>
-  </div>
-</div>
 {% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/comment_styles.css' %}">
 <style>
-/* Blog post */
-.blog-meta {
-  display: flex;
-  gap: 1rem;
-  color: hsl(240, 5%, 64.9%);
-  font-size: 0.875rem;
-  margin-bottom: 1rem;
-}
+  .dropdown-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 20px;
+    color: #aaa;
+  }
 
-.blog-meta-item {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #1e1e1e;
+    min-width: 120px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    z-index: 1;
+    border-radius: 4px;
+  }
 
-.blog-content {
-  line-height: 1.8;
-  font-size: 1.05rem;
-}
+  .dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #eee;
+    text-decoration: none;
+  }
 
-.blog-content p {
-  margin-bottom: 1.5rem;
-}
+  .dropdown-item:hover {
+    background-color: #333;
+  }
 
-.blog-content h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 2.5rem 0 1.5rem;
-  color: hsl(142, 100%, 50%);
-  border-bottom: 1px solid hsl(240, 5%, 20%);
-  padding-bottom: 0.5rem;
-}
+  .success-message {
+    background-color: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
 
-.blog-content h2 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin: 2.25rem 0 1.25rem;
-  color: hsl(142, 85%, 50%);
-}
+  .error-message {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }
 
-.blog-content h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 2rem 0 1rem;
-  color: hsl(142, 75%, 50%);
-}
-
-.blog-content h4 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 1.75rem 0 1rem;
-  color: hsl(142, 65%, 50%);
-}
-
-.blog-content ul, .blog-content ol {
-  margin: 1rem 0 1.5rem;
-  padding-left: 2rem;
-}
-
-.blog-content li {
-  margin-bottom: 0.75rem;
-}
-
-.blog-content strong {
-  color: hsl(142, 100%, 65%);
-  font-weight: 600;
-}
-
-.blog-content img {
-  max-width: 100%;
-  border-radius: 0.5rem;
-  margin: 1.5rem 0;
-  border: 1px solid hsl(240, 5%, 15%);
-}
-
-/* Styles pour les blocs de code */
-.blog-content pre {
-  background-color: hsl(0, 0%, 6%);
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  overflow-x: auto;
-  margin: 1.5rem 0;
-  border: 1px solid hsl(240, 5%, 15%);
-  position: relative;
-}
-
-.blog-content code {
-  font-family: 'JetBrains Mono', monospace;
-  color: hsl(142, 100%, 50%);
-}
-
-.blog-content .codehilite {
-  margin: 1.5rem 0;
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-.blog-content .codehilite pre {
-  padding: 1.5rem;
-  margin: 0;
-  overflow-x: auto;
-  background-color: hsl(0, 0%, 6%);
-  border: 1px solid hsl(240, 5%, 20%);
-}
-
-.blog-content .code-block {
-  background-color: hsl(0, 0%, 6%);
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  overflow-x: auto;
-  margin: 1.5rem 0;
-  border: 1px solid hsl(240, 5%, 20%);
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.blog-content blockquote {
-  border-left: 4px solid hsl(142, 100%, 50%);
-  padding-left: 1rem;
-  margin: 1.5rem 0;
-  font-style: italic;
-  color: hsl(240, 5%, 75%);
-}
-
-/* Style pour les listes à puces et numérotées */
-.styled-list {
-  margin: 1.5rem 0;
-  padding-left: 2rem;
-}
-
-.styled-list li {
-  margin-bottom: 0.75rem;
-  position: relative;
-}
-
-.blog-content ul.styled-list {
-  list-style-type: none;
-}
-
-.blog-content ul.styled-list li:before {
-  content: "•";
-  color: hsl(142, 100%, 50%);
-  font-weight: bold;
-  display: inline-block; 
-  width: 1em;
-  margin-left: -1em;
-}
-
-.blog-content ol.styled-list {
-  counter-reset: item;
-  list-style-type: none;
-}
-
-.blog-content ol.styled-list li:before {
-  content: counter(item) ".";
-  counter-increment: item;
-  color: hsl(142, 100%, 50%);
-  font-weight: bold;
-  display: inline-block;
-  width: 1.5em;
-  margin-left: -1.5em;
-}
-
-/* Commentaires */
-.comments-section {
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid hsl(240, 3.7%, 15.9%);
-}
-
-.comments-section h3 {
-  margin-bottom: 1.5rem;
-}
-
-.comments-list {
-  margin-bottom: 2rem;
-}
-
-.comment {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background-color: hsl(240, 3.7%, 10%);
-  border-radius: 0.5rem;
-  border: 1px solid hsl(240, 3.7%, 15.9%);
-}
-
-.comment-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
-}
-
-.comment-author {
-  font-weight: bold;
-  color: hsl(142, 100%, 50%);
-}
-
-.comment-date {
-  color: hsl(240, 5%, 64.9%);
-}
-
-.comment-body {
-  color: hsl(0, 0%, 100%);
-  line-height: 1.6;
-}
-
-/* Formulaire de commentaire */
-.comment-form {
-  margin-top: 2rem;
-}
-
-.comment-form h4 {
-  margin-bottom: 1rem;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: hsl(240, 5%, 64.9%);
-}
-
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: hsl(240, 3.7%, 10%);
-  border: 1px solid hsl(240, 3.7%, 15.9%);
-  border-radius: 0.25rem;
-  color: hsl(0, 0%, 100%);
-  font-family: inherit;
-  font-size: 1rem;
-  transition: border-color 0.2s;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: hsl(142, 100%, 50%);
-  box-shadow: 0 0 0 1px rgba(46, 255, 133, 0.3);
-}
-
-.btn {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  background-color: hsl(142, 100%, 50%);
-  color: hsl(0, 0%, 0%);
-  border: none;
-  border-radius: 0.25rem;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.btn:hover {
-  background-color: hsl(142, 100%, 45%);
-}
-
-.auto-comment {
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px dashed hsl(240, 3.7%, 15.9%);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.btn-auto {
-  background-color: transparent;
-  border: 1px solid hsl(142, 100%, 50%);
-  color: hsl(142, 100%, 50%);
-}
-
-.btn-auto:hover {
-  background-color: rgba(46, 255, 133, 0.1);
-}
-
-/* Style pour les boutons d'actions des commentaires */
-.comment-actions {
-  margin-top: 0.75rem;
-  display: flex;
-  gap: 0.5rem;
-}
-
-.btn-edit-comment,
-.btn-delete-comment {
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-  cursor: pointer;
-  border: none;
-  transition: background-color 0.2s;
-}
-
-.btn-edit-comment {
-  background-color: hsl(210, 100%, 25%);
-  color: white;
-}
-
-.btn-edit-comment:hover {
-  background-color: hsl(210, 100%, 35%);
-}
-
-.btn-delete-comment {
-  background-color: hsl(0, 100%, 35%);
-  color: white;
-}
-
-.btn-delete-comment:hover {
-  background-color: hsl(0, 100%, 45%);
-}
-
-/* Style pour les modals */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal.active {
-  display: flex;
-}
-
-.modal-content {
-  background-color: hsl(240, 3.7%, 10%);
-  padding: 2rem;
-  border-radius: 0.5rem;
-  width: 90%;
-  max-width: 600px;
-  position: relative;
-}
-
-.close-modal {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: hsl(240, 5%, 64.9%);
-}
-
-.close-modal:hover {
-  color: white;
-}
+  .comment-instructions {
+    color: #999;
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
+  }
+  
+  .comment-instructions a {
+    color: #0f0;
+    text-decoration: none;
+  }
+  
+  .comment-instructions a:hover {
+    text-decoration: underline;
+  }
 </style>
 {% endblock %}
 
 {% block extra_js %}
+{{ block.super }}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Configuration du formulaire AJAX pour les commentaires
-  const ajaxSubmitButton = document.getElementById('ajax-submit');
-  const ajaxNameInput = document.getElementById('ajax-name');
-  const ajaxEmailInput = document.getElementById('ajax-email');
-  const ajaxBodyTextarea = document.getElementById('ajax-body');
-  const ajaxResponse = document.getElementById('ajax-response');
-  
-  if (ajaxSubmitButton && ajaxBodyTextarea) {
-    ajaxSubmitButton.addEventListener('click', function() {
-      // Récupérer les valeurs du formulaire
-      const commentBody = ajaxBodyTextarea.value.trim();
-      const commentName = ajaxNameInput.value.trim();
-      const commentEmail = ajaxEmailInput.value.trim();
-      
-      // Vérifier que le commentaire n'est pas vide
-      if (!commentBody) {
-        showAjaxResponse('Erreur: Le commentaire ne peut pas être vide.', 'error');
-        return;
+  console.log("Script de commentaires chargé");
+
+  // Obtenir le cookie par son nom
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        // Est-ce que ce cookie commence par le nom que nous voulons?
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
       }
+    }
+    return cookieValue;
+  }
+  
+  // Obtenir le token CSRF depuis les cookies
+  function getCSRFToken() {
+    return getCookie('csrftoken');
+  }
+
+  // Fonction pour afficher des notifications
+  function showNotification(message, type = 'success') {
+    console.log("Notification:", type, message);
+    const messagesContainer = document.querySelector('.messages');
+    if (messagesContainer) {
+      messagesContainer.innerHTML = `<div class="${type}-message">${message}</div>`;
+      messagesContainer.style.display = 'block';
       
-      // Récupérer le token CSRF
-      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      // Faire défiler jusqu'à la notification
+      messagesContainer.scrollIntoView({ behavior: 'smooth' });
       
-      // Créer les données à envoyer
-      const data = new FormData();
-      data.append('body', commentBody);
-      data.append('name', commentName);
-      data.append('email', commentEmail);
-      data.append('form_type', 'ajax_form');
-      data.append('csrfmiddlewaretoken', csrfToken);
-      
-      // Désactiver le bouton pendant l'envoi
-      ajaxSubmitButton.disabled = true;
-      ajaxSubmitButton.textContent = 'Envoi en cours...';
-      
-      // Envoyer la requête
-      fetch('{{ request.path }}', {
-        method: 'POST',
-        body: data,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
+      // Masquer la notification après 5 secondes
+      setTimeout(() => {
+        messagesContainer.style.display = 'none';
+      }, 5000);
+    }
+  }
+
+  // Gestion de l'envoi du formulaire de commentaire
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM chargé, initialisation du gestionnaire de formulaire");
+    const commentForm = document.querySelector('#comment-form');
+    console.log("Formulaire de commentaire trouvé:", commentForm !== null);
+    
+    if (commentForm) {
+      commentForm.addEventListener('submit', function(e) {
+        console.log("Formulaire soumis!");
+        e.preventDefault();
+        
+        // Vérifier que le contenu n'est pas vide
+        const bodyField = document.getElementById('body');
+        console.log("Champ body trouvé:", bodyField !== null);
+        
+        if (bodyField && !bodyField.value.trim()) {
+          showNotification('Le commentaire ne peut pas être vide', 'error');
+          return;
         }
-      })
-      .then(response => {
-        if (!response.ok) {
-          return response.json().then(errData => {
-            throw new Error(errData.message || 'Erreur serveur');
-          });
+        
+        console.log("Préparation de l'envoi AJAX...");
+        
+        // Désactiver le bouton de soumission et ajouter un spinner
+        const submitButton = commentForm.querySelector('button[type="submit"]');
+        console.log("Bouton submit trouvé:", submitButton !== null);
+        
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.classList.add('disabled-btn');
+          const originalText = submitButton.textContent;
+          submitButton.innerHTML = 'Envoi en cours... <span class="spinner"></span>';
         }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Réponse du serveur:', data);
-        showAjaxResponse('Votre commentaire a été ajouté avec succès !', 'success');
         
-        // Réinitialiser le formulaire
-        ajaxBodyTextarea.value = '';
+        // Préparer les données du formulaire
+        const formData = new FormData(commentForm);
+        formData.append('action', 'add_comment');
         
-        // Rafraîchir la page après 1.5 secondes
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
-      })
-      .catch(error => {
-        console.error('Erreur:', error);
-        showAjaxResponse('Erreur lors de l\'envoi du commentaire. Veuillez réessayer.', 'error');
+        // Afficher les données qui seront envoyées
+        console.log("Données à envoyer:");
+        for (let pair of formData.entries()) {
+          console.log(pair[0] + ': ' + pair[1]);
+        }
         
-        // Réactiver le bouton
-        ajaxSubmitButton.disabled = false;
-        ajaxSubmitButton.textContent = 'Publier votre commentaire';
+        // Obtenir le jeton CSRF
+        const csrftoken = getCSRFToken();
+        console.log("CSRF Token trouvé:", csrftoken !== null && csrftoken !== undefined);
+        
+        // Envoyer la requête AJAX
+        console.log("Envoi de la requête AJAX à:", '{% url "blog:post_detail" post.slug %}');
+        fetch('{% url "blog:post_detail" post.slug %}', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': csrftoken
+          },
+          credentials: 'same-origin'  // Envoyer les cookies avec la requête
+        })
+        .then(response => {
+          console.log("Réponse reçue, statut:", response.status);
+          if (!response.ok) {
+            throw new Error('Erreur réseau ' + response.status);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log("Données reçues:", data);
+          if (data.status === 'success') {
+            // Réinitialiser le formulaire
+            commentForm.reset();
+            
+            // Afficher une notification
+            showNotification(data.message || 'Commentaire ajouté avec succès');
+            
+            // Recharger la page pour afficher le nouveau commentaire
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          } else {
+            showNotification(data.message || 'Erreur lors de l\'ajout du commentaire', 'error');
+            
+            // Réactiver le bouton de soumission
+            if (submitButton) {
+              submitButton.disabled = false;
+              submitButton.classList.remove('disabled-btn');
+              submitButton.innerHTML = originalText;
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Erreur:', error);
+          showNotification('Une erreur s\'est produite. Veuillez réessayer.', 'error');
+          
+          // Réactiver le bouton de soumission
+          if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.classList.remove('disabled-btn');
+            submitButton.innerHTML = originalText;
+          }
+        });
+      });
+    }
+    
+    // Initialiser les boutons de réponse
+    const replyButtons = document.querySelectorAll('.reply-toggle');
+    replyButtons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const commentParent = this.getAttribute('data-parent');
+        if (commentParent) {
+          const replyForm = document.getElementById(`reply-form-${commentParent}`);
+          if (replyForm) {
+            replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
+          }
+        }
       });
     });
-  }
-  
-  // Fonction pour afficher la réponse
-  function showAjaxResponse(message, type) {
-    if (!ajaxResponse) return;
     
-    ajaxResponse.textContent = message;
-    ajaxResponse.style.display = 'block';
+    // Initialiser les boutons d'édition et de suppression avec le même jeton CSRF
+    const csrftoken = getCSRFToken();
     
-    if (type === 'success') {
-      ajaxResponse.style.backgroundColor = 'rgba(0, 255, 0, 0.1)';
-      ajaxResponse.style.color = '#00ff00';
-      ajaxResponse.style.border = '1px solid #00ff00';
-    } else {
-      ajaxResponse.style.backgroundColor = 'rgba(255, 0, 0, 0.1)';
-      ajaxResponse.style.color = '#ff0000';
-      ajaxResponse.style.border = '1px solid #ff0000';
-    }
-    
-    // Faire défiler jusqu'à la réponse
-    ajaxResponse.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-  
-  // Gestion des boutons d'édition et de suppression
-  const editButtons = document.querySelectorAll('.btn-edit-comment');
-  const deleteButtons = document.querySelectorAll('.btn-delete-comment');
-  const editModal = document.getElementById('edit-comment-modal');
-  const deleteModal = document.getElementById('delete-comment-modal');
-  const closeModals = document.querySelectorAll('.close-modal');
-  const cancelEditButton = document.getElementById('cancel-edit-comment');
-  const saveEditButton = document.getElementById('save-edit-comment');
-  const cancelDeleteButton = document.getElementById('cancel-delete-comment');
-  const confirmDeleteButton = document.getElementById('confirm-delete-comment');
-  const editCommentBody = document.getElementById('edit-comment-body');
-  const editCommentId = document.getElementById('edit-comment-id');
-  const deleteCommentId = document.getElementById('delete-comment-id');
-  const commentToDelete = document.getElementById('comment-to-delete');
-  const editCommentFeedback = document.getElementById('edit-comment-feedback');
-  const deleteCommentFeedback = document.getElementById('delete-comment-feedback');
-  
-  // Fonction pour fermer tous les modals
-  function closeAllModals() {
-    if (editModal) editModal.style.display = 'none';
-    if (deleteModal) deleteModal.style.display = 'none';
-  }
-  
-  // Attacher les gestionnaires d'événements pour fermer les modals
-  if (closeModals) {
-    closeModals.forEach(closeBtn => {
-      closeBtn.addEventListener('click', closeAllModals);
+    // Initialiser les menus déroulants
+    document.querySelectorAll('.dropdown-toggle').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const menu = this.nextElementSibling;
+        
+        // Fermer tous les autres menus
+        document.querySelectorAll('.dropdown-menu').forEach(item => {
+          if (item !== menu) {
+            item.style.display = 'none';
+          }
+        });
+        
+        // Basculer l'affichage du menu actuel
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+      });
     });
-  }
-  
-  // Fermer les modals en cliquant en dehors
-  window.addEventListener('click', function(event) {
-    if (event.target === editModal) {
-      closeAllModals();
-    }
-    if (event.target === deleteModal) {
-      closeAllModals();
-    }
-  });
-  
-  // Également avec la touche Escape
-  document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-      closeAllModals();
-    }
-  });
-  
-  // Annuler l'édition
-  if (cancelEditButton) {
-    cancelEditButton.addEventListener('click', closeAllModals);
-  }
-  
-  // Annuler la suppression
-  if (cancelDeleteButton) {
-    cancelDeleteButton.addEventListener('click', closeAllModals);
-  }
-  
-  // Fonction pour afficher un message de feedback
-  function showFeedback(element, message, type) {
-    if (!element) return;
     
-    element.textContent = message;
-    element.style.display = 'block';
+    // Fermer les menus quand on clique ailleurs
+    document.addEventListener('click', function() {
+      document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.style.display = 'none';
+      });
+    });
     
-    if (type === 'success') {
-      element.style.backgroundColor = 'rgba(0, 255, 0, 0.1)';
-      element.style.color = '#00ff00';
-      element.style.border = '1px solid #00ff00';
-    } else {
-      element.style.backgroundColor = 'rgba(255, 0, 0, 0.1)';
-      element.style.color = '#ff0000';
-      element.style.border = '1px solid #ff0000';
-    }
-    
-    // Faire défiler jusqu'au message
-    element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-  
-  // Gestion des boutons d'édition
-  if (editButtons) {
+    // Initialiser les boutons d'édition
+    const editButtons = document.querySelectorAll('.edit-comment-btn');
     editButtons.forEach(button => {
       button.addEventListener('click', function() {
         const commentId = this.getAttribute('data-comment-id');
+        if (!commentId) return;
+        
         const commentElement = document.getElementById(`comment-${commentId}`);
-        const commentBody = commentElement.querySelector('.comment-body').textContent.trim();
+        if (!commentElement) return;
         
-        // Remplir le formulaire d'édition
-        editCommentBody.value = commentBody;
-        editCommentId.value = commentId;
+        const commentBody = commentElement.querySelector('.comment-body');
+        if (!commentBody) return;
         
-        // Afficher le modal
-        editModal.style.display = 'flex';
+        const currentContent = commentBody.textContent.trim();
         
-        // Focus sur le textarea
-        editCommentBody.focus();
+        // Créer le formulaire d'édition
+        const editForm = document.createElement('div');
+        editForm.className = 'edit-form';
+        editForm.innerHTML = `
+          <textarea class="form-control" rows="3">${currentContent}</textarea>
+          <div class="edit-actions" style="margin-top: 10px;">
+            <button type="button" class="btn-primary save-edit-btn">Enregistrer</button>
+            <button type="button" class="btn-secondary cancel-edit-btn" style="margin-left: 10px;">Annuler</button>
+          </div>
+        `;
+        
+        // Cacher le contenu original et afficher le formulaire
+        commentBody.style.display = 'none';
+        commentBody.parentNode.insertBefore(editForm, commentBody.nextSibling);
+        
+        // Mettre le focus sur le textarea et le sélectionner
+        const textarea = editForm.querySelector('textarea');
+        textarea.focus();
+        textarea.setSelectionRange(0, textarea.value.length);
+        
+        // Gérer l'annulation de l'édition
+        editForm.querySelector('.cancel-edit-btn').addEventListener('click', function() {
+          commentBody.style.display = 'block';
+          editForm.remove();
+        });
+        
+        // Gérer la sauvegarde de l'édition
+        editForm.querySelector('.save-edit-btn').addEventListener('click', function() {
+          const newContent = textarea.value.trim();
+          
+          if (!newContent) {
+            showNotification('Le commentaire ne peut pas être vide', 'error');
+            return;
+          }
+          
+          // Désactiver les boutons pendant la sauvegarde
+          const saveBtn = this;
+          const cancelBtn = editForm.querySelector('.cancel-edit-btn');
+          
+          saveBtn.disabled = true;
+          saveBtn.textContent = 'Enregistrement...';
+          saveBtn.classList.add('disabled-btn');
+          cancelBtn.disabled = true;
+          cancelBtn.classList.add('disabled-btn');
+          
+          // Préparer les données pour l'AJAX
+          const formData = new FormData();
+          formData.append('action', 'edit_comment');
+          formData.append('comment_id', commentId);
+          formData.append('body', newContent);
+          formData.append('csrfmiddlewaretoken', csrftoken);
+          
+          // Envoyer la requête AJAX
+          fetch('{% url "blog:post_detail" post.slug %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'X-CSRFToken': csrftoken
+            },
+            credentials: 'same-origin'
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Erreur réseau');
+            }
+            return response.json();
+          })
+          .then(data => {
+            if (data.status === 'success') {
+              // Mettre à jour le contenu du commentaire
+              commentBody.textContent = newContent;
+              commentBody.style.display = 'block';
+              
+              // Supprimer le formulaire d'édition
+              editForm.remove();
+              
+              // Afficher une notification
+              showNotification(data.message || 'Commentaire modifié avec succès');
+            } else {
+              showNotification(data.message || 'Erreur lors de la modification du commentaire', 'error');
+              
+              // Réactiver les boutons
+              saveBtn.disabled = false;
+              saveBtn.textContent = 'Enregistrer';
+              saveBtn.classList.remove('disabled-btn');
+              cancelBtn.disabled = false;
+              cancelBtn.classList.remove('disabled-btn');
+            }
+          })
+          .catch(error => {
+            console.error('Erreur:', error);
+            showNotification('Une erreur s\'est produite. Veuillez réessayer.', 'error');
+            
+            // Réactiver les boutons
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Enregistrer';
+            saveBtn.classList.remove('disabled-btn');
+            cancelBtn.disabled = false;
+            cancelBtn.classList.remove('disabled-btn');
+          });
+        });
       });
     });
-  }
-  
-  // Gestion des boutons de suppression
-  if (deleteButtons) {
+    
+    // Initialiser les boutons de suppression
+    const deleteButtons = document.querySelectorAll('.delete-comment-btn');
     deleteButtons.forEach(button => {
       button.addEventListener('click', function() {
         const commentId = this.getAttribute('data-comment-id');
-        const commentElement = document.getElementById(`comment-${commentId}`);
-        const commentBody = commentElement.querySelector('.comment-body').textContent.trim();
-        const commentAuthor = commentElement.querySelector('.comment-author').textContent.trim();
+        if (!commentId) return;
         
-        // Préparer le modal de confirmation
-        commentToDelete.innerHTML = `<strong>${commentAuthor}</strong>: ${commentBody.substring(0, 100)}${commentBody.length > 100 ? '...' : ''}`;
-        deleteCommentId.value = commentId;
-        
-        // Afficher le modal
-        deleteModal.style.display = 'flex';
-      });
-    });
-  }
-  
-  // Gestion de la sauvegarde de l'édition
-  if (saveEditButton) {
-    saveEditButton.addEventListener('click', function() {
-      const commentId = editCommentId.value;
-      const commentBody = editCommentBody.value.trim();
-      
-      // Vérifier que le commentaire n'est pas vide
-      if (!commentBody) {
-        showFeedback(editCommentFeedback, 'Le commentaire ne peut pas être vide', 'error');
-        return;
-      }
-      
-      // Récupérer le token CSRF
-      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-      
-      // Créer les données à envoyer
-      const data = new FormData();
-      data.append('body', commentBody);
-      data.append('csrfmiddlewaretoken', csrfToken);
-      
-      // Désactiver le bouton pendant l'envoi
-      saveEditButton.disabled = true;
-      saveEditButton.textContent = 'Enregistrement...';
-      
-      // Envoyer la requête
-      fetch(`/blog/comment/${commentId}/edit/`, {
-        method: 'POST',
-        body: data,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
+        if (!confirm('Êtes-vous sûr de vouloir supprimer ce commentaire?')) {
+          return;
         }
-      })
-      .then(response => {
-        if (!response.ok) {
-          return response.json().then(errData => {
-            throw new Error(errData.message || 'Erreur serveur');
-          });
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Montrer le message de succès
-        showFeedback(editCommentFeedback, 'Commentaire mis à jour avec succès', 'success');
         
-        // Mettre à jour le commentaire dans la page
-        const commentElement = document.getElementById(`comment-${commentId}`);
-        if (commentElement) {
-          commentElement.querySelector('.comment-body').innerHTML = commentBody.replace(/\n/g, '<br>');
-          
-          // Mettre à jour la date de modification si nécessaire
-          const dateElement = commentElement.querySelector('.comment-date');
-          if (data.comment && data.comment.updated) {
-            dateElement.textContent = `${data.comment.created} (Modifié le ${data.comment.updated})`;
+        // Préparer les données pour l'AJAX
+        const formData = new FormData();
+        formData.append('action', 'delete_comment');
+        formData.append('comment_id', commentId);
+        formData.append('csrfmiddlewaretoken', csrftoken);
+        
+        // Envoyer la requête AJAX
+        fetch('{% url "blog:post_detail" post.slug %}', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': csrftoken
+          },
+          credentials: 'same-origin'
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Erreur réseau');
           }
-        }
-        
-        // Fermer le modal après un délai
-        setTimeout(() => {
-          closeAllModals();
-          // Réactiver le bouton
-          saveEditButton.disabled = false;
-          saveEditButton.textContent = 'Enregistrer';
-          // Effacer le feedback
-          editCommentFeedback.style.display = 'none';
-        }, 1500);
-      })
-      .catch(error => {
-        console.error('Erreur:', error);
-        showFeedback(editCommentFeedback, `Erreur: ${error.message}`, 'error');
-        
-        // Réactiver le bouton
-        saveEditButton.disabled = false;
-        saveEditButton.textContent = 'Enregistrer';
+          return response.json();
+        })
+        .then(data => {
+          if (data.status === 'success') {
+            // Supprimer le commentaire du DOM avec animation
+            const commentElement = document.getElementById(`comment-${commentId}`);
+            if (commentElement) {
+              commentElement.classList.add('fade-out');
+              
+              setTimeout(() => {
+                commentElement.remove();
+                
+                // Afficher une notification
+                showNotification(data.message || 'Commentaire supprimé avec succès');
+                
+                // Mettre à jour le compteur de commentaires
+                const commentsCount = document.querySelector('.comments-count');
+                if (commentsCount && data.total_comments !== undefined) {
+                  commentsCount.textContent = `Commentaires (${data.total_comments})`;
+                  
+                  // Si plus aucun commentaire, afficher un message
+                  if (data.total_comments === 0) {
+                    const commentsList = document.querySelector('.comments-list');
+                    if (commentsList) {
+                      commentsList.innerHTML = '<p>Aucun commentaire pour l\'instant. Soyez le premier à commenter !</p>';
+                    }
+                  }
+                }
+              }, 300);
+            }
+          } else {
+            showNotification(data.message || 'Erreur lors de la suppression du commentaire', 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Erreur:', error);
+          showNotification('Une erreur s\'est produite. Veuillez réessayer.', 'error');
+        });
       });
     });
+    
+    // Redéfinir la fonction de défilement pour les références et appels existants
+    window.scrollToCommentForm = function() {
+      const commentForm = document.getElementById('comment-form');
+      if (commentForm) {
+        commentForm.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('reply-to').style.display = 'block';
+      }
+    };
+  });
+
+  // Script pour le bouton de test
+  document.addEventListener('DOMContentLoaded', function() {
+    const testButton = document.getElementById('testSubmitBtn');
+    const testInput = document.getElementById('testBody');
+    
+    if (testButton && testInput) {
+      testButton.addEventListener('click', function() {
+        const testText = testInput.value.trim();
+        if (!testText) {
+          alert('Veuillez entrer un commentaire de test');
+          return;
+        }
+        
+        // Créer un formulaire simple
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "blog:post_detail" post.slug %}';
+        form.style.display = 'none';
+        
+        // CSRF token
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = '{{ csrf_token }}';
+        form.appendChild(csrfInput);
+        
+        // Action
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = 'add_comment';
+        form.appendChild(actionInput);
+        
+        // Body
+        const bodyInput = document.createElement('input');
+        bodyInput.type = 'hidden';
+        bodyInput.name = 'body';
+        bodyInput.value = testText;
+        form.appendChild(bodyInput);
+        
+        // Nom et email pour les utilisateurs non authentifiés
+        {% if not user.is_authenticated %}
+        const nameInput = document.createElement('input');
+        nameInput.type = 'hidden';
+        nameInput.name = 'name';
+        nameInput.value = 'Anonyme Test';
+        form.appendChild(nameInput);
+        
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = 'test@example.com';
+        form.appendChild(emailInput);
+        {% endif %}
+        
+        // Ajouter le formulaire au document et le soumettre
+        document.body.appendChild(form);
+        console.log('Soumission du formulaire test...');
+        form.submit();
+      });
+    }
+    
+    // Intercepter la soumission normale du formulaire pour AJAX
+    const commentForm = document.getElementById('commentForm');
+    if (commentForm) {
+      commentForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        console.log('Formulaire intercepté pour soumission AJAX');
+        
+        const formData = new FormData(this);
+        const postUrl = this.getAttribute('data-post-url');
+        
+        // Afficher un indicateur de chargement
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Envoi...';
+        submitBtn.disabled = true;
+        
+        // Envoyer les données via AJAX
+        fetch(postUrl, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          // Réinitialiser le bouton
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+          
+          if (data.success) {
+            // Afficher un message de succès
+            showMessage('success', data.message);
+            
+            // Réinitialiser le formulaire
+            this.reset();
+            
+            // Ajouter le nouveau commentaire à la liste sans rechargement
+            if (data.comment) {
+              addNewComment(data.comment);
+            }
+          } else {
+            // Afficher un message d'erreur
+            showMessage('danger', data.message || 'Une erreur est survenue lors de l\'envoi du commentaire.');
+          }
+        })
+        .catch(error => {
+          console.error('Erreur:', error);
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+          
+          showMessage('danger', 'Une erreur est survenue lors de l\'envoi du commentaire.');
+        });
+      });
+    }
+  });
+
+  // Fonction pour afficher un message
+  function showMessage(type, message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-' + type;
+    alertDiv.innerHTML = message;
+    
+    const messagesContainer = document.querySelector('.messages') || document.createElement('div');
+    if (!document.querySelector('.messages')) {
+      messagesContainer.className = 'messages';
+      commentForm.parentNode.insertBefore(messagesContainer, commentForm);
+    }
+    messagesContainer.innerHTML = '';
+    messagesContainer.appendChild(alertDiv);
   }
   
-  // Gestion de la confirmation de suppression
-  if (confirmDeleteButton) {
-    confirmDeleteButton.addEventListener('click', function() {
-      const commentId = deleteCommentId.value;
+  // Fonction pour ajouter un nouveau commentaire
+  function addNewComment(comment) {
+    const commentsList = document.querySelector('.comments-list');
+    if (commentsList) {
+      const newComment = document.createElement('div');
+      newComment.className = 'comment mb-4';
       
-      // Récupérer le token CSRF
-      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      const commentHtml = 
+        '<div class="d-flex">' +
+          '<div class="flex-shrink-0">' +
+            '<img src="' + comment.avatar + '" alt="' + comment.name + '" class="rounded-circle" width="50">' +
+          '</div>' +
+          '<div class="flex-grow-1 ms-3">' +
+            '<div class="d-flex justify-content-between align-items-start">' +
+              '<div>' +
+                '<h5 class="mb-1">' + comment.name + '</h5>' +
+                '<div class="text-muted small">' + comment.date + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="mt-2">' + comment.body + '</div>' +
+          '</div>' +
+        '</div>';
       
-      // Créer les données à envoyer
-      const data = new FormData();
-      data.append('csrfmiddlewaretoken', csrfToken);
-      
-      // Désactiver le bouton pendant l'envoi
-      confirmDeleteButton.disabled = true;
-      confirmDeleteButton.textContent = 'Suppression...';
-      
-      // Envoyer la requête
-      fetch(`/blog/comment/${commentId}/delete/`, {
-        method: 'POST',
-        body: data,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      })
-      .then(response => {
-        if (!response.ok) {
-          return response.json().then(errData => {
-            throw new Error(errData.message || 'Erreur serveur');
-          });
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Montrer le message de succès
-        showFeedback(deleteCommentFeedback, 'Commentaire supprimé avec succès', 'success');
-        
-        // Supprimer le commentaire de la page
-        const commentElement = document.getElementById(`comment-${commentId}`);
-        if (commentElement) {
-          commentElement.style.opacity = '0';
-          setTimeout(() => {
-            commentElement.remove();
-            
-            // Vérifier s'il reste des commentaires
-            const commentsList = document.querySelector('.comments-list');
-            if (commentsList && commentsList.children.length === 0) {
-              commentsList.innerHTML = '<p>Aucun commentaire pour l\'instant. Soyez le premier à commenter !</p>';
-            }
-            
-            // Mettre à jour le compteur de commentaires
-            const commentsTitle = document.querySelector('.comments-section h3');
-            if (commentsTitle) {
-              const count = document.querySelectorAll('.comment').length;
-              commentsTitle.textContent = `Commentaires (${count})`;
-            }
-          }, 500);
-        }
-        
-        // Fermer le modal après un délai
-        setTimeout(() => {
-          closeAllModals();
-          // Réactiver le bouton
-          confirmDeleteButton.disabled = false;
-          confirmDeleteButton.textContent = 'Supprimer';
-          // Effacer le feedback
-          deleteCommentFeedback.style.display = 'none';
-        }, 1500);
-      })
-      .catch(error => {
-        console.error('Erreur:', error);
-        showFeedback(deleteCommentFeedback, `Erreur: ${error.message}`, 'error');
-        
-        // Réactiver le bouton
-        confirmDeleteButton.disabled = false;
-        confirmDeleteButton.textContent = 'Supprimer';
-      });
-    });
+      newComment.innerHTML = commentHtml;
+      commentsList.appendChild(newComment);
+    }
   }
-});
 </script>
 {% endblock %} 

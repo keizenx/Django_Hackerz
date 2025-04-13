@@ -17,6 +17,18 @@ from datetime import timedelta
 from Hackerz_blog.models import Post, Comment as BlogComment
 from decimal import Decimal
 from django.urls import reverse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from django.http import HttpResponse
+from io import BytesIO
+from django.conf import settings
+import datetime
+import os
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.utils.html import strip_tags
+from django.template.loader import render_to_string
+from django.contrib.sites.shortcuts import get_current_site
+from .utils import save_invoice_pdf
 
 
 def _cart_id(request):
@@ -67,7 +79,7 @@ def shop(request, category_slug=None):
             products = products.order_by('-created')
     
     # Pagination
-    paginator = Paginator(products, 6)  # 6 products per page
+    paginator = Paginator(products, 4)  # 4 products per page
     page = request.GET.get('page')
     
     try:
@@ -224,6 +236,11 @@ def delete_from_cart(request, product_id):
 
 def checkout(request, total=0, counter=0, cart_items=None):
     """Vue pour afficher la page de paiement."""
+    # Vérifier si l'utilisateur est connecté
+    if not request.user.is_authenticated:
+        messages.warning(request, "Veuillez vous connecter pour finaliser votre commande.")
+        return redirect('login')
+        
     # Initialiser shipping_info par défaut
     shipping_info = {}
     
@@ -248,27 +265,26 @@ def checkout(request, total=0, counter=0, cart_items=None):
             counter += cart_item.quantity
         
         # Récupérer les informations d'adresse de livraison de l'utilisateur
-        if request.user.is_authenticated:
-            try:
-                profile = request.user.profile
-                shipping_info = {
-                    'address': profile.address or '',
-                    'city': profile.city or '',
-                    'postal_code': profile.postal_code or '',
-                    'country': profile.country or 'france'
-                }
-            except:
-                shipping_info = {}
-            
-            # Si l'utilisateur n'a pas d'adresse dans son profil, essayer de récupérer depuis la session
-            if not shipping_info.get('address') and 'shipping_address' in request.session:
-                session_address = request.session.get('shipping_address', {})
-                shipping_info = {
-                    'address': session_address.get('address', ''),
-                    'city': session_address.get('city', ''),
-                    'postal_code': session_address.get('postal_code', ''),
-                    'country': session_address.get('country', 'france')
-                }
+        try:
+            profile = request.user.profile
+            shipping_info = {
+                'address': profile.address or '',
+                'city': profile.city or '',
+                'postal_code': profile.postal_code or '',
+                'country': profile.country or 'france'
+            }
+        except:
+            shipping_info = {}
+        
+        # Si l'utilisateur n'a pas d'adresse dans son profil, essayer de récupérer depuis la session
+        if not shipping_info.get('address') and 'shipping_address' in request.session:
+            session_address = request.session.get('shipping_address', {})
+            shipping_info = {
+                'address': session_address.get('address', ''),
+                'city': session_address.get('city', ''),
+                'postal_code': session_address.get('postal_code', ''),
+                'country': session_address.get('country', 'france')
+            }
     
     except (Cart.DoesNotExist, Exception) as e:
         # En cas d'erreur, afficher une page vide avec les informations par défaut
@@ -420,7 +436,7 @@ def category_view(request, category_slug):
     products = Product.objects.filter(category=category, available=True)
     
     # Pagination
-    paginator = Paginator(products, 6)  # 6 products per page
+    paginator = Paginator(products, 4)  # 4 products per page
     page = request.GET.get('page')
     
     try:
@@ -562,6 +578,11 @@ def add_review(request, product_id):
 
 
 def buy_now(request, product_id):
+    # Vérifier si l'utilisateur est connecté
+    if not request.user.is_authenticated:
+        messages.warning(request, "Veuillez vous connecter pour effectuer un achat.")
+        return redirect('login')
+        
     product = get_object_or_404(Product, id=product_id, available=True)
     
     if request.method == 'POST':
@@ -606,6 +627,11 @@ def buy_now(request, product_id):
 
 def process_payment(request):
     """Vue pour traiter le paiement."""
+    # Vérifier si l'utilisateur est connecté
+    if not request.user.is_authenticated:
+        messages.warning(request, "Veuillez vous connecter pour finaliser votre paiement.")
+        return redirect('login')
+        
     if request.method == 'POST':
         # Récupérer les données du formulaire
         shipping_data = {
@@ -618,19 +644,18 @@ def process_payment(request):
         # Enregistrer l'adresse dans la session pour une utilisation future
         request.session['shipping_address'] = shipping_data
         
-        # Si l'utilisateur est connecté, mettre à jour son profil
-        if request.user.is_authenticated:
-            try:
-                from Hackerz.models import Profile
-                profile, created = Profile.objects.get_or_create(user=request.user)
-                profile.address = shipping_data['address']
-                profile.city = shipping_data['city']
-                profile.postal_code = shipping_data['postal_code']
-                profile.country = shipping_data['country']
-                profile.save()
-                print(f"Profil utilisateur mis à jour avec adresse: {shipping_data}")
-            except Exception as e:
-                print(f"Erreur lors de la mise à jour du profil: {str(e)}")
+        # Mettre à jour le profil de l'utilisateur
+        try:
+            from Hackerz.models import Profile
+            profile, created = Profile.objects.get_or_create(user=request.user)
+            profile.address = shipping_data['address']
+            profile.city = shipping_data['city']
+            profile.postal_code = shipping_data['postal_code']
+            profile.country = shipping_data['country']
+            profile.save()
+            print(f"Profil utilisateur mis à jour avec adresse: {shipping_data}")
+        except Exception as e:
+            print(f"Erreur lors de la mise à jour du profil: {str(e)}")
         
         # Simuler le traitement du paiement
         
@@ -654,6 +679,7 @@ def process_payment(request):
             
             # Créer une commande avec les champs corrects selon le modèle
             order = Order.objects.create(
+                user=request.user,
                 first_name=request.POST.get('first_name', ''),
                 last_name=request.POST.get('last_name', ''),
                 email=request.POST.get('email', ''),
@@ -681,15 +707,95 @@ def process_payment(request):
             # Vider le panier
             cart_items.delete()
             
+            # Générer et sauvegarder la facture PDF
+            invoice_path = save_invoice_pdf(order)
+            
+            # Envoyer un email de confirmation avec la facture
+            try:
+                # Récupérer les articles de la commande
+                order_items = order.items.all()
+                
+                # Calculer les totaux pour l'email
+                subtotal = sum(item.price * item.quantity for item in order_items)
+                tax = subtotal * Decimal('0.2')  # TVA à 20%
+                shipping = Decimal('5.99')  # Frais de livraison fixes
+                total = subtotal + tax + shipping
+                
+                # Créer le contexte pour le template
+                from datetime import datetime
+                current_site = get_current_site(request)
+                site_url = f"{'https' if request.is_secure() else 'http'}://{current_site.domain}"
+                
+                context = {
+                    'order': order,
+                    'order_items': order_items,
+                    'subtotal': f"{subtotal:.2f}",
+                    'tax': f"{tax:.2f}",
+                    'shipping': f"{shipping:.2f}",
+                    'total': f"{total:.2f}",
+                    'site_url': site_url,
+                    'current_year': datetime.now().year,
+                    'company_name': settings.COMPANY_NAME if hasattr(settings, 'COMPANY_NAME') else 'Hackerz E-Commerce',
+                    'company_address': settings.COMPANY_ADDRESS if hasattr(settings, 'COMPANY_ADDRESS') else 'Abidjan, Côte d\'Ivoire',
+                    'company_phone': settings.COMPANY_PHONE if hasattr(settings, 'COMPANY_PHONE') else '+225 07 50 23 77 10',
+                    'company_email': settings.COMPANY_EMAIL if hasattr(settings, 'COMPANY_EMAIL') else 'contact@hackerz-ecommerce.com',
+                }
+                
+                # Rendre les templates d'email
+                html_message = render_to_string('email/order_confirmation.html', context)
+                plain_message = render_to_string('email/order_confirmation_text.txt', context)
+                
+                # Préparer l'email
+                subject = f'Confirmation de votre commande #{order.id}'
+                from_email = settings.DEFAULT_FROM_EMAIL
+                to_email = order.email
+                
+                # Créer l'email avec les deux versions (HTML et texte)
+                email = EmailMultiAlternatives(
+                    subject=subject,
+                    body=plain_message,
+                    from_email=from_email,
+                    to=[to_email]
+                )
+                email.attach_alternative(html_message, "text/html")
+                
+                # Joindre la facture PDF si elle a été générée
+                if invoice_path:
+                    invoice_file_path = os.path.join(settings.MEDIA_ROOT, invoice_path)
+                    if os.path.exists(invoice_file_path):
+                        with open(invoice_file_path, 'rb') as f:
+                            email.attach(f"facture_{order.id}.pdf", f.read(), 'application/pdf')
+                
+                # Envoyer l'email
+                email.send(fail_silently=False)
+                
+                print(f"Email de confirmation envoyé à {to_email} pour la commande #{order.id}")
+            
+            except Exception as e:
+                print(f"Erreur lors de l'envoi de l'email de confirmation: {str(e)}")
+            
             # Debug log pour la commande
             print(f"Commande #{order.id} créée avec succès: {order.first_name} {order.last_name}, {order.email}, {order.status}")
             
-            # Retourner une réponse JSON pour AJAX
-            return JsonResponse({
-                'success': True,
+            # Stockage des informations de commande dans la session pour la page de succès
+            request.session['order_complete'] = {
                 'order_id': order.id,
-                'message': 'Votre commande a été passée avec succès!'
-            })
+                'total': str(total),
+                'email': order.email
+            }
+            
+            # Retourner une réponse basée sur le type de requête
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                # Si c'est une requête AJAX, retourner un JSON avec l'URL de redirection
+                return JsonResponse({
+                    'success': True,
+                    'order_id': order.id,
+                    'message': 'Votre commande a été passée avec succès! Un email de confirmation a été envoyé à votre adresse email.',
+                    'redirect_url': reverse('shop:payment_success')
+                })
+            else:
+                # Si c'est une requête normale, rediriger vers la page de succès
+                return redirect('shop:payment_success')
         
         except Exception as e:
             print(f"Erreur lors du traitement du paiement: {str(e)}")
@@ -700,6 +806,47 @@ def process_payment(request):
     
     # Si la méthode n'est pas POST, rediriger vers la page de checkout
     return redirect('shop:checkout')
+
+
+def payment_success(request):
+    """Vue pour afficher la page de confirmation après un paiement réussi."""
+    # Récupérer les données de la commande depuis la session
+    order_data = request.session.get('order_complete', {})
+    
+    if not order_data:
+        # Si aucune donnée de commande n'est trouvée, rediriger vers la page d'accueil
+        return redirect('shop:shop')
+    
+    # Récupérer la commande
+    try:
+        order = Order.objects.get(id=order_data.get('order_id'))
+        
+        # Calculer les totaux pour l'affichage
+        order_items = order.items.all()
+        subtotal = sum(item.price * item.quantity for item in order_items)
+        tax = subtotal * Decimal('0.2')  # TVA à 20%
+        shipping = Decimal('5.99')  # Frais de livraison fixes
+        total = subtotal + tax + shipping
+        
+        # Préparer le contexte
+        context = {
+            'order': order,
+            'order_items': order_items,
+            'subtotal': f"{subtotal:.2f}",
+            'tax': f"{tax:.2f}",
+            'shipping': f"{shipping:.2f}",
+            'total': f"{total:.2f}"
+        }
+        
+        # Effacer les données de commande de la session
+        if 'order_complete' in request.session:
+            del request.session['order_complete']
+        
+        return render(request, 'shop/payment_success.html', context)
+    
+    except Order.DoesNotExist:
+        # Si la commande n'existe pas, rediriger vers la page d'accueil
+        return redirect('shop:shop')
 
 
 def cart_count(request):
@@ -1026,4 +1173,51 @@ def vendor_product_detail(request, product_id):
         'average_rating': round(average_rating, 1)
     }
     
-    return render(request, 'shop/vendor_product_detail.html', context) 
+    return render(request, 'shop/vendor_product_detail.html', context)
+
+
+@login_required
+def generate_invoice_pdf(request, order_id):
+    # Récupérer la commande
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order_items = order.items.all()
+    
+    # Calculer les totaux
+    subtotal = sum(item.price * item.quantity for item in order_items)
+    tax = subtotal * 0.2  # TVA à 20%
+    shipping = 5.99  # Frais de livraison fixes
+    total = subtotal + tax + shipping
+    
+    # Générer un numéro de facture
+    invoice_number = f"INV-{order.id}-{datetime.datetime.now().strftime('%Y%m%d')}"
+    
+    # Préparer le contexte
+    context = {
+        'order': order,
+        'order_items': order_items,
+        'invoice_number': invoice_number,
+        'invoice_date': datetime.datetime.now().strftime('%d/%m/%Y'),
+        'subtotal': f"{subtotal:.2f}",
+        'tax': f"{tax:.2f}",
+        'shipping': f"{shipping:.2f}",
+        'total': f"{total:.2f}"
+    }
+    
+    # Charger le template
+    template = get_template('shop/invoice_pdf.html')
+    html = template.render(context)
+    
+    # Créer le PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="facture_{order.id}.pdf"'
+    
+    # Générer le PDF avec xhtml2pdf
+    pdf_file = BytesIO()
+    pisa_status = pisa.CreatePDF(html, dest=pdf_file)
+    
+    if pisa_status.err:
+        return HttpResponse('Erreur lors de la génération du PDF', status=500)
+    
+    pdf_file.seek(0)
+    response.write(pdf_file.read())
+    return response 

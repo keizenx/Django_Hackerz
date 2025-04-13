@@ -430,7 +430,7 @@
               <a href="{% url 'shop:product_detail' product.slug %}">{{ product.name }}</a>
             </h3>
             <p class="card-text">{{ product.category.name }}</p>
-            <p class="card-price">{{ product.price }} €</p>
+            <p class="card-price">{{ product.price }} FCFA</p>
             <button class="card-btn add-to-cart" data-product-id="{{ product.id }}">
               Ajouter au panier
             </button>
@@ -441,21 +441,21 @@
         
       <!-- Pagination -->
       {% if products.has_other_pages %}
-      <div class="pagination">
+      <div class="pagination" style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.75rem;">
         {% if products.has_previous %}
-          <a href="?page={{ products.previous_page_number }}" class="pagination-link">&laquo;</a>
+          <a href="?page={{ products.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if category %}&category={{ category.slug }}{% endif %}" class="pagination-link" style="background-color: hsl(142, 100%, 50%); color: hsl(0, 0%, 5%); font-weight: 500; padding: 0.5rem 1rem; border-radius: 0.25rem; text-decoration: none;">&laquo; Précédent</a>
         {% endif %}
         
         {% for i in products.paginator.page_range %}
           {% if products.number == i %}
-            <span class="pagination-link active">{{ i }}</span>
-          {% else %}
-            <a href="?page={{ i }}" class="pagination-link">{{ i }}</a>
+            <span class="pagination-link active" style="background-color: hsl(142, 100%, 50%); color: hsl(0, 0%, 5%); font-weight: 700; padding: 0.5rem 1rem; border-radius: 0.25rem; box-shadow: 0 0 5px rgba(0, 255, 65, 0.5);">{{ i }}</span>
+          {% elif i > products.number|add:'-3' and i < products.number|add:'3' %}
+            <a href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if category %}&category={{ category.slug }}{% endif %}" class="pagination-link" style="border: 1px solid hsl(142, 100%, 50%); color: hsl(142, 100%, 50%); padding: 0.5rem 1rem; border-radius: 0.25rem; text-decoration: none;">{{ i }}</a>
           {% endif %}
         {% endfor %}
         
         {% if products.has_next %}
-          <a href="?page={{ products.next_page_number }}" class="pagination-link">&raquo;</a>
+          <a href="?page={{ products.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if category %}&category={{ category.slug }}{% endif %}" class="pagination-link" style="background-color: hsl(142, 100%, 50%); color: hsl(0, 0%, 5%); font-weight: 500; padding: 0.5rem 1rem; border-radius: 0.25rem; text-decoration: none;">Suivant &raquo;</a>
         {% endif %}
       </div>
       {% endif %}

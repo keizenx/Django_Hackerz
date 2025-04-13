@@ -1,0 +1,1132 @@
+{
+  "info": {
+    "name": "Hackerz API",
+    "_postman_id": "087b1414-135f-40fe-aa27-253080dc15af",
+    "description": "Collection pour tester l'API Hackerz",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Swagger",
+      "item": [
+        {
+          "name": "Documentation Swagger",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/swagger/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "swagger",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 200",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/swagger/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "swagger",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"text_response\": \"\\n<!DOCTYPE html>\\n<html>\\n<head>\\n    <meta charset=\\\"utf-8\\\"/>\\n    <title>Hackerz API</title>\\n\\n    \\n        \\n    \\n\\n    \\n        \\n        <link rel=\\\"icon\\\" type=\\\"image/png\\\" href=\\\"/static/drf-yasg/swagger-ui-dist/favicon-32x32.png\\\"/>\\n    \\n\\n    \\n        <link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"/static/drf-yasg/style.css\\\"/>\\n        <link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"/static/drf-yasg/swagger-ui-dist/swagger-ui.css\\\">\\n    \\n    \\n        \\n    \\n</head>\\n\\n<body class=\\\"swagger-body\\\">\\n\\n\\n    \\n\\n\\n<div i... [truncated]\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Redoc",
+      "item": [
+        {
+          "name": "Documentation ReDoc",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/redoc/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "redoc",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 200",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/redoc/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "redoc",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"text_response\": \"\\n<!DOCTYPE html>\\n<html>\\n<head>\\n    <meta charset=\\\"utf-8\\\"/>\\n    <meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1\\\">\\n    <title>Hackerz API</title>\\n\\n    \\n        \\n    \\n\\n    \\n        \\n        <link rel=\\\"icon\\\" type=\\\"image/png\\\" href=\\\"/static/drf-yasg/redoc/redoc-logo.png\\\"/>\\n    \\n\\n    \\n        <link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"/static/drf-yasg/style.css\\\"/>\\n    \\n    \\n        \\n    \\n</head>\\n<body>\\n\\n\\n    \\n\\n\\n<div id=\\\"redoc-placeholder\\\"></div>\\n\\n\\n    \\n\\n\\n<script id=\\\"redoc-settings\\\"... [truncated]\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Token",
+      "item": [
+        {
+          "name": "Auth Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/token/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "token",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"franck\",\n  \"password\": \"votre_mot_de_passe\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 404",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/token/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "token",
+                    ""
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"franck\",\n  \"password\": \"votre_mot_de_passe\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ],
+              "body": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n  <title>Page not found at /api/v1/token/</title>\n  <meta name=\"robots\" content=\"NONE,NOARCHIVE\">\n  <style>\n    html * { padding:0; margin:0; }\n    body * { padding:10px 20px; }\n    body * * { padding:0; }\n    body { font-family: sans-serif; background:#eee; color:#000; }\n    body > :where(header, main, footer) { border-bottom:1px solid #ddd; }\n    h1 { font-weight:normal; margin-bottom:.4em; }\n    h1 small { font-size:60%; color:#666; font-weight:normal; }\n    table { border:none; border-collapse: collapse; width:100%; }\n    td, th { vertical-align:top; padding:2px 3px; }\n    th { width:12em; text-align:right; color:#666; padding-right:.5em; }\n    #info { background:#f6f6f6; }\n    #info ol { margin: 0.5em 4em; }\n    #info ol li { font-family: monospace; }\n    #summary { background: #ffc; }\n    #explanation { background:#eee; border-bottom: 0px none; }\n    pre.exception_value { font-family: sans-serif; color: #575757; font-size: 1.5em; margin: 10px 0 10px 0; }\n  </style>\n</head>\n<body>\n  <header id=\"summary\">\n    <h1>Page not found <small>(404)</small></h1>\n    \n    <table class=\"meta\">\n      <tr>\n        <th scope=\"row\">Request Method:</th>\n        <td>POST</td>\n      </tr>\n      <tr>\n        <th scope=\"row\">Request URL:</th>\n        <td>http://127.0.0.1:8000/api/v1/token/</td>\n      </tr>\n      \n    </table>\n  </header>\n\n  <main id=\"info\">\n    \n      <p>\n      Using the URLconf defined in <code>Hackerz.urls</code>,\n      Django tried these URL patterns, in this order:\n      </p>\n      <ol>\n        \n          <li>\n            \n              <code>\n                admin/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                blog/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                shop/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^users/$\n                [name='user-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^users\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='user-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^users/(?P&lt;pk&gt;[^/.]+)/$\n                [name='user-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^users/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='user-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/categories/$\n                [name='shop-category-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/categories\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='shop-category-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/categories/(?P&lt;slug&gt;[^/.]+)/$\n                [name='shop-category-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/categories/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='shop-category-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/$\n                [name='product-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/(?P&lt;slug&gt;[^/.]+)/$\n                [name='product-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/(?P&lt;slug&gt;[^/.]+)/reviews/$\n                [name='product-reviews']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/(?P&lt;slug&gt;[^/.]+)/reviews\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-reviews']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/reviews/$\n                [name='review-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/reviews\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='review-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/reviews/(?P&lt;pk&gt;[^/.]+)/$\n                [name='review-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/reviews/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='review-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/orders/$\n                [name='order-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/orders\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/orders/(?P&lt;pk&gt;[^/.]+)/$\n                [name='order-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/orders/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/tags/$\n                [name='tag-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/tags\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='tag-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/tags/(?P&lt;slug&gt;[^/.]+)/$\n                [name='tag-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/tags/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='tag-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/categories/$\n                [name='blog-category-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/categories\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='blog-category-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/categories/(?P&lt;slug&gt;[^/.]+)/$\n                [name='blog-category-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/categories/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='blog-category-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/$\n                [name='post-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='post-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/(?P&lt;slug&gt;[^/.]+)/$\n                [name='post-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='post-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/(?P&lt;slug&gt;[^/.]+)/comments/$\n                [name='post-comments']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/(?P&lt;slug&gt;[^/.]+)/comments\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='post-comments']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/comments/$\n                [name='comment-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/comments\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='comment-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/comments/(?P&lt;pk&gt;[^/.]+)/$\n                [name='comment-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/comments/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='comment-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                \n                [name='api-root']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                &lt;drf_format_suffix:format&gt;\n                [name='api-root']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                auth/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                token-auth/\n                [name='api_token_auth']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                swagger&lt;format&gt;/\n                [name='schema-json']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                swagger/\n                [name='schema-swagger-ui']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                redoc/\n                [name='schema-redoc']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                \n                [name='home']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                contact/\n                [name='contact']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                login/\n                [name='login']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                register/\n                [name='register']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                logout/\n                [name='logout']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                profile/\n                [name='profile']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                newsletter-signup/\n                [name='newsletter_signup']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                newsletter/subscribe/\n                [name='newsletter_subscribe']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                terms/\n                [name='terms']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                privacy/\n                [name='privacy']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                favicon.ico\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                update-account/\n                [name='update_account']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                become-vendor/\n                [name='become_vendor']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                wishlist/add/\n                [name='add_to_wishlist']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                wishlist/remove/&lt;int:product_id&gt;/\n                [name='remove_from_wishlist']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                wishlist/\n                [name='wishlist']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                confirm-email/&lt;uuid:token&gt;/\n                [name='confirm_email']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                registration-success/\n                [name='registration_success']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                resend-confirmation/\n                [name='resend_confirmation']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                password-reset/\n                [name='password_reset']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                password-reset/done/\n                [name='password_reset_done']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                password-reset-confirm/&lt;uidb64&gt;/&lt;token&gt;/\n                [name='password_reset_confirm']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                password-reset-complete/\n                [name='password_reset_complete']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                admin/group/&lt;str:group_name&gt;/\n                [name='group_users']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                ^static/(?P&lt;path&gt;.*)$\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                ^media/(?P&lt;path&gt;.*)$\n                \n              </code>\n            \n          </li>\n        \n      </ol>\n      <p>\n        \n          The current path, <code>api/v1/token/</code>,\n        \n        didn\u2019t match any of these.\n      </p>\n    \n  </main>\n\n  <footer id=\"explanation\">\n    <p>\n      You\u2019re seeing this error because you have <code>DEBUG = True</code> in\n      your Django settings file. Change that to <code>False</code>, and Django\n      will display a standard 404 page.\n    </p>\n  </footer>\n</body>\n</html>\n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Shop",
+      "item": [
+        {
+          "name": "Liste des cat\u00e9gories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/shop/categories/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "shop",
+                "categories",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 200",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/shop/categories/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "shop",
+                    "categories",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"count\": 6,\n  \"next\": null,\n  \"previous\": null,\n  \"results\": [\n    {\n      \"id\": 1,\n      \"name\": \"Pentesting Hardware\",\n      \"slug\": \"pentesting-hardware\",\n      \"image\": null,\n      \"description\": \"Mat\\u00e9riel sp\\u00e9cialis\\u00e9 pour le pentesting\"\n    },\n    {\n      \"id\": 2,\n      \"name\": \"WiFi Security\",\n      \"slug\": \"wifi-security\",\n      \"image\": null,\n      \"description\": \"Outils pour tester la s\\u00e9curit\\u00e9 WiFi\"\n    },\n    {\n      \"id\": 3,\n      \"name\": \"RFID Tools\",\n      \"slug\": \"rfid-tools\",\n      \"image\": null,\n      \"description\": \"\\u00c9quipement pour l'analyse RFID\"\n    },\n    {\n      \"id\": 4,\n      \"name\": \"Network Tools\",\n      \"slug\": \"network-tools\",\n      \"image\": null,\n      \"description\": \"Outils pour l'analyse r\\u00e9seau\"\n    },\n    {\n      \"id\": 5,\n      \"name\": \"USB Security\",\n      \"slug\": \"usb-security\",\n      \"image\": null,\n      \"description\": \"Dispositifs de s\\u00e9curit\\u00e9 USB\"\n    },\n    {\n      \"id\": 6,\n      \"name\": \"Books & Training\",\n      \"slug\": \"books-training\",\n      \"image\": null,\n      \"description\": \"Livres et mat\\u00e9riel de formation\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Liste des produits",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/shop/products/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "shop",
+                "products",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 200",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/shop/products/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "shop",
+                    "products",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"count\": 2,\n  \"next\": null,\n  \"previous\": null,\n  \"results\": [\n    {\n      \"id\": 1,\n      \"name\": \"TEST\",\n      \"slug\": \"test\",\n      \"image\": \"http://127.0.0.1:8000/media/products/2025/04/08/matthew-anderson-RuMnGOfWmsw-unsplash.jpg\",\n      \"description\": \"TEST\",\n      \"regular_price\": \"120.00\",\n      \"price\": \"120.00\",\n      \"stock\": 3,\n      \"available\": true,\n      \"created\": \"2025-04-08T22:48:59.643866+02:00\",\n      \"updated\": \"2025-04-12T02:46:17.365618+02:00\",\n      \"featured\": true,\n      \"category\": {\n        \"id\": 5,\n        \"name\": \"USB Security\",\n        \"slug\": \"usb-security\",\n        \"image\": null,\n        \"description\": \"Dispositifs de s\\u00e9curit\\u00e9 USB\"\n      },\n      \"vendor_name\": null\n    },\n    {\n      \"id\": 2,\n      \"name\": \"test_product\",\n      \"slug\": \"test_product\",\n      \"image\": \"http://127.0.0.1:8000/media/products/2025/04/11/ChatGPT_Image_Apr_11_2025_02_48_11_AM.png\",\n      \"description\": \"testetetstetecvwdcvwdhcbchb;hbsd'\\r\\ndsicb[sducbsdocb'ico\\r\\nc[osdhc[usdbcsucbsucbsdc\\r\\nsisdbcuisdbcdsbcdsuobcs\\r\\ndc[dsc'isdbcidsbcdjsbcsd\\r\\nc[osd'cisdbcjsdbcjosdbc\\r\\ndpchsd'ucbsducbsdocbsojcb\",\n      \"regular_price\": \"200.00\",\n      \"price\": \"200.00\",\n      \"stock\": 51,\n      \"available\": true,\n      \"created\": \"2025-04-11T21:40:04.990605+02:00\",\n      \"updated\": \"2025-04-12T02:49:18.589256+02:00\",\n      \"featured\": false,\n      \"category\": {\n        \"id\": 2,\n        \"name\": \"WiFi Security\",\n        \"slug\": \"wifi-security\",\n        \"image\": null,\n        \"description\": \"Outils pour tester la s\\u00e9curit\\u00e9 WiFi\"\n      },\n      \"vendor_name\": \"Workinis\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "D\u00e9tail d'un produit",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/shop/products/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "shop",
+                "products",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 404",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/shop/products/1/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "shop",
+                    "products",
+                    "1",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"detail\":\"No Product matches the given query.\"}"
+            }
+          ]
+        },
+        {
+          "name": "Liste des avis",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/shop/reviews/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "shop",
+                "reviews",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 200",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/shop/reviews/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "shop",
+                    "reviews",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"count\": 1,\n  \"next\": null,\n  \"previous\": null,\n  \"results\": [\n    {\n      \"id\": 1,\n      \"product\": \"test\",\n      \"user\": {\n        \"id\": 1,\n        \"username\": \"franck\",\n        \"email\": \"franckbello0@gmail.com\",\n        \"first_name\": \"franck\",\n        \"last_name\": \"bello\"\n      },\n      \"rating\": 5,\n      \"title\": \"pas mal\",\n      \"comment\": \"aoijxmsax\",\n      \"created\": \"2025-04-09T20:33:45.693041+02:00\",\n      \"updated\": \"2025-04-10T04:22:57.893130+02:00\",\n      \"active\": true\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Avis par produit",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/shop/reviews/by_product/?product_id=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "shop",
+                "reviews",
+                "by_product",
+                "?product_id=1"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 404",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/shop/reviews/by_product/?product_id=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "shop",
+                    "reviews",
+                    "by_product",
+                    "?product_id=1"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"detail\":\"Pas trouv\u00e9.\"}"
+            }
+          ]
+        },
+        {
+          "name": "Cr\u00e9er un produit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/shop/products/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "shop",
+                "products",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Produit test via script\",\n  \"category_id\": 2,\n  \"price\": 99.99,\n  \"stock\": 10,\n  \"slug\": \"produit-test-script\",\n  \"description\": \"Produit cr\\u00e9\\u00e9 via script Python\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 400",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/shop/products/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "shop",
+                    "products",
+                    ""
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Produit test via script\",\n  \"category_id\": 2,\n  \"price\": 99.99,\n  \"stock\": 10,\n  \"slug\": \"produit-test-script\",\n  \"description\": \"Produit cr\\u00e9\\u00e9 via script Python\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"image\":[\"Aucun fichier n'a \u00e9t\u00e9 soumis.\"],\"regular_price\":[\"Ce champ est obligatoire.\"]}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Blog",
+      "item": [
+        {
+          "name": "Liste des cat\u00e9gories de blog",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/blog/categories/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "blog",
+                "categories",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 200",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/blog/categories/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "blog",
+                    "categories",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"count\": 19,\n  \"next\": \"http://127.0.0.1:8000/api/v1/blog/categories/?page=2\",\n  \"previous\": null,\n  \"results\": [\n    {\n      \"id\": 1,\n      \"name\": \"Cybers\\u00e9curit\\u00e9\",\n      \"slug\": \"cybersecurite\"\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Hacking \\u00c9thique\",\n      \"slug\": \"hacking-ethique\"\n    },\n    {\n      \"id\": 3,\n      \"name\": \"CTF Writeups\",\n      \"slug\": \"ctf-writeups\"\n    },\n    {\n      \"id\": 4,\n      \"name\": \"Pentesting\",\n      \"slug\": \"pentesting\"\n    },\n    {\n      \"id\": 5,\n      \"name\": \"Forensics\",\n      \"slug\": \"forensics\"\n    },\n    {\n      \"id\": 6,\n      \"name\": \"Cryptographie\",\n      \"slug\": \"cryptographie\"\n    },\n    {\n      \"id\": 7,\n      \"name\": \"Reverse Engineering\",\n      \"slug\": \"reverse-engineering\"\n    },\n    {\n      \"id\": 8,\n      \"name\": \"Web Security\",\n      \"slug\": \"web-security\"\n    },\n    {\n      \"id\": 9,\n      \"name\": \"Network Security\",\n      \"slug\": \"network-security\"\n    },\n    {\n      \"id\": 10,\n      \"name\": \"OSINT\",\n      \"slug\": \"osint\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Liste des articles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/blog/posts/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "blog",
+                "posts",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 200",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/blog/posts/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "blog",
+                    "posts",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"count\": 6,\n  \"next\": null,\n  \"previous\": null,\n  \"results\": [\n    {\n      \"id\": 4,\n      \"title\": \"test\",\n      \"slug\": \"test-1\",\n      \"author\": {\n        \"id\": 1,\n        \"username\": \"franck\",\n        \"email\": \"franckbello0@gmail.com\",\n        \"first_name\": \"franck\",\n        \"last_name\": \"bello\"\n      },\n      \"content\": \"jbsyichbhkscb\\r\\nkcdn'l;cncsdlnc\\r\\nsdpicbsdcobcjlsdbc\\r\\nds[icbs'jcbsdjcsdc\\r\\nsc[odsc'ojbscjsdb cljsdc\\r\\ns[cnsdcjbsjcnsdjlcn\",\n      \"image\": \"http://127.0.0.1:8000/media/blog/2025/04/11/vahid-kanani-8zvgJMD0pTg-unsplash.jpg\",\n      \"category\": {\n        \"id\": 2,\n        \"name\": \"Hacking \\u00c9thique\",\n        \"slug\": \"hacking-ethique\"\n      },\n      \"tags\": [\n        {\n          \"id\": 22,\n          \"name\": \"Tech\",\n          \"slug\": \"tech\"\n        }\n      ],\n      \"publish\": \"2025-04-12T02:44:06.996796+02:00\",\n      \"created\": \"2025-04-11T18:57:16.160107+02:00\",\n      \"updated\": \"2025-04-12T02:44:06.996796+02:00\",\n      \"status\": \"published\",\n      \"comments_count\": 0\n    },\n    {\n      \"id\": 6,\n      \"title\": \"Test-post_bellotest\",\n      \"slug\": \"test-post_bellotest\",\n      \"author\": {\n        \"id\": 6,\n        \"username\": \"hackman\",\n        \"email\": \"franckbellotest@gmail.com\",\n        \"first_name\": \"marcel\",\n        \"last_name\": \"jules\"\n      },\n      \"content\": \"asduoch[ajvabsuidbv\\r\\ndviabdiuvboujdsbvasd\\r\\nvisdv;idsbvjsdbv'asdovubds\\r\\n[dv\\r\\n'adsouvbdsvbsa'ouvdbsv\\r\\ndsvids'vuosbvoudsba'vuobvoudsbv\\r\\nsadvidsav;hdsvbijsdbvujosvb'asdv\\r\\nds[voasdh'vuodbs'vuodbsa'vuiodsbv\\r\\nsd[ovh'sdiuvbsd;ivbasd'ovubds\\r\\n[dovbasdivubdsvubsaovubds\",\n      \"image\": \"http://127.0.0.1:8000/media/blog/2025/04/11/ChatGPT_Image_Apr_11_2025_02_21_36_AM.png\",\n      \"category\": {\n        \"id\": 3,\n        \"name\": \"CTF Writeups\",\n        \"slug\": \"ctf-writeups\"\n      },\n      \"tags\": [\n        {\n          \"id\": 2,\n          \"name\": \"Cybers\\u00e9curit\\u00e9\",\n          \"slug\": \"cybersecurite\"\n        },\n        {\n          \"id\": 12,\n          \"name\": \"Cryptographie\",\n          \"slug\": \"cryptographie\"\n        },\n        {\n          \"id\": 20,\n          \"name\": \"Bluetooth\",\n          \"slug\": \"bluetooth\"\n        }\n      ],\n      \"publish\": \"2025-04-11T19:33:34.211439+02:00\",\n      \"created\": \"2025-04-11T19:33:26.140592+02:00\",\n      \"updated\": \"2025-04-11T19:33:34.211439+02:00\",\n      \"status\": \"published\",\n      \"comments_count\": 2\n    },\n    {\n      \"id\": 5,\n      \"title\": \"Les 10 Meilleures Pratiques de S\\u00e9curit\\u00e9 pour les D\\u00e9veloppeurs Web\",\n      \"slug\": \"les-10-meilleures-pratiques-de-securite-pour-les-developpeurs-web\",\n      \"author\": {\n        \"id\": 1,\n        \"username\": \"franck\",\n        \"email\": \"franckbello0@gmail.com\",\n        \"first_name\": \"franck\",\n        \"last_name\": \"bello\"\n      },\n      \"content\": \"La s\\u00e9curit\\u00e9 web est un aspect crucial du d\\u00e9veloppement moderne. Dans cet article, nous allons explorer les pratiques essentielles que chaque d\\u00e9veloppeur devrait conna\\u00eetre et appliquer.\\r\\n\\r\\n## 1. Validation des Entr\\u00e9es Utilisateur\\r\\n\\r\\nToujours valider et assainir les entr\\u00e9es utilisateur. Ne jamais faire confiance aux donn\\u00e9es re\\u00e7ues :\\r\\n\\r\\n```python\\r\\n# Mauvaise pratique\\r\\nquery = \\\"SELECT * FROM users WHERE id = \\\" + user_input\\r\\n\\r\\n# Bonne pratique\\r\\nquery = \\\"SELECT * FROM users WHERE id = %s\\\"\\r\\ncursor.execute(query, [user_input])\\r\\n```\\r\\n\\r\\n## 2. Protection Contre les Injections SQL\\r\\n\\r\\nLes injections SQL restent l'une des vuln\\u00e9rabilit\\u00e9s les plus dangereuses. Utilisez toujours des requ\\u00eates param\\u00e9tr\\u00e9es :\\r\\n\\r\\n- Utilisez des ORM quand c'est possible\\r\\n- \\u00c9chappez correctement les caract\\u00e8res sp\\u00e9ciaux\\r\\n- Limitez les privil\\u00e8ges de la base de donn\\u00e9es\\r\\n\\r\\n## 3. Gestion S\\u00e9curis\\u00e9e des Mots de Passe\\r\\n\\r\\n```python\\r\\n# Utilisation de bcrypt pour le hachage des mots de passe\\r\\nimport bcrypt\\r\\n\\r\\ndef hash_password(password):\\r\\n    salt = bcrypt.gensalt()\\r\\n    return bcrypt.hashpw(password.encode(), salt)\\r\\n```\\r\\n\\r\\n## 4. Protection CSRF\\r\\n\\r\\nDjango inclut une protection CSRF par d\\u00e9faut. Assurez-vous de :\\r\\n- Inclure le token CSRF dans vos formulaires\\r\\n- Ne pas d\\u00e9sactiver la protection CSRF sans raison valable\\r\\n\\r\\n## 5. Headers de S\\u00e9curit\\u00e9\\r\\n\\r\\nConfigurez correctement vos headers HTTP :\\r\\n\\r\\n```python\\r\\nSECURE_HSTS_SECONDS = 31536000\\r\\nSECURE_HSTS_INCLUDE_SUBDOMAINS = True\\r\\nSECURE_CONTENT_TYPE_NOSNIFF = True\\r\\nSECURE_BROWSER_XSS_FILTER = True\\r\\n```\\r\\n\\r\\n## 6. Authentification \\u00e0 Deux Facteurs (2FA)\\r\\n\\r\\nImpl\\u00e9mentez la 2FA pour une s\\u00e9curit\\u00e9 renforc\\u00e9e :\\r\\n- SMS/Email\\r\\n- Applications d'authentification\\r\\n- Cl\\u00e9s de s\\u00e9curit\\u00e9 physiques\\r\\n\\r\\n## 7. Gestion des Sessions\\r\\n\\r\\n- Utilisez des sessions c\\u00f4t\\u00e9 serveur\\r\\n- D\\u00e9finissez des d\\u00e9lais d'expiration appropri\\u00e9s\\r\\n- Invalidez les sessions \\u00e0 la d\\u00e9connexion\\r\\n\\r\\n## 8. Logging et Monitoring\\r\\n\\r\\n```python\\r\\nimport logging\\r\\n\\r\\nlogging.basicConfig(level=logging.INFO)\\r\\nlogger = logging.getLogger(__name__)\\r\\n\\r\\ndef login_attempt(username):\\r\\n    logger.info(f\\\"Tentative de connexion pour l'utilisateur: {username}\\\")\\r\\n```\\r\\n\\r\\n## 9. Mises \\u00e0 Jour de S\\u00e9curit\\u00e9\\r\\n\\r\\n- Surveillez les CVE pour vos d\\u00e9pendances\\r\\n- Utilisez des outils comme `safety` pour v\\u00e9rifier les vuln\\u00e9rabilit\\u00e9s\\r\\n- Mettez \\u00e0 jour r\\u00e9guli\\u00e8rement vos packages\\r\\n\\r\\n## 10. Tests de S\\u00e9curit\\u00e9\\r\\n\\r\\nEffectuez r\\u00e9guli\\u00e8rement :\\r\\n- Tests de p\\u00e9n\\u00e9tration\\r\\n- Analyses de vuln\\u00e9rabilit\\u00e9s\\r\\n- Revues de code ax\\u00e9es sur la s\\u00e9curit\\u00e9\\r\\n\\r\\n## Conclusion\\r\\n\\r\\nLa s\\u00e9curit\\u00e9 est un processus continu, pas une destination. Restez inform\\u00e9 des nouvelles menaces et mettez r\\u00e9guli\\u00e8rement \\u00e0 jour vos connaissances et vos pratiques.\\r\\n\\r\\n### Ressources Utiles\\r\\n\\r\\n- [OWASP Top 10](https://owasp.org/www-project-top-ten/)\\r\\n- [Django Security Best Practices](https://docs.djangoproject.com/en/stable/topics/security/)\\r\\n- [Python Security Package Index](https://pypi.org/search/?c=Topic+%3A%3A+Security)\",\n      \"image\": \"http://127.0.0.1:8000/media/blog/2025/04/11/ChatGPT_Image_Apr_11_2025_02_24_42_AM.png\",\n      \"category\": {\n        \"id\": 1,\n        \"name\": \"Cybers\\u00e9curit\\u00e9\",\n        \"slug\": \"cybersecurite\"\n      },\n      \"tags\": [\n        {\n          \"id\": 2,\n          \"name\": \"Cybers\\u00e9curit\\u00e9\",\n          \"slug\": \"cybersecurite\"\n        },\n        {\n          \"id\": 7,\n          \"name\": \"S\\u00e9curit\\u00e9 Web\",\n          \"slug\": \"securite-web\"\n        },\n        {\n          \"id\": 8,\n          \"name\": \"Vuln\\u00e9rabilit\\u00e9s\",\n          \"slug\": \"vulnerabilites\"\n        },\n        {\n          \"id\": 22,\n          \"name\": \"Tech\",\n          \"slug\": \"tech\"\n        }\n      ],\n      \"publish\": \"2025-04-11T19:21:57.922225+02:00\",\n      \"created\": \"2025-04-11T19:21:57.922225+02:00\",\n      \"updated\": \"2025-04-11T19:21:57.932416+02:00\",\n      \"status\": \"published\",\n      \"comments_count\": 0\n    },\n    {\n      \"id\": 3,\n      \"title\": \"khfdgsgghjgfdv\",\n      \"slug\": \"khfdgsgghjgfdv\",\n      \"author\": {\n        \"id\": 1,\n        \"username\": \"franck\",\n        \"email\": \"franckbello0@gmail.com\",\n        \"first_name\": \"franck\",\n        \"last_name\": \"bello\"\n      },\n      \"content\": \"fdkyufu;higifv e\\r\\nrirhf;uih'oihiourhueg\\r\\nefcgelicygecyigeycgr\\r\\nrecufkrycfeycfelyjcf\\r\\nrkcugrgrhegcegrcyrfcyrleygygcrgcygrlygcy3lregcyrjcg\\r\\n\",\n      \"image\": \"http://127.0.0.1:8000/media/blog/2025/04/10/wave.png\",\n      \"category\": {\n        \"id\": 3,\n        \"name\": \"CTF Writeups\",\n        \"slug\": \"ctf-writeups\"\n      },\n      \"tags\": [\n        {\n          \"id\": 22,\n          \"name\": \"Tech\",\n          \"slug\": \"tech\"\n        }\n      ],\n      \"publish\": \"2025-04-10T23:27:57.043838+02:00\",\n      \"created\": \"2025-04-10T23:27:57.043838+02:00\",\n      \"updated\": \"2025-04-10T23:27:57.048382+02:00\",\n      \"status\": \"published\",\n      \"comments_count\": 0\n    },\n    {\n      \"id\": 2,\n      \"title\": \"Analyse de Vuln\\u00e9rabilit\\u00e9s Wi-Fi: D\\u00e9couverte et Exploitation des R\\u00e9seaux WPA2\",\n      \"slug\": \"analyse-de-vulnerabilites-wi-fi-decouverte-et-exploitation-des-reseaux-wpa2\",\n      \"author\": {\n        \"id\": 1,\n        \"username\": \"franck\",\n        \"email\": \"franckbello0@gmail.com\",\n        \"first_name\": \"franck\",\n        \"last_name\": \"bello\"\n      },\n      \"content\": \"Le Wi-Fi est omnipr\\u00e9sent dans notre quotidien, mais savez-vous r\\u00e9ellement \\u00e0 quel point ces r\\u00e9seaux peuvent \\u00eatre vuln\\u00e9rables, m\\u00eame avec le protocole WPA2? Dans cet article, nous allons explorer les faiblesses courantes des r\\u00e9seaux sans fil et les m\\u00e9thodes pour les identifier dans un cadre \\u00e9thique.\\r\\n\\r\\n\\r\\nLes r\\u00e9seaux Wi-Fi constituent souvent le premier point d'entr\\u00e9e pour de nombreuses attaques. Malgr\\u00e9 les am\\u00e9liorations constantes en mati\\u00e8re de s\\u00e9curit\\u00e9, le protocole WPA2 pr\\u00e9sente encore des vuln\\u00e9rabilit\\u00e9s exploitables par des attaquants d\\u00e9termin\\u00e9s.\\r\\n\\r\\n\\u00c9quipement n\\u00e9cessaire\\r\\n\\r\\nPour r\\u00e9aliser les tests pr\\u00e9sent\\u00e9s dans cet article, vous aurez besoin de:\\r\\n\\r\\n- Une carte r\\u00e9seau compatible avec le mode moniteur (Alfa AWUS036ACH recommand\\u00e9e)\\r\\n- Kali Linux (version 2023 ou plus r\\u00e9cente)\\r\\n- Aircrack-ng suite\\r\\n- Hashcat pour le craquage de mots de passe\\r\\n- Un r\\u00e9seau de test (JAMAIS tester sur des r\\u00e9seaux sans autorisation!)\\r\\n\\r\\n## Phase 1: Reconnaissance\\r\\n\\r\\nLa premi\\u00e8re \\u00e9tape consiste \\u00e0 identifier les r\\u00e9seaux Wi-Fi environnants et \\u00e0 collecter des informations:\\r\\n\\r\\n```bash\\r\\n# Activation du mode moniteur\\r\\nairmon-ng check kill\\r\\nairmon-ng start wlan0\\r\\n\\r\\n# Scan des r\\u00e9seaux\\r\\nairodump-ng wlan0mon\\r\\n```\\r\\n\\r\\nCette commande r\\u00e9v\\u00e9lera tous les r\\u00e9seaux \\u00e0 proximit\\u00e9, leur canal, leur puissance de signal et leur type de chiffrement.\\r\\n\\r\\n## Phase 2: Capture de handshake\\r\\n\\r\\nPour analyser la s\\u00e9curit\\u00e9 d'un r\\u00e9seau WPA2, nous devons capturer le handshake d'authentification:\\r\\n\\r\\n```bash\\r\\n# Cibler un r\\u00e9seau sp\\u00e9cifique\\r\\nairodump-ng -c [CANAL] --bssid [MAC_DU_POINT_ACC\\u00c8S] -w capture wlan0mon\\r\\n```\\r\\n\\r\\nDans une autre fen\\u00eatre de terminal, nous pouvons acc\\u00e9l\\u00e9rer le processus:\\r\\n\\r\\n```bash\\r\\n# Envoyer des paquets de d\\u00e9sauthentification\\r\\naireplay-ng -0 1 -a [MAC_DU_POINT_ACC\\u00c8S] -c [MAC_CLIENT] wlan0mon\\r\\n```\\r\\n\\r\\n## Phase 3: Analyse des vuln\\u00e9rabilit\\u00e9s\\r\\n\\r\\nUne fois le handshake captur\\u00e9, plusieurs faiblesses peuvent \\u00eatre exploit\\u00e9es:\\r\\n\\r\\n1. **Attaque par dictionnaire**: Si le mot de passe est faible, il peut \\u00eatre trouv\\u00e9 dans une liste de mots courants.\\r\\n2. **Attaque PMKID**: Certains routeurs sont vuln\\u00e9rables sans n\\u00e9cessiter de handshake complet.\\r\\n3. **D\\u00e9fauts d'impl\\u00e9mentation**: Certains appareils IoT impl\\u00e9mentent mal le protocole WPA2.\\r\\n\\r\\n## Phase 4: Recommandations de s\\u00e9curisation\\r\\n\\r\\nPour prot\\u00e9ger vos r\\u00e9seaux Wi-Fi:\\r\\n\\r\\n- Utilisez des mots de passe complexes d'au moins 12 caract\\u00e8res\\r\\n- Activez WPA2-Enterprise avec authentification 802.1X quand c'est possible\\r\\n- Impl\\u00e9mentez un syst\\u00e8me de d\\u00e9tection d'intrusion sans fil (WIDS)\\r\\n- Utilisez des VLANs pour isoler les diff\\u00e9rents types d'appareils\\r\\n- Mettez r\\u00e9guli\\u00e8rement \\u00e0 jour le firmware de vos points d'acc\\u00e8s\\r\\n\\r\\n\\r\\nLa s\\u00e9curit\\u00e9 Wi-Fi est un \\u00e9quilibre d\\u00e9licat entre commodit\\u00e9 et protection. Comprendre les vuln\\u00e9rabilit\\u00e9s potentielles vous permet de mieux prot\\u00e9ger vos infrastructures sans fil contre les attaques. La pratique \\u00e9thique de ces techniques est essentielle pour renforcer vos d\\u00e9fenses sans compromettre les syst\\u00e8mes d'autrui.\\r\\n\\r\\nN'oubliez jamais: la s\\u00e9curit\\u00e9 est un processus, pas un produit. Une vigilance constante et des audits r\\u00e9guliers sont n\\u00e9cessaires pour maintenir une posture de s\\u00e9curit\\u00e9 robuste face aux menaces \\u00e9mergentes.\\r\\n\",\n      \"image\": \"http://127.0.0.1:8000/media/blog/2025/04/10/klim-musalimov-WCNuSNpnQ-M-unsplash.jpg\",\n      \"category\": {\n        \"id\": 1,\n        \"name\": \"Cybers\\u00e9curit\\u00e9\",\n        \"slug\": \"cybersecurite\"\n      },\n      \"tags\": [\n        {\n          \"id\": 2,\n          \"name\": \"Cybers\\u00e9curit\\u00e9\",\n          \"slug\": \"cybersecurite\"\n        },\n        {\n          \"id\": 8,\n          \"name\": \"Vuln\\u00e9rabilit\\u00e9s\",\n          \"slug\": \"vulnerabilites\"\n        },\n        {\n          \"id\": 21,\n          \"name\": \"Zero Day\",\n          \"slug\": \"zero-day\"\n        }\n      ],\n      \"publish\": \"2025-04-10T04:52:16.231795+02:00\",\n      \"created\": \"2025-04-10T04:52:16.231795+02:00\",\n      \"updated\": \"2025-04-10T04:52:16.240806+02:00\",\n      \"status\": \"published\",\n      \"comments_count\": 3\n    },\n    {\n      \"id\": 1,\n      \"title\": \"test\",\n      \"slug\": \"test\",\n      \"author\": {\n        \"id\": 1,\n        \"username\": \"franck\",\n        \"email\": \"franckbello0@gmail.com\",\n        \"first_name\": \"franck\",\n        \"last_name\": \"bello\"\n      },\n      \"content\": \"testetstetste\",\n      \"image\": \"http://127.0.0.1:8000/media/blog/2025/04/08/laura-chouette-JlQxjaVRF2o-unsplash1.jpg\",\n      \"category\": {\n        \"id\": 1,\n        \"name\": \"Cybers\\u00e9curit\\u00e9\",\n        \"slug\": \"cybersecurite\"\n      },\n      \"tags\": [\n        {\n          \"id\": 1,\n          \"name\": \"GG\",\n          \"slug\": \"gg\"\n        }\n      ],\n      \"publish\": \"2025-04-08T22:46:31+02:00\",\n      \"created\": \"2025-04-08T22:47:48.721494+02:00\",\n      \"updated\": \"2025-04-08T22:47:48.721494+02:00\",\n      \"status\": \"published\",\n      \"comments_count\": 3\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Liste des commentaires",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/blog/comments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "blog",
+                "comments",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 200",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/blog/comments/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "blog",
+                    "comments",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"count\": 8,\n  \"next\": null,\n  \"previous\": null,\n  \"results\": [\n    {\n      \"id\": 16,\n      \"post\": \"test\",\n      \"name\": \"franck\",\n      \"email\": \"franckbello0@gmail.com\",\n      \"body\": \"test\",\n      \"created\": \"2025-04-09T19:32:38.390187+02:00\",\n      \"updated\": \"2025-04-09T19:32:38.390187+02:00\",\n      \"active\": true\n    },\n    {\n      \"id\": 17,\n      \"post\": \"test\",\n      \"name\": \"franck\",\n      \"email\": \"franckbello0@gmail.com\",\n      \"body\": \"test\",\n      \"created\": \"2025-04-09T19:58:13.878414+02:00\",\n      \"updated\": \"2025-04-09T19:58:13.878414+02:00\",\n      \"active\": true\n    },\n    {\n      \"id\": 18,\n      \"post\": \"test\",\n      \"name\": \"franck\",\n      \"email\": \"franckbello0@gmail.com\",\n      \"body\": \"yudvgsdiuc\",\n      \"created\": \"2025-04-10T03:45:39.240293+02:00\",\n      \"updated\": \"2025-04-10T03:45:39.240293+02:00\",\n      \"active\": true\n    },\n    {\n      \"id\": 20,\n      \"post\": \"analyse-de-vulnerabilites-wi-fi-decouverte-et-exploitation-des-reseaux-wpa2\",\n      \"name\": \"franck\",\n      \"email\": \"franckbello0@gmail.com\",\n      \"body\": \"12312\",\n      \"created\": \"2025-04-10T05:11:51.663261+02:00\",\n      \"updated\": \"2025-04-12T02:47:06.818822+02:00\",\n      \"active\": true\n    },\n    {\n      \"id\": 21,\n      \"post\": \"analyse-de-vulnerabilites-wi-fi-decouverte-et-exploitation-des-reseaux-wpa2\",\n      \"name\": \"Anonyme\",\n      \"email\": \"anonyme@example.com\",\n      \"body\": \"kyfyu\",\n      \"created\": \"2025-04-10T23:10:45.105798+02:00\",\n      \"updated\": \"2025-04-10T23:10:45.105798+02:00\",\n      \"active\": true\n    },\n    {\n      \"id\": 24,\n      \"post\": \"test-post_bellotest\",\n      \"name\": \"franck\",\n      \"email\": \"franckbello0@gmail.com\",\n      \"body\": \"test fuocdicsss\",\n      \"created\": \"2025-04-11T20:52:54.770515+02:00\",\n      \"updated\": \"2025-04-11T21:18:13.250973+02:00\",\n      \"active\": true\n    },\n    {\n      \"id\": 26,\n      \"post\": \"test-post_bellotest\",\n      \"name\": \"franck\",\n      \"email\": \"franckbello0@gmail.com\",\n      \"body\": \"super\",\n      \"created\": \"2025-04-11T21:18:22.823949+02:00\",\n      \"updated\": \"2025-04-11T21:18:22.823949+02:00\",\n      \"active\": true\n    },\n    {\n      \"id\": 28,\n      \"post\": \"analyse-de-vulnerabilites-wi-fi-decouverte-et-exploitation-des-reseaux-wpa2\",\n      \"name\": \"franck\",\n      \"email\": \"franckbello0@gmail.com\",\n      \"body\": \"tdcvhavcjs\",\n      \"created\": \"2025-04-12T02:47:15.987557+02:00\",\n      \"updated\": \"2025-04-12T02:47:15.987557+02:00\",\n      \"active\": true\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Commentaires par article",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/blog/comments/by_post/?post_id=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "blog",
+                "comments",
+                "by_post",
+                "?post_id=1"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 404",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/blog/comments/by_post/?post_id=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "blog",
+                    "comments",
+                    "by_post",
+                    "?post_id=1"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"detail\":\"Pas trouv\u00e9.\"}"
+            }
+          ]
+        },
+        {
+          "name": "Cr\u00e9er un commentaire",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/blog/comments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "blog",
+                "comments",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"post\": 1,\n  \"body\": \"Commentaire cr\\u00e9\\u00e9 via script Python\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 400",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/blog/comments/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "blog",
+                    "comments",
+                    ""
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"post\": 1,\n  \"body\": \"Commentaire cr\\u00e9\\u00e9 via script Python\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\"name\":[\"Ce champ est obligatoire.\"],\"email\":[\"Ce champ est obligatoire.\"]}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Projects",
+      "item": [
+        {
+          "name": "Liste des cat\u00e9gories de projets",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/projects/categories/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "projects",
+                "categories",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 404",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/projects/categories/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "categories",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ],
+              "body": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n  <title>Page not found at /api/v1/projects/categories/</title>\n  <meta name=\"robots\" content=\"NONE,NOARCHIVE\">\n  <style>\n    html * { padding:0; margin:0; }\n    body * { padding:10px 20px; }\n    body * * { padding:0; }\n    body { font-family: sans-serif; background:#eee; color:#000; }\n    body > :where(header, main, footer) { border-bottom:1px solid #ddd; }\n    h1 { font-weight:normal; margin-bottom:.4em; }\n    h1 small { font-size:60%; color:#666; font-weight:normal; }\n    table { border:none; border-collapse: collapse; width:100%; }\n    td, th { vertical-align:top; padding:2px 3px; }\n    th { width:12em; text-align:right; color:#666; padding-right:.5em; }\n    #info { background:#f6f6f6; }\n    #info ol { margin: 0.5em 4em; }\n    #info ol li { font-family: monospace; }\n    #summary { background: #ffc; }\n    #explanation { background:#eee; border-bottom: 0px none; }\n    pre.exception_value { font-family: sans-serif; color: #575757; font-size: 1.5em; margin: 10px 0 10px 0; }\n  </style>\n</head>\n<body>\n  <header id=\"summary\">\n    <h1>Page not found <small>(404)</small></h1>\n    \n    <table class=\"meta\">\n      <tr>\n        <th scope=\"row\">Request Method:</th>\n        <td>GET</td>\n      </tr>\n      <tr>\n        <th scope=\"row\">Request URL:</th>\n        <td>http://127.0.0.1:8000/api/v1/projects/categories/</td>\n      </tr>\n      \n    </table>\n  </header>\n\n  <main id=\"info\">\n    \n      <p>\n      Using the URLconf defined in <code>Hackerz.urls</code>,\n      Django tried these URL patterns, in this order:\n      </p>\n      <ol>\n        \n          <li>\n            \n              <code>\n                admin/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                blog/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                shop/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^users/$\n                [name='user-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^users\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='user-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^users/(?P&lt;pk&gt;[^/.]+)/$\n                [name='user-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^users/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='user-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/categories/$\n                [name='shop-category-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/categories\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='shop-category-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/categories/(?P&lt;slug&gt;[^/.]+)/$\n                [name='shop-category-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/categories/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='shop-category-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/$\n                [name='product-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/(?P&lt;slug&gt;[^/.]+)/$\n                [name='product-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/(?P&lt;slug&gt;[^/.]+)/reviews/$\n                [name='product-reviews']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/(?P&lt;slug&gt;[^/.]+)/reviews\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-reviews']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/reviews/$\n                [name='review-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/reviews\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='review-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/reviews/(?P&lt;pk&gt;[^/.]+)/$\n                [name='review-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/reviews/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='review-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/orders/$\n                [name='order-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/orders\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/orders/(?P&lt;pk&gt;[^/.]+)/$\n                [name='order-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/orders/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/tags/$\n                [name='tag-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/tags\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='tag-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/tags/(?P&lt;slug&gt;[^/.]+)/$\n                [name='tag-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/tags/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='tag-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/categories/$\n                [name='blog-category-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/categories\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='blog-category-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/categories/(?P&lt;slug&gt;[^/.]+)/$\n                [name='blog-category-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/categories/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='blog-category-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/$\n                [name='post-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='post-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/(?P&lt;slug&gt;[^/.]+)/$\n                [name='post-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='post-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/(?P&lt;slug&gt;[^/.]+)/comments/$\n                [name='post-comments']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/(?P&lt;slug&gt;[^/.]+)/comments\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='post-comments']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/comments/$\n                [name='comment-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/comments\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='comment-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/comments/(?P&lt;pk&gt;[^/.]+)/$\n                [name='comment-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/comments/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='comment-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                \n                [name='api-root']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                &lt;drf_format_suffix:format&gt;\n                [name='api-root']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                auth/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                token-auth/\n                [name='api_token_auth']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                swagger&lt;format&gt;/\n                [name='schema-json']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                swagger/\n                [name='schema-swagger-ui']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                redoc/\n                [name='schema-redoc']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                \n                [name='home']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                contact/\n                [name='contact']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                login/\n                [name='login']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                register/\n                [name='register']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                logout/\n                [name='logout']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                profile/\n                [name='profile']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                newsletter-signup/\n                [name='newsletter_signup']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                newsletter/subscribe/\n                [name='newsletter_subscribe']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                terms/\n                [name='terms']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                privacy/\n                [name='privacy']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                favicon.ico\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                update-account/\n                [name='update_account']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                become-vendor/\n                [name='become_vendor']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                wishlist/add/\n                [name='add_to_wishlist']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                wishlist/remove/&lt;int:product_id&gt;/\n                [name='remove_from_wishlist']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                wishlist/\n                [name='wishlist']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                confirm-email/&lt;uuid:token&gt;/\n                [name='confirm_email']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                registration-success/\n                [name='registration_success']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                resend-confirmation/\n                [name='resend_confirmation']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                password-reset/\n                [name='password_reset']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                password-reset/done/\n                [name='password_reset_done']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                password-reset-confirm/&lt;uidb64&gt;/&lt;token&gt;/\n                [name='password_reset_confirm']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                password-reset-complete/\n                [name='password_reset_complete']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                admin/group/&lt;str:group_name&gt;/\n                [name='group_users']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                ^static/(?P&lt;path&gt;.*)$\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                ^media/(?P&lt;path&gt;.*)$\n                \n              </code>\n            \n          </li>\n        \n      </ol>\n      <p>\n        \n          The current path, <code>api/v1/projects/categories/</code>,\n        \n        didn\u2019t match any of these.\n      </p>\n    \n  </main>\n\n  <footer id=\"explanation\">\n    <p>\n      You\u2019re seeing this error because you have <code>DEBUG = True</code> in\n      your Django settings file. Change that to <code>False</code>, and Django\n      will display a standard 404 page.\n    </p>\n  </footer>\n</body>\n</html>\n"
+            }
+          ]
+        },
+        {
+          "name": "Liste des projets",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/v1/projects/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "projects",
+                ""
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Example Response 404",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "http://127.0.0.1:8000/api/v1/projects/",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "projects",
+                    ""
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ],
+              "body": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n  <title>Page not found at /api/v1/projects/</title>\n  <meta name=\"robots\" content=\"NONE,NOARCHIVE\">\n  <style>\n    html * { padding:0; margin:0; }\n    body * { padding:10px 20px; }\n    body * * { padding:0; }\n    body { font-family: sans-serif; background:#eee; color:#000; }\n    body > :where(header, main, footer) { border-bottom:1px solid #ddd; }\n    h1 { font-weight:normal; margin-bottom:.4em; }\n    h1 small { font-size:60%; color:#666; font-weight:normal; }\n    table { border:none; border-collapse: collapse; width:100%; }\n    td, th { vertical-align:top; padding:2px 3px; }\n    th { width:12em; text-align:right; color:#666; padding-right:.5em; }\n    #info { background:#f6f6f6; }\n    #info ol { margin: 0.5em 4em; }\n    #info ol li { font-family: monospace; }\n    #summary { background: #ffc; }\n    #explanation { background:#eee; border-bottom: 0px none; }\n    pre.exception_value { font-family: sans-serif; color: #575757; font-size: 1.5em; margin: 10px 0 10px 0; }\n  </style>\n</head>\n<body>\n  <header id=\"summary\">\n    <h1>Page not found <small>(404)</small></h1>\n    \n    <table class=\"meta\">\n      <tr>\n        <th scope=\"row\">Request Method:</th>\n        <td>GET</td>\n      </tr>\n      <tr>\n        <th scope=\"row\">Request URL:</th>\n        <td>http://127.0.0.1:8000/api/v1/projects/</td>\n      </tr>\n      \n    </table>\n  </header>\n\n  <main id=\"info\">\n    \n      <p>\n      Using the URLconf defined in <code>Hackerz.urls</code>,\n      Django tried these URL patterns, in this order:\n      </p>\n      <ol>\n        \n          <li>\n            \n              <code>\n                admin/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                blog/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                shop/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^users/$\n                [name='user-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^users\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='user-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^users/(?P&lt;pk&gt;[^/.]+)/$\n                [name='user-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^users/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='user-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/categories/$\n                [name='shop-category-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/categories\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='shop-category-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/categories/(?P&lt;slug&gt;[^/.]+)/$\n                [name='shop-category-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/categories/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='shop-category-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/$\n                [name='product-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/(?P&lt;slug&gt;[^/.]+)/$\n                [name='product-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/(?P&lt;slug&gt;[^/.]+)/reviews/$\n                [name='product-reviews']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/products/(?P&lt;slug&gt;[^/.]+)/reviews\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='product-reviews']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/reviews/$\n                [name='review-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/reviews\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='review-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/reviews/(?P&lt;pk&gt;[^/.]+)/$\n                [name='review-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/reviews/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='review-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/orders/$\n                [name='order-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/orders\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/orders/(?P&lt;pk&gt;[^/.]+)/$\n                [name='order-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^shop/orders/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='order-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/tags/$\n                [name='tag-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/tags\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='tag-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/tags/(?P&lt;slug&gt;[^/.]+)/$\n                [name='tag-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/tags/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='tag-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/categories/$\n                [name='blog-category-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/categories\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='blog-category-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/categories/(?P&lt;slug&gt;[^/.]+)/$\n                [name='blog-category-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/categories/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='blog-category-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/$\n                [name='post-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='post-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/(?P&lt;slug&gt;[^/.]+)/$\n                [name='post-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/(?P&lt;slug&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='post-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/(?P&lt;slug&gt;[^/.]+)/comments/$\n                [name='post-comments']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/posts/(?P&lt;slug&gt;[^/.]+)/comments\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='post-comments']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/comments/$\n                [name='comment-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/comments\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='comment-list']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/comments/(?P&lt;pk&gt;[^/.]+)/$\n                [name='comment-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                ^blog/comments/(?P&lt;pk&gt;[^/.]+)\\.(?P&lt;format&gt;[a-z0-9]+)/?$\n                [name='comment-detail']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                \n                [name='api-root']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                \n                \n              </code>\n            \n              <code>\n                &lt;drf_format_suffix:format&gt;\n                [name='api-root']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                auth/\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                token-auth/\n                [name='api_token_auth']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                swagger&lt;format&gt;/\n                [name='schema-json']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                swagger/\n                [name='schema-swagger-ui']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                api/v1/\n                \n              </code>\n            \n              <code>\n                redoc/\n                [name='schema-redoc']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                \n                [name='home']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                contact/\n                [name='contact']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                login/\n                [name='login']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                register/\n                [name='register']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                logout/\n                [name='logout']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                profile/\n                [name='profile']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                newsletter-signup/\n                [name='newsletter_signup']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                newsletter/subscribe/\n                [name='newsletter_subscribe']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                terms/\n                [name='terms']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                privacy/\n                [name='privacy']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                favicon.ico\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                update-account/\n                [name='update_account']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                become-vendor/\n                [name='become_vendor']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                wishlist/add/\n                [name='add_to_wishlist']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                wishlist/remove/&lt;int:product_id&gt;/\n                [name='remove_from_wishlist']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                wishlist/\n                [name='wishlist']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                confirm-email/&lt;uuid:token&gt;/\n                [name='confirm_email']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                registration-success/\n                [name='registration_success']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                resend-confirmation/\n                [name='resend_confirmation']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                password-reset/\n                [name='password_reset']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                password-reset/done/\n                [name='password_reset_done']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                password-reset-confirm/&lt;uidb64&gt;/&lt;token&gt;/\n                [name='password_reset_confirm']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                password-reset-complete/\n                [name='password_reset_complete']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                admin/group/&lt;str:group_name&gt;/\n                [name='group_users']\n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                ^static/(?P&lt;path&gt;.*)$\n                \n              </code>\n            \n          </li>\n        \n          <li>\n            \n              <code>\n                ^media/(?P&lt;path&gt;.*)$\n                \n              </code>\n            \n          </li>\n        \n      </ol>\n      <p>\n        \n          The current path, <code>api/v1/projects/</code>,\n        \n        didn\u2019t match any of these.\n      </p>\n    \n  </main>\n\n  <footer id=\"explanation\">\n    <p>\n      You\u2019re seeing this error because you have <code>DEBUG = True</code> in\n      your Django settings file. Change that to <code>False</code>, and Django\n      will display a standard 404 page.\n    </p>\n  </footer>\n</body>\n</html>\n"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

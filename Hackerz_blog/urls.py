@@ -29,6 +29,7 @@ urlpatterns = [
     path('post/<slug:post_slug>/comment/auto/', views.auto_add_comment, name='auto_add_comment'),
     path('comment/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
     path('comment/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
+    path('comment/action/', views.comment_action, name='comment_action'),
     
     # Correction des URLs pour la gestion des articles
     path('create/', views.create_post, name='create_post'),

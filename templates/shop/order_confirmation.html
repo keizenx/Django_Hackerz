@@ -59,24 +59,24 @@
             {% for item in order_items %}
             <tr>
               <td>{{ item.product.name }}</td>
-              <td>{{ item.price }} €</td>
+              <td>{{ item.price }} FCFA</td>
               <td>{{ item.quantity }}</td>
-              <td>{{ item.get_cost|floatformat:2 }} €</td>
+              <td>{{ item.get_cost|floatformat:2 }} FCFA</td>
             </tr>
             {% endfor %}
           </tbody>
           <tfoot>
             <tr>
               <td colspan="3">Sous-total</td>
-              <td>{{ total|floatformat:2 }} €</td>
+              <td>{{ total|floatformat:2 }} FCFA</td>
             </tr>
             <tr>
               <td colspan="3">TVA (20%)</td>
-              <td>{{ total|floatformat:2|mult:0.2 }} €</td>
+              <td>{{ total|floatformat:2|mult:0.2 }} FCFA</td>
             </tr>
             <tr class="total-row">
               <td colspan="3">Total</td>
-              <td>{{ total|floatformat:2|mult:1.2 }} €</td>
+              <td>{{ total|floatformat:2|mult:1.2 }} FCFA</td>
             </tr>
           </tfoot>
         </table>

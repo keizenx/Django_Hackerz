@@ -122,7 +122,7 @@
                                             <div class="activity-order">
                                                 <i class="fas fa-shopping-cart"></i>
                                                 <span>Commande #{{ activity.content.id }}</span>
-                                                <span class="text-muted">{{ activity.content.total }} €</span>
+                                                <span class="text-muted">{{ activity.content.total }} FCFA</span>
                                             </div>
                                         {% elif activity.type == 'tutorial' %}
                                             <div class="activity-tutorial">
@@ -159,14 +159,14 @@
                     <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="order-product-img">
                     <div class="order-product-info">
                       <div class="order-product-name">{{ item.product.name }}</div>
-                      <div class="order-product-price">{{ item.quantity }} x {{ item.price }} €</div>
+                      <div class="order-product-price">{{ item.quantity }} x {{ item.price }} FCFA</div>
                     </div>
                   </div>
                   {% endfor %}
                 </div>
                 <div class="order-total">
                   <div>Total</div>
-                  <div>{{ order.get_total_cost }} €</div>
+                  <div>{{ order.get_total_cost }} FCFA</div>
                 </div>
               </div>
               {% empty %}
@@ -331,7 +331,7 @@
                         <p>{{ vendor_info.shop_name }}</p>
                       </div>
                       <div>
-                        <p style="font-weight: 600;">SIRET:</p>
+                        <p style="font-weight: 600;"></p>
                         <p>{{ vendor_info.siret }}</p>
                       </div>
                     </div>
@@ -464,7 +464,7 @@
                           <a href="{% url 'shop:product_detail' product.slug %}">{{ product.name }}</a>
                         </h3>
                         <p class="card-text">{{ product.category.name }}</p>
-                        <p class="card-price">{{ product.price }} €</p>
+                        <p class="card-price">{{ product.price }} FCFA</p>
                         <button class="card-btn add-to-cart" data-product-id="{{ product.id }}">
                           Ajouter au panier
                         </button>

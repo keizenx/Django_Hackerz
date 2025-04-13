@@ -16,7 +16,7 @@
                             <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="cart-item-img">
                             <div class="cart-item-details">
                                 <h3>{{ item.product.name }}</h3>
-                                <p class="cart-item-price">{{ item.product.price }} €</p>
+                                <p class="cart-item-price">{{ item.product.price }} FCFA</p>
                             </div>
                             <div class="cart-item-quantity">
                                 <form method="post" action="{% url 'shop:cart_update' item.product.id %}" class="quantity-form">
@@ -27,7 +27,7 @@
                                 </form>
                             </div>
                             <div class="cart-item-subtotal">
-                                <p>{{ item.sub_total|floatformat:2 }} €</p>
+                                <p>{{ item.sub_total|floatformat:2 }} FCFA</p>
                             </div>
                             <div class="cart-item-remove">
                                 <a href="{% url 'shop:cart_remove' item.product.id %}" class="remove-btn">
@@ -42,7 +42,7 @@
                     <h3>Résumé de la commande</h3>
                     <div class="summary-row">
                         <span>Sous-total</span>
-                        <span>{{ cart_total|floatformat:2 }} €</span>
+                        <span>{{ cart_total|floatformat:2 }} FCFA</span>
                     </div>
                     <div class="summary-row">
                         <span>Livraison</span>
@@ -50,7 +50,7 @@
                     </div>
                     <div class="summary-row total">
                         <span>Total</span>
-                        <span>{{ cart_total|floatformat:2 }} €</span>
+                        <span>{{ cart_total|floatformat:2 }} FCFA</span>
                     </div>
                     <a href="{% url 'shop:checkout' %}" class="btn-primary">Procéder au paiement</a>
                     <a href="{% url 'shop:shop' %}" class="btn-outline">Continuer les achats</a>

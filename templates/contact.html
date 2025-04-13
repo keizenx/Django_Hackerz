@@ -42,7 +42,7 @@
               </div>
               <div>
                 <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Téléphone</h3>
-                <p style="color: hsl(240, 5%, 64.9%); margin-bottom: 0.25rem;">+33 1 23 45 67 89</p>
+                <p style="color: hsl(240, 5%, 64.9%); margin-bottom: 0.25rem;">+225 07 50 23 77 10</p>
                 <p style="color: hsl(240, 5%, 64.9%);">Lun-Ven: 9h-18h</p>
               </div>
             </div>
@@ -53,8 +53,8 @@
               </div>
               <div>
                 <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Adresse</h3>
-                <p style="color: hsl(240, 5%, 64.9%); margin-bottom: 0.25rem;">123 Rue du Hacking</p>
-                <p style="color: hsl(240, 5%, 64.9%);">75001 Paris, France</p>
+                <p style="color: hsl(240, 5%, 64.9%); margin-bottom: 0.25rem;">Abidjan, Côte d'Ivoire</p>
+                <p style="color: hsl(240, 5%, 64.9%);">75000 Abidjan</p>
               </div>
             </div>
             
@@ -92,7 +92,7 @@
         <div>
           <h2 style="font-size: 1.75rem; margin-bottom: 1.5rem;"><span style="color: hsl(142, 100%, 50%);">Envoyez-nous</span> un message</h2>
           
-          <form class="card contact-form" style="padding: 1.5rem;">
+          <form class="card contact-form" style="padding: 1.5rem;" method="POST" action="{% url 'contact' %}">
             {% csrf_token %}
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
               <div class="form-group">
@@ -121,6 +121,17 @@
               <label for="message" class="form-label">Message</label>
               <textarea id="message" name="message" class="form-textarea" rows="6" required></textarea>
             </div>
+            
+            <!-- Afficher les messages de succès ou d'erreur -->
+            {% if messages %}
+            <div class="messages-container" style="margin-bottom: 1rem;">
+              {% for message in messages %}
+                <div class="message {% if message.tags %}{{ message.tags }}{% endif %}" style="padding: 0.75rem; border-radius: 0.25rem; {% if message.tags == 'success' %}background-color: rgba(0, 255, 65, 0.1); color: hsl(142, 100%, 65%);{% else %}background-color: rgba(255, 0, 0, 0.1); color: hsl(0, 100%, 65%);{% endif %}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            </div>
+            {% endif %}
             
             <button type="submit" class="form-btn" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>

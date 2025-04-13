@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de votre commande</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff9d;
+        }
+        .content {
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #00ff9d;
+            color: #000;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .total-row {
+            font-weight: bold;
+        }
+        .summary {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">HACKERZ</div>
+        </div>
+        
+        <div class="content">
+            <h2>Merci pour votre commande !</h2>
+            
+            <p>Bonjour {{ order.first_name }} {{ order.last_name }},</p>
+            
+            <p>Nous vous confirmons que votre commande a bien été enregistrée. Voici un récapitulatif :</p>
+            
+            <div class="summary">
+                <p><strong>Numéro de commande :</strong> {{ order.id }}</p>
+                <p><strong>Date :</strong> {{ order.created|date:"d/m/Y" }}</p>
+                <p><strong>Statut :</strong> {{ order.get_status_display }}</p>
+            </div>
+            
+            <h3>Détails de votre commande</h3>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Quantité</th>
+                        <th>Prix unitaire</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order_items %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.price }} FCA</td>
+                        <td>{{ item.get_cost }} FCA</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="3" style="text-align: right;"><strong>Sous-total :</strong></td>
+                        <td>{{ subtotal }} FCA</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: right;"><strong>TVA (20%) :</strong></td>
+                        <td>{{ tax }} FCA</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: right;"><strong>Frais de livraison :</strong></td>
+                        <td>{{ shipping }} FCA</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="3" style="text-align: right;"><strong>TOTAL :</strong></td>
+                        <td>{{ total }} FCA</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Adresse de livraison</h3>
+            <p>
+                {{ order.first_name }} {{ order.last_name }}<br>
+                {{ order.address }}<br>
+                {{ order.postal_code }} {{ order.city }}<br>
+            </p>
+            
+            <p>Vous trouverez votre facture en pièce jointe de cet email. Vous pourrez également la retrouver dans votre espace client.</p>
+            
+            <p>Un email de suivi vous sera envoyé dès que votre commande sera expédiée.</p>
+            
+            <a href="{{ site_url }}{% url 'profile' %}" class="btn">Voir le détail dans votre compte</a>
+        </div>
+        
+        <div class="footer">
+            <p>© {{ current_year }} Hackerz E-Commerce. Tous droits réservés.</p>
+            <p>{{ company_address }} | {{ company_phone }} | {{ company_email }}</p>
+            <p>Si vous avez des questions, n'hésitez pas à nous contacter par email ou par téléphone.</p>
+        </div>
+    </div>
+</body>
+</html> 

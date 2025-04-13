@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from .models import Profile, Vendor, Wishlist, EmailConfirmationToken
+from .models import Profile, Vendor, Wishlist, EmailConfirmationToken, NewsletterSubscriber
 from django.utils.html import format_html
 
 class CustomUserAdmin(UserAdmin):
@@ -101,10 +101,85 @@ class EmailConfirmationTokenAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'user__email']
     readonly_fields = ['token', 'created']
 
+class NewsletterSubscriberAdmin(admin.ModelAdmin):
+    list_display = ['email', 'is_active', 'created', 'updated']
+    list_filter = ['is_active', 'created', 'updated']
+    search_fields = ['email']
+    date_hierarchy = 'created'
+    readonly_fields = ['created', 'updated']
+    actions = ['activate_subscribers', 'deactivate_subscribers', 'send_test_email']
+    
+    def activate_subscribers(self, request, queryset):
+        queryset.update(is_active=True)
+        self.message_user(request, f"{queryset.count()} abonnés ont été activés.")
+    activate_subscribers.short_description = "Activer les abonnés sélectionnés"
+    
+    def deactivate_subscribers(self, request, queryset):
+        queryset.update(is_active=False)
+        self.message_user(request, f"{queryset.count()} abonnés ont été désactivés.")
+    deactivate_subscribers.short_description = "Désactiver les abonnés sélectionnés"
+    
+    def send_test_email(self, request, queryset):
+        from django.core.mail import send_mail
+        from django.conf import settings
+        from django.utils.html import strip_tags
+        
+        subject = "Test de newsletter Hackerz"
+        html_message = """
+        <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { text-align: center; padding: 20px 0; }
+                    .header h1 { color: #00ff41; margin: 0; }
+                    .content { padding: 20px 0; }
+                    .footer { text-align: center; font-size: 12px; color: #999; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>Hackerz Newsletter</h1>
+                    </div>
+                    <div class="content">
+                        <p>Bonjour,</p>
+                        <p>Ceci est un message de test de la newsletter Hackerz.</p>
+                        <p>Merci de vous être inscrit à notre newsletter.</p>
+                        <p>Cordialement,<br>L'équipe Hackerz</p>
+                    </div>
+                    <div class="footer">
+                        <p>&copy; 2025 Hackerz. Tous droits réservés.</p>
+                    </div>
+                </div>
+            </body>
+        </html>
+        """
+        
+        count = 0
+        for subscriber in queryset:
+            if subscriber.is_active:
+                try:
+                    send_mail(
+                        subject,
+                        strip_tags(html_message),
+                        settings.DEFAULT_FROM_EMAIL,
+                        [subscriber.email],
+                        html_message=html_message,
+                        fail_silently=False,
+                    )
+                    count += 1
+                except Exception as e:
+                    self.message_user(request, f"Erreur lors de l'envoi à {subscriber.email}: {str(e)}", level='ERROR')
+        
+        self.message_user(request, f"E-mail de test envoyé à {count} abonnés actifs.")
+    send_test_email.short_description = "Envoyer un e-mail de test aux abonnés sélectionnés"
+
 # Réenregistrer le modèle User avec notre configuration personnalisée
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Vendor, VendorAdmin)
 admin.site.register(Wishlist, WishlistAdmin)
-admin.site.register(EmailConfirmationToken, EmailConfirmationTokenAdmin) 
+admin.site.register(EmailConfirmationToken, EmailConfirmationTokenAdmin)
+admin.site.register(NewsletterSubscriber, NewsletterSubscriberAdmin) 

@@ -5,30 +5,37 @@ function getCsrfToken() {
 }
 
 // Fonction pour afficher les notifications
-function afficherNotification(message, type = 'success') {
+function afficherNotification(message, type = 'success', duree = 3000) {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
-    notification.textContent = message;
-    
+    notification.innerHTML = `
+      <span class="notification-message">${message}</span>
+      <button class="notification-close">&times;</button>
+    `;
     document.body.appendChild(notification);
     
-    // Déclencher le reflow pour que la transition fonctionne
+    // Force le reflow pour assurer que la transition fonctionne correctement
     notification.offsetHeight;
     
-    // Afficher la notification
-    setTimeout(() => notification.classList.add('show'), 10);
+    notification.classList.add('show');
     
-    // Supprimer la notification après 3 secondes
+    notification.querySelector('.notification-close').addEventListener('click', function() {
+      notification.classList.remove('show');
+      setTimeout(() => notification.remove(), 300);
+    });
+    
     setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
+      notification.classList.remove('show');
+      setTimeout(() => notification.remove(), 300);
+    }, duree);
+    
+    return notification;
 }
 
 // Fonction pour formater la date
 function formaterDate(date) {
     return new Date(date).toLocaleDateString('fr-FR', {
-        day: '2-digit',
+        day: 'numeric',
         month: 'short',
         year: 'numeric',
         hour: '2-digit',
@@ -37,12 +44,61 @@ function formaterDate(date) {
 }
 
 // Gestionnaire d'erreurs AJAX
-function gererErreurAjax(error) {
-    console.error('Erreur AJAX:', error);
-    afficherNotification('Une erreur est survenue. Veuillez réessayer.', 'error');
+function gererErreurAjax(erreur) {
+    console.error('Erreur AJAX:', erreur);
+    afficherNotification(
+      'Une erreur est survenue lors de la communication avec le serveur.',
+      'error'
+    );
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Fonctions utilitaires
+    function afficherNotification(message, type = 'success', duree = 3000) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+          <span class="notification-message">${message}</span>
+          <button class="notification-close">&times;</button>
+        `;
+        document.body.appendChild(notification);
+        
+        // Force le reflow pour assurer que la transition fonctionne correctement
+        notification.offsetHeight;
+        
+        notification.classList.add('show');
+        
+        notification.querySelector('.notification-close').addEventListener('click', function() {
+          notification.classList.remove('show');
+          setTimeout(() => notification.remove(), 300);
+        });
+        
+        setTimeout(() => {
+          notification.classList.remove('show');
+          setTimeout(() => notification.remove(), 300);
+        }, duree);
+        
+        return notification;
+    }
+
+    function gererErreurAjax(erreur) {
+        console.error('Erreur AJAX:', erreur);
+        afficherNotification(
+          'Une erreur est survenue lors de la communication avec le serveur.',
+          'error'
+        );
+    }
+
+    function formaterDate(date) {
+        return new Date(date).toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
     // Gestion des menus déroulants
     document.querySelectorAll('.dropdown-toggle').forEach(button => {
         button.addEventListener('click', function(e) {
@@ -51,384 +107,632 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Fermer tous les autres menus
             document.querySelectorAll('.dropdown-menu').forEach(item => {
-                if (item !== menu) item.style.display = 'none';
+                if (item !== menu) {
+                    item.style.display = 'none';
+                }
             });
             
+            // Basculer l'affichage du menu actuel
             menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
         });
     });
-
-    // Fermer les menus lors d'un clic à l'extérieur
-    document.addEventListener('click', () => {
-        document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-            menu.classList.remove('show');
-        });
-    });
-
-    // Édition de commentaire
-    document.querySelectorAll('.btn-edit-comment').forEach(button => {
-        button.addEventListener('click', function() {
-            const commentId = this.dataset.commentId;
-            const commentBody = document.querySelector(`#comment-${commentId} .comment-body`).textContent.trim();
-            
-            // Remplir le modal
-            document.getElementById('edit-comment-id').value = commentId;
-            document.getElementById('edit-comment-body').value = commentBody;
-            
-            // Afficher le modal
-            const modal = document.getElementById('edit-comment-modal');
-            if (modal) {
-                modal.style.display = 'flex';
-                // Focus sur le textarea
-                document.getElementById('edit-comment-body').focus();
-            }
-        });
-    });
-
-    // Gestion de la soumission du formulaire d'édition
-    document.getElementById('save-edit-comment').addEventListener('click', async function() {
-        const commentId = document.getElementById('edit-comment-id').value;
-        const newBody = document.getElementById('edit-comment-body').value.trim();
-        
-        if (!newBody) {
-            afficherNotification('Le commentaire ne peut pas être vide.', 'error');
-            return;
-        }
-        
-        try {
-            const response = await fetch(`/blog/comment/${commentId}/edit/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCsrfToken(),
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({ body: newBody })
-            });
-            
-            const data = await response.json();
-            
-            if (response.ok) {
-                // Mettre à jour le contenu du commentaire
-                const commentBody = document.querySelector(`#comment-${commentId} .comment-body`);
-                if (commentBody) {
-                    commentBody.innerHTML = newBody.replace(/\n/g, '<br>');
-                    
-                    // Mettre à jour la date si disponible
-                    const dateElement = document.querySelector(`#comment-${commentId} .comment-date`);
-                    if (dateElement && data.comment && data.comment.updated) {
-                        dateElement.textContent = `${data.comment.created} (Modifié le ${data.comment.updated})`;
-                    }
-                    
-                    // Fermer le modal
-                    const modal = document.getElementById('edit-comment-modal');
-                    if (modal) {
-                        modal.style.display = 'none';
-                    }
-                    
-                    afficherNotification('Commentaire modifié avec succès', 'success');
-                } else {
-                    throw new Error('Élément commentaire non trouvé');
-                }
-            } else {
-                throw new Error(data.message || 'Erreur lors de la modification');
-            }
-        } catch (error) {
-            console.error('Erreur lors de la modification:', error);
-            afficherNotification(error.message || 'Une erreur est survenue lors de la modification', 'error');
-        }
-    });
-
-    // Fermeture des modals
-    document.querySelectorAll('.close-modal, .btn-secondary').forEach(button => {
-        button.addEventListener('click', function() {
-            this.closest('.modal').style.display = 'none';
-        });
-    });
-
-    // Gestion des boutons de réponse
-    document.querySelectorAll('.btn-reply').forEach(button => {
-        button.addEventListener('click', function() {
-            const commentId = this.getAttribute('data-comment-id');
-            const replyForm = document.getElementById(`reply-form-${commentId}`);
-            
-            // Fermer tous les autres formulaires de réponse
-            document.querySelectorAll('.reply-form-container').forEach(form => {
-                if (form !== replyForm) {
-                    form.style.display = 'none';
-                }
-            });
-            
-            // Basculer l'affichage du formulaire actuel
-            replyForm.style.display = replyForm.style.display === 'block' ? 'none' : 'block';
-            
-            // Focus sur le textarea
-            if (replyForm.style.display === 'block') {
-                replyForm.querySelector('.reply-textarea').focus();
-            }
+    
+    // Fermer les menus quand on clique ailleurs
+    document.addEventListener('click', function() {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.style.display = 'none';
         });
     });
     
-    // Gestion des boutons d'annulation de réponse
-    document.querySelectorAll('.btn-reply-cancel').forEach(button => {
-        button.addEventListener('click', function() {
-            const commentId = this.getAttribute('data-comment-id');
-            const replyForm = document.getElementById(`reply-form-${commentId}`);
-            replyForm.style.display = 'none';
-            replyForm.querySelector('.reply-textarea').value = '';
-        });
-    });
-
-    // Gestion de la suppression des commentaires
-    document.querySelectorAll('.btn-delete-comment').forEach(button => {
-        button.addEventListener('click', function() {
-            const commentId = this.getAttribute('data-comment-id');
-            const commentBody = document.querySelector(`#comment-${commentId} .comment-body`).textContent.trim();
+    // Formulaire de commentaire principal
+    const commentForm = document.getElementById('comment-form');
+    if (commentForm) {
+        commentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
             
-            document.getElementById('delete-comment-id').value = commentId;
-            document.getElementById('comment-to-delete').textContent = commentBody;
-            
-            // Afficher le modal de suppression
-            const deleteModal = document.getElementById('delete-comment-modal');
-            if (deleteModal) {
-                deleteModal.style.display = 'flex';
-            }
-        });
-    });
-
-    // Confirmer la suppression d'un commentaire
-    document.getElementById('confirm-delete-comment').addEventListener('click', async function() {
-        const commentId = document.getElementById('delete-comment-id').value;
-        
-        try {
-            const response = await fetch(`/blog/comment/${commentId}/delete/`, {
+            fetch(this.action, {
                 method: 'POST',
+                body: formData,
                 headers: {
-                    'X-CSRFToken': getCsrfToken(),
                     'X-Requested-With': 'XMLHttpRequest'
                 }
-            });
-            
-            const data = await response.json();
-            
-            if (data.status === 'success') {
-                const commentElement = document.getElementById(`comment-${commentId}`);
-                if (commentElement) {
-                    commentElement.style.animation = 'fadeOut 0.3s ease forwards';
-                    setTimeout(() => {
-                        commentElement.remove();
-                        // Fermer le modal
-                        const deleteModal = document.getElementById('delete-comment-modal');
-                        if (deleteModal) {
-                            deleteModal.style.display = 'none';
-                        }
-                        // Mettre à jour le compteur de commentaires
-                        updateCommentCount(-1);
-                        // Afficher la notification de succès
-                        afficherNotification('Commentaire supprimé avec succès', 'success');
-                    }, 300);
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Créer et ajouter le nouveau commentaire
+                    const commentsList = document.querySelector('.comments-list');
+                    const newComment = document.createElement('div');
+                    newComment.className = 'comment';
+                    newComment.id = `comment-${data.comment.id}`;
+                    newComment.innerHTML = `
+                        <div class="comment-header">
+                            <span class="comment-author">${data.comment.name}</span>
+                            <span class="comment-date">${formaterDate(data.comment.created)}</span>
+                            ${data.is_owner ? `
+                                <div class="dropdown">
+                                    <button class="dropdown-toggle" aria-label="Menu actions">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="5" r="1"></circle>
+                                            <circle cx="12" cy="12" r="1"></circle>
+                                            <circle cx="12" cy="19" r="1"></circle>
+                                        </svg>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <button class="dropdown-item edit-comment" data-id="${data.comment.id}">Modifier</button>
+                                        <button class="dropdown-item delete-comment" data-id="${data.comment.id}">Supprimer</button>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="comment-body">${data.comment.body}</div>
+                        <div class="comment-footer">
+                            <button class="reply-toggle" data-parent="${data.comment.id}">Répondre</button>
+                        </div>
+                        <div class="reply-form-container" id="reply-form-${data.comment.id}" style="display: none;">
+                            <form action="/blog/add_comment/${data.post_id}/" method="post" class="reply-form" data-parent="${data.comment.id}">
+                                <input type="hidden" name="csrfmiddlewaretoken" value="${formData.get('csrfmiddlewaretoken')}">
+                                <input type="hidden" name="parent_id" value="${data.comment.id}">
+                                <textarea name="body" rows="3" class="form-control" placeholder="Votre réponse..." required></textarea>
+                                <div class="form-actions">
+                                    <button type="button" class="btn-secondary cancel-reply">Annuler</button>
+                                    <button type="submit" class="btn-primary">Répondre</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="replies" id="replies-${data.comment.id}"></div>
+                    `;
+                    
+                    if (commentsList.firstChild) {
+                        commentsList.insertBefore(newComment, commentsList.firstChild);
+                    } else {
+                        commentsList.appendChild(newComment);
+                    }
+                    
+                    // Réinitialiser le formulaire
+                    commentForm.reset();
+                    
+                    // Mettre à jour le compteur de commentaires
+                    const commentCount = document.getElementById('comment-count');
+                    if (commentCount) {
+                        commentCount.textContent = parseInt(commentCount.textContent) + 1;
+                    }
+                    
+                    // Afficher une notification
+                    afficherNotification('Votre commentaire a été ajouté avec succès.');
+                    
+                    // Ajouter les événements aux boutons du nouveau commentaire
+                    attachEventListeners();
+                } else {
+                    afficherNotification(data.message || 'Erreur lors de l\'ajout du commentaire.', 'error');
                 }
-            } else {
-                throw new Error(data.message || 'Erreur lors de la suppression');
-            }
-        } catch (error) {
-            console.error('Erreur:', error);
-            afficherNotification(error.message || 'Une erreur est survenue lors de la suppression', 'error');
-        }
-    });
-
-    // Gestion des réponses aux commentaires
-    document.querySelectorAll('.btn-reply-submit').forEach(button => {
-        button.addEventListener('click', function() {
-            const commentId = this.getAttribute('data-comment-id');
-            const replyForm = document.getElementById(`reply-form-${commentId}`);
-            const replyContent = replyForm.querySelector('.reply-textarea').value.trim();
-            const postSlug = document.querySelector('[data-post-slug]').getAttribute('data-post-slug');
+            })
+            .catch(gererErreurAjax);
+        });
+    }
+    
+    // Formulaire AJAX personnalisé
+    const ajaxCommentForm = document.getElementById('ajax-comment-form');
+    if (ajaxCommentForm) {
+        const submitButton = document.getElementById('ajax-submit');
+        submitButton.addEventListener('click', function(e) {
+            e.preventDefault();
             
-            if (!replyContent) {
-                showFeedback(replyForm, 'Le commentaire ne peut pas être vide', 'error');
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const name = document.getElementById('ajax-name').value;
+            const email = document.getElementById('ajax-email').value;
+            const body = document.getElementById('ajax-body').value;
+            const postSlug = document.querySelector('.comments-section').dataset.postSlug;
+            
+            if (!body.trim()) {
+                afficherNotification('Le commentaire ne peut pas être vide.', 'error');
                 return;
             }
             
+            const formData = new FormData();
+            formData.append('csrfmiddlewaretoken', csrfToken);
+            formData.append('name', name);
+            formData.append('email', email);
+            formData.append('body', body);
+            
             fetch(`/blog/post/${postSlug}/comment/`, {
                 method: 'POST',
+                body: formData,
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
                     'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({ body: replyContent })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erreur réseau');
                 }
-                return response.json();
             })
+            .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // Créer et insérer le nouveau commentaire
-                    const newComment = createCommentElement(data.comment);
-                    const parentComment = document.getElementById(`comment-${commentId}`);
-                    parentComment.insertAdjacentElement('afterend', newComment);
+                    // Créer et ajouter le nouveau commentaire
+                    const commentsList = document.querySelector('.comments-list');
+                    const newComment = document.createElement('div');
+                    newComment.className = 'comment';
+                    newComment.id = `comment-${data.comment.id}`;
                     
-                    // Réinitialiser le formulaire
-                    replyForm.querySelector('.reply-textarea').value = '';
-                    replyForm.style.display = 'none';
+                    // Mettre à jour l'interface avec le nouveau commentaire
+                    newComment.innerHTML = `
+                        <div class="comment-header">
+                            <div class="comment-author">${data.comment.name}</div>
+                            <div class="comment-date">${formaterDate(data.comment.created)}</div>
+                            <div class="comment-dropdown">
+                                <button class="dropdown-toggle" aria-label="Options du commentaire">
+                                    <span class="dots">⋮</span>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <button class="dropdown-item btn-edit-comment" data-comment-id="${data.comment.id}">
+                                        <i class="bi bi-pencil"></i> Modifier
+                                    </button>
+                                    <button class="dropdown-item btn-delete-comment" data-comment-id="${data.comment.id}">
+                                        <i class="bi bi-trash"></i> Supprimer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comment-body">${data.comment.body}</div>
+                        <div class="comment-footer">
+                            <button class="btn-like" data-comment-id="${data.comment.id}">
+                                <span class="like-count">0</span>
+                            </button>
+                            <button class="btn-reply" data-comment-id="${data.comment.id}">Répondre</button>
+                        </div>
+                        <div class="reply-form-container" id="reply-form-${data.comment.id}" style="display: none;">
+                            <textarea class="reply-textarea" rows="3" placeholder="Votre réponse..."></textarea>
+                            <div class="reply-actions">
+                                <button class="btn-reply-cancel" data-comment-id="${data.comment.id}">Annuler</button>
+                                <button class="btn-reply-submit" data-comment-id="${data.comment.id}">Envoyer</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Ajouter au DOM
+                    if (commentsList) {
+                        if (commentsList.firstChild) {
+                            commentsList.insertBefore(newComment, commentsList.firstChild);
+                        } else {
+                            commentsList.appendChild(newComment);
+                        }
+                    } else {
+                        // Créer la liste de commentaires si elle n'existe pas
+                        const newCommentsList = document.createElement('div');
+                        newCommentsList.className = 'comments-list';
+                        newCommentsList.appendChild(newComment);
+                        document.querySelector('.comments-section').insertBefore(
+                            newCommentsList, 
+                            document.querySelector('.comment-form')
+                        );
+                    }
                     
                     // Mettre à jour le compteur de commentaires
-                    updateCommentCount(1);
+                    const commentCount = document.querySelector('.comments-section h3');
+                    if (commentCount) {
+                        const count = parseInt(commentCount.textContent.match(/\d+/)[0]) + 1;
+                        commentCount.textContent = `Commentaires (${count})`;
+                    }
                     
-                    // Afficher un message de succès
-                    showFeedback(replyForm, 'Votre réponse a été ajoutée avec succès', 'success');
+                    // Réinitialiser le formulaire
+                    document.getElementById('ajax-body').value = '';
+                    
+                    // Notification
+                    afficherNotification('Votre commentaire a été ajouté avec succès.', 'success');
+                    
+                    // Attacher les événements aux nouveaux éléments
+                    attachEventListeners();
                 } else {
-                    showFeedback(replyForm, data.message || 'Une erreur est survenue', 'error');
+                    afficherNotification(data.message || 'Erreur lors de l\'ajout du commentaire.', 'error');
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                showFeedback(replyForm, 'Une erreur est survenue lors de l\'envoi de la réponse', 'error');
+                console.error('Erreur:', error);
+                afficherNotification('Une erreur est survenue lors de la communication avec le serveur.', 'error');
             });
         });
-    });
-
-    // Fonction utilitaire pour afficher les messages de feedback
-    function showFeedback(container, message, type = 'error') {
-        let feedbackDiv = container.querySelector('.feedback-message');
-        if (!feedbackDiv) {
-            feedbackDiv = document.createElement('div');
-            feedbackDiv.className = 'feedback-message';
-            container.appendChild(feedbackDiv);
-        }
-        
-        feedbackDiv.textContent = message;
-        feedbackDiv.className = `feedback-message ${type}`;
-        
-        // Effacer le message après 5 secondes
-        setTimeout(() => {
-            feedbackDiv.remove();
-        }, 5000);
     }
-
-    // Fonction pour créer un élément de commentaire
-    function createCommentElement(comment) {
-        const div = document.createElement('div');
-        div.className = 'comment';
-        div.id = `comment-${comment.id}`;
-        
-        div.innerHTML = `
-            <div class="comment-header">
-                <span class="comment-author">${comment.name}</span>
-                <span class="comment-date">${comment.created}</span>
-                ${comment.can_edit ? `
-                    <div class="comment-dropdown">
-                        <button class="dropdown-toggle" aria-label="Options du commentaire">
-                            <span class="dots">⋮</span>
-                        </button>
-                        <div class="dropdown-menu">
-                            <button class="dropdown-item btn-edit-comment" data-comment-id="${comment.id}">Modifier</button>
-                            <button class="dropdown-item btn-delete-comment" data-comment-id="${comment.id}">Supprimer</button>
-                        </div>
-                    </div>
-                ` : ''}
-            </div>
-            <div class="comment-body">${comment.body}</div>
-            <div class="comment-footer">
-                <button class="btn-reply" data-comment-id="${comment.id}">Répondre</button>
-            </div>
-            <div class="reply-form-container" id="reply-form-${comment.id}" style="display: none;">
-                <textarea class="reply-textarea" rows="3" placeholder="Votre réponse..."></textarea>
-                <div class="reply-actions">
-                    <button class="btn-reply-cancel" data-comment-id="${comment.id}">Annuler</button>
-                    <button class="btn-reply-submit" data-comment-id="${comment.id}">Envoyer</button>
-                </div>
-            </div>
-        `;
-        
-        return div;
-    }
-
-    // Fonction pour mettre à jour le compteur de commentaires
-    function updateCommentCount(increment = 0) {
-        const countElement = document.querySelector('.comments-section h3');
-        const currentCount = parseInt(countElement.textContent.match(/\d+/)[0]) + increment;
-        countElement.textContent = `Commentaires (${currentCount})`;
-    }
-
-    // Gestion du formulaire de commentaire principal
-    document.getElementById('ajax-submit').addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        const postSlug = document.querySelector('[data-post-slug]').getAttribute('data-post-slug');
-        const commentBody = document.getElementById('ajax-body').value.trim();
-        const name = document.getElementById('ajax-name').value;
-        const email = document.getElementById('ajax-email').value;
-        
-        if (!commentBody) {
-            showFeedback(document.getElementById('ajax-response'), 'Le commentaire ne peut pas être vide', 'error');
-            return;
-        }
-        
-        fetch(`/blog/post/${postSlug}/comment/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                body: commentBody,
-                name: name,
-                email: email
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erreur réseau');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === 'success') {
-                // Créer et ajouter le nouveau commentaire
-                const newComment = createCommentElement(data.comment);
-                const commentsList = document.querySelector('.comments-list');
+    
+    // Répondre à un commentaire
+    function handleReplyForm() {
+        document.querySelectorAll('.btn-reply').forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.dataset.commentId;
+                const replyForm = document.getElementById(`reply-form-${commentId}`);
                 
-                if (commentsList) {
-                    commentsList.appendChild(newComment);
-                } else {
-                    // S'il n'y a pas encore de liste de commentaires, la créer
-                    const newList = document.createElement('div');
-                    newList.className = 'comments-list';
-                    newList.appendChild(newComment);
-                    document.querySelector('.comments-section').insertBefore(
-                        newList,
-                        document.querySelector('.comment-form')
-                    );
-                    
-                    // Supprimer le message "Aucun commentaire"
-                    const noCommentMessage = document.querySelector('.comments-section > p');
-                    if (noCommentMessage) {
-                        noCommentMessage.remove();
+                // Cacher tous les autres formulaires de réponse
+                document.querySelectorAll('.reply-form-container').forEach(form => {
+                    if (form.id !== `reply-form-${commentId}`) {
+                        form.style.display = 'none';
                     }
+                });
+                
+                // Afficher/cacher le formulaire de réponse actuel
+                replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
+                
+                if (replyForm.style.display === 'block') {
+                    replyForm.querySelector('textarea').focus();
+                }
+            });
+        });
+        
+        document.querySelectorAll('.btn-reply-cancel').forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.dataset.commentId;
+                const replyForm = document.getElementById(`reply-form-${commentId}`);
+                replyForm.style.display = 'none';
+                replyForm.querySelector('textarea').value = '';
+            });
+        });
+        
+        document.querySelectorAll('.btn-reply-submit').forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.dataset.commentId;
+                const replyForm = document.getElementById(`reply-form-${commentId}`);
+                const textarea = replyForm.querySelector('textarea');
+                const body = textarea.value.trim();
+                const postSlug = document.querySelector('.comments-section').dataset.postSlug;
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                
+                if (!body) {
+                    afficherNotification('La réponse ne peut pas être vide.', 'error');
+                    return;
                 }
                 
-                // Réinitialiser le formulaire
-                document.getElementById('ajax-body').value = '';
-                
-                // Mettre à jour le compteur
-                updateCommentCount(1);
-                
-                // Afficher un message de succès
-                showFeedback(document.getElementById('ajax-response'), 'Votre commentaire a été ajouté avec succès', 'success');
-            } else {
-                showFeedback(document.getElementById('ajax-response'), data.message || 'Une erreur est survenue', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showFeedback(document.getElementById('ajax-response'), 'Une erreur est survenue lors de l\'envoi du commentaire', 'error');
+                fetch('/blog/comment/action/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        action: 'reply',
+                        comment_id: commentId,
+                        content: body,
+                        post_slug: postSlug
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Créer et ajouter la nouvelle réponse
+                        const repliesContainer = document.getElementById(`replies-${commentId}`);
+                        if (!repliesContainer) {
+                            // Créer le conteneur de réponses s'il n'existe pas
+                            const newRepliesContainer = document.createElement('div');
+                            newRepliesContainer.className = 'replies';
+                            newRepliesContainer.id = `replies-${commentId}`;
+                            
+                            const comment = document.getElementById(`comment-${commentId}`);
+                            comment.appendChild(newRepliesContainer);
+                            
+                            // Utiliser le nouveau conteneur
+                            repliesContainer = newRepliesContainer;
+                        }
+                        
+                        const newReply = document.createElement('div');
+                        newReply.className = 'comment reply';
+                        newReply.id = `comment-${data.comment.id}`;
+                        newReply.innerHTML = `
+                            <div class="comment-header">
+                                <div class="comment-author">${data.comment.name}</div>
+                                <div class="comment-date">${formaterDate(data.comment.created)}</div>
+                                <div class="comment-dropdown">
+                                    <button class="dropdown-toggle" aria-label="Options du commentaire">
+                                        <span class="dots">⋮</span>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <button class="dropdown-item btn-edit-comment" data-comment-id="${data.comment.id}">
+                                            <i class="bi bi-pencil"></i> Modifier
+                                        </button>
+                                        <button class="dropdown-item btn-delete-comment" data-comment-id="${data.comment.id}">
+                                            <i class="bi bi-trash"></i> Supprimer
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="comment-body">${data.comment.body}</div>
+                            <div class="comment-footer">
+                                <button class="btn-like" data-comment-id="${data.comment.id}">
+                                    <span class="like-count">0</span>
+                                </button>
+                                <button class="btn-reply" data-comment-id="${data.comment.id}">Répondre</button>
+                            </div>
+                            <div class="reply-form-container" id="reply-form-${data.comment.id}" style="display: none;">
+                                <textarea class="reply-textarea" rows="3" placeholder="Votre réponse..."></textarea>
+                                <div class="reply-actions">
+                                    <button class="btn-reply-cancel" data-comment-id="${data.comment.id}">Annuler</button>
+                                    <button class="btn-reply-submit" data-comment-id="${data.comment.id}">Envoyer</button>
+                                </div>
+                            </div>
+                        `;
+                        
+                        repliesContainer.appendChild(newReply);
+                        
+                        // Cacher et réinitialiser le formulaire
+                        replyForm.style.display = 'none';
+                        textarea.value = '';
+                        
+                        // Mettre à jour le compteur de commentaires
+                        const commentCountEl = document.querySelector('.comments-section h3');
+                        if (commentCountEl) {
+                            const count = parseInt(commentCountEl.textContent.match(/\d+/)[0]) + 1;
+                            commentCountEl.textContent = `Commentaires (${count})`;
+                        }
+                        
+                        // Afficher une notification
+                        afficherNotification('Votre réponse a été ajoutée avec succès.', 'success');
+                        
+                        // Attacher les événements aux nouveaux éléments
+                        attachEventListeners();
+                    } else {
+                        afficherNotification(data.message || 'Erreur lors de l\'ajout de la réponse.', 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error('Erreur:', err);
+                    afficherNotification('Une erreur est survenue lors de la communication avec le serveur.', 'error');
+                });
+            });
         });
-    });
+    }
+    
+    // Modifier un commentaire
+    function handleEditComment() {
+        document.querySelectorAll('.btn-edit-comment').forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.dataset.commentId;
+                const comment = document.getElementById(`comment-${commentId}`);
+                const commentBody = comment.querySelector('.comment-body').textContent.trim();
+                const modal = document.getElementById('edit-comment-modal');
+                
+                // Remplir la modal avec le contenu actuel
+                document.getElementById('edit-comment-body').value = commentBody;
+                document.getElementById('edit-comment-id').value = commentId;
+                
+                // Afficher la modal
+                modal.style.display = 'flex';
+                document.getElementById('edit-comment-body').focus();
+            });
+        });
+        
+        // Gérer la soumission du formulaire d'édition
+        document.getElementById('save-edit-comment').addEventListener('click', function() {
+            const commentId = document.getElementById('edit-comment-id').value;
+            const newBody = document.getElementById('edit-comment-body').value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            if (!newBody.trim()) {
+                document.getElementById('edit-comment-feedback').textContent = 'Le commentaire ne peut pas être vide.';
+                return;
+            }
+            
+            fetch(`/blog/comment/action/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ 
+                    action: 'edit',
+                    comment_id: commentId,
+                    content: newBody 
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Mettre à jour le contenu du commentaire
+                    const comment = document.getElementById(`comment-${commentId}`);
+                    comment.querySelector('.comment-body').innerHTML = newBody.replace(/\n/g, '<br>');
+                    
+                    // Ajouter l'indicateur "Modifié" s'il n'existe pas déjà
+                    const dateEl = comment.querySelector('.comment-date');
+                    if (!dateEl.textContent.includes('(Modifié)')) {
+                        dateEl.textContent += ' (Modifié)';
+                    }
+                    
+                    // Cacher la modal
+                    document.getElementById('edit-comment-modal').style.display = 'none';
+                    
+                    // Afficher une notification
+                    afficherNotification('Votre commentaire a été modifié avec succès.', 'success');
+                } else {
+                    document.getElementById('edit-comment-feedback').textContent = data.message || 'Erreur lors de la modification du commentaire.';
+                }
+            })
+            .catch(err => {
+                document.getElementById('edit-comment-feedback').textContent = 'Une erreur est survenue lors de la communication avec le serveur.';
+                console.error('Erreur:', err);
+            });
+        });
+        
+        // Gérer l'annulation de l'édition
+        document.getElementById('cancel-edit-comment').addEventListener('click', function() {
+            document.getElementById('edit-comment-modal').style.display = 'none';
+            document.getElementById('edit-comment-feedback').textContent = '';
+        });
+    }
+    
+    // Supprimer un commentaire
+    function handleDeleteComment() {
+        document.querySelectorAll('.btn-delete-comment').forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.dataset.commentId;
+                const comment = document.getElementById(`comment-${commentId}`);
+                const commentContent = comment.querySelector('.comment-body').textContent.trim();
+                const modal = document.getElementById('delete-comment-modal');
+                
+                // Afficher un aperçu du commentaire à supprimer
+                document.getElementById('comment-to-delete').textContent = commentContent.length > 100 
+                    ? commentContent.substring(0, 100) + '...' 
+                    : commentContent;
+                
+                // Mettre à jour l'ID du commentaire à supprimer
+                document.getElementById('delete-comment-id').value = commentId;
+                
+                // Afficher la modal
+                modal.style.display = 'flex';
+            });
+        });
+        
+        // Gérer la confirmation de suppression
+        document.getElementById('confirm-delete-comment').addEventListener('click', function() {
+            const commentId = document.getElementById('delete-comment-id').value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            fetch(`/blog/comment/action/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ 
+                    action: 'delete',
+                    comment_id: commentId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Supprimer le commentaire du DOM
+                    const comment = document.getElementById(`comment-${commentId}`);
+                    comment.remove();
+                    
+                    // Mettre à jour le compteur de commentaires
+                    const commentCountEl = document.querySelector('.comments-section h3');
+                    if (commentCountEl) {
+                        const count = parseInt(commentCountEl.textContent.match(/\d+/)[0]) - 1;
+                        commentCountEl.textContent = `Commentaires (${count})`;
+                    }
+                    
+                    // Cacher la modal
+                    document.getElementById('delete-comment-modal').style.display = 'none';
+                    
+                    // Afficher une notification
+                    afficherNotification('Le commentaire a été supprimé avec succès.', 'success');
+                } else {
+                    document.getElementById('delete-comment-feedback').textContent = data.message || 'Erreur lors de la suppression du commentaire.';
+                }
+            })
+            .catch(err => {
+                document.getElementById('delete-comment-feedback').textContent = 'Une erreur est survenue lors de la communication avec le serveur.';
+                console.error('Erreur:', err);
+            });
+        });
+        
+        // Gérer l'annulation de la suppression
+        document.getElementById('cancel-delete-comment').addEventListener('click', function() {
+            document.getElementById('delete-comment-modal').style.display = 'none';
+            document.getElementById('delete-comment-feedback').textContent = '';
+        });
+    }
+    
+    // Gestion des modales
+    function setupModals() {
+        // Fermer les modales quand on clique sur la croix
+        document.querySelectorAll('.close-modal').forEach(button => {
+            button.addEventListener('click', function() {
+                this.closest('.modal').style.display = 'none';
+            });
+        });
+        
+        // Fermer les modales quand on clique en dehors
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        });
+    }
+    
+    // Gérer les likes des commentaires
+    function handleCommentLikes() {
+        document.querySelectorAll('.btn-like').forEach(button => {
+            button.addEventListener('click', function() {
+                // Vérifier si l'utilisateur est connecté
+                if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
+                    afficherNotification('Veuillez vous connecter pour aimer un commentaire.', 'error');
+                    return;
+                }
+                
+                const commentId = this.dataset.commentId;
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                
+                // Animation temporaire de feedback
+                const likeButton = this;
+                const likeCount = likeButton.querySelector('.like-count');
+                const currentCount = parseInt(likeCount.textContent);
+                const isLiked = likeButton.classList.contains('liked');
+                
+                // Mise à jour temporaire avant la réponse du serveur
+                if (isLiked) {
+                    likeButton.classList.remove('liked');
+                    likeCount.textContent = Math.max(0, currentCount - 1);
+                } else {
+                    likeButton.classList.add('liked');
+                    likeCount.textContent = currentCount + 1;
+                }
+                
+                // Envoyer la requête au serveur
+                fetch('/blog/comment/action/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        action: 'like',
+                        comment_id: commentId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Mettre à jour l'interface avec le statut réel
+                        if (data.liked) {
+                            likeButton.classList.add('liked');
+                        } else {
+                            likeButton.classList.remove('liked');
+                        }
+                        likeCount.textContent = data.likes_count;
+                    } else {
+                        // Restaurer l'état précédent en cas d'erreur
+                        if (isLiked) {
+                            likeButton.classList.add('liked');
+                        } else {
+                            likeButton.classList.remove('liked');
+                        }
+                        likeCount.textContent = currentCount;
+                        afficherNotification(data.message || 'Erreur lors de l\'action.', 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error('Erreur:', err);
+                    // Restaurer l'état précédent en cas d'erreur
+                    if (isLiked) {
+                        likeButton.classList.add('liked');
+                    } else {
+                        likeButton.classList.remove('liked');
+                    }
+                    likeCount.textContent = currentCount;
+                    afficherNotification('Une erreur est survenue lors de la communication avec le serveur.', 'error');
+                });
+            });
+        });
+    }
+    
+    // Attacher tous les écouteurs d'événements
+    function attachEventListeners() {
+        handleReplyForm();
+        handleEditComment();
+        handleDeleteComment();
+        handleCommentLikes();
+        setupModals();
+    }
+    
+    // Initialiser
+    attachEventListeners();
 });
 </script> 

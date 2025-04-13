@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Paiement réussi - Hackerz{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-container {
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 3rem 1rem;
+    }
+    
+    .success-icon {
+        font-size: 5rem;
+        color: #00ff9d;
+        margin-bottom: 1rem;
+    }
+    
+    .success-title {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        color: #fff;
+    }
+    
+    .success-message {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        color: hsl(240, 5%, 64.9%);
+    }
+    
+    .order-details {
+        background-color: hsl(240, 3.7%, 15.9%);
+        border-radius: 0.75rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        text-align: left;
+    }
+    
+    .order-number {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+    }
+    
+    .order-summary {
+        margin-bottom: 1.5rem;
+    }
+    
+    .order-summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+    
+    .order-total {
+        font-size: 1.2rem;
+        font-weight: bold;
+        border-top: 1px solid hsl(240, 3.7%, 25%);
+        padding-top: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .cta-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+    }
+    
+    .btn-primary {
+        background-color: #00ff9d;
+        color: #000;
+        font-weight: bold;
+    }
+    
+    .btn-secondary {
+        background-color: hsl(240, 3.7%, 15.9%);
+        color: #fff;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    @media (max-width: 640px) {
+        .cta-buttons {
+            flex-direction: column;
+        }
+        .success-title {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="success-container">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        
+        <h1 class="success-title">Paiement réussi !</h1>
+        
+        <p class="success-message">
+            Merci pour votre commande. Votre paiement a été traité avec succès et votre commande est en cours de préparation.
+            Un email de confirmation a été envoyé à l'adresse {{ order.email }} avec les détails de votre commande et votre facture.
+        </p>
+        
+        <div class="order-details">
+            <div class="order-number">
+                Commande #{{ order.id }}
+            </div>
+            
+            <div class="order-summary">
+                <div class="order-summary-item">
+                    <span>Date:</span>
+                    <span>{{ order.created|date:"d/m/Y" }}</span>
+                </div>
+                <div class="order-summary-item">
+                    <span>Statut:</span>
+                    <span>{{ order.get_status_display }}</span>
+                </div>
+                <div class="order-summary-item">
+                    <span>Adresse de livraison:</span>
+                    <span>{{ order.address }}, {{ order.postal_code }} {{ order.city }}</span>
+                </div>
+            </div>
+            
+            <div class="order-total">
+                <div class="order-summary-item">
+                    <span>TOTAL:</span>
+                    <span>{{ total }} FCA</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="cta-buttons">
+            <a href="{% url 'profile' %}" class="btn btn-primary">
+                <i class="fas fa-user"></i> Voir mes commandes
+            </a>
+            <a href="{% url 'shop:shop' %}" class="btn btn-secondary">
+                <i class="fas fa-shopping-bag"></i> Continuer mes achats
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %} 

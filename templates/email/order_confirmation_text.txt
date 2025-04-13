@@ -1,0 +1,40 @@
+HACKERZ - CONFIRMATION DE COMMANDE
+
+Bonjour {{ order.first_name }} {{ order.last_name }},
+
+Nous vous confirmons que votre commande a bien été enregistrée. Voici un récapitulatif :
+
+Numéro de commande : {{ order.id }}
+Date : {{ order.created|date:"d/m/Y" }}
+Statut : {{ order.get_status_display }}
+
+DÉTAILS DE VOTRE COMMANDE
+-----------------------------------------
+
+{% for item in order_items %}
+{{ item.product.name }} x {{ item.quantity }} - {{ item.price }} FCA = {{ item.get_cost }} FCA
+{% endfor %}
+
+Sous-total : {{ subtotal }} FCA
+TVA (20%) : {{ tax }} FCA
+Frais de livraison : {{ shipping }} FCA
+TOTAL : {{ total }} FCA
+
+ADRESSE DE LIVRAISON
+-----------------------------------------
+{{ order.first_name }} {{ order.last_name }}
+{{ order.address }}
+{{ order.postal_code }} {{ order.city }}
+
+Vous trouverez votre facture en pièce jointe de cet email. 
+Vous pourrez également la retrouver dans votre espace client.
+
+Un email de suivi vous sera envoyé dès que votre commande sera expédiée.
+
+Pour voir le détail dans votre compte, rendez-vous sur :
+{{ site_url }}{% url 'profile' %}
+
+Si vous avez des questions, n'hésitez pas à nous contacter par email ou par téléphone.
+
+© {{ current_year }} Hackerz E-Commerce. Tous droits réservés.
+{{ company_address }} | {{ company_phone }} | {{ company_email }} 

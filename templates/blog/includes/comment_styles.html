@@ -90,179 +90,400 @@
 
 /* Style des commentaires */
 .comments-section {
-  margin-top: 4rem;
+  margin-top: 3rem;
   padding-top: 2rem;
   border-top: 1px solid hsl(240, 3.7%, 15.9%);
 }
 
 .comments-section h3 {
+  margin-bottom: 1.5rem;
   font-size: 1.5rem;
-  margin-bottom: 2rem;
-  color: #fff;
+  color: hsl(0, 0%, 100%);
 }
 
 .comments-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .comment {
-  background-color: hsl(240, 3.7%, 10%);
-  border: 1px solid hsl(240, 3.7%, 15.9%);
-  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
   padding: 1.25rem;
-  transition: box-shadow 0.2s;
+  background-color: hsl(240, 3.7%, 10%);
+  border-radius: 0.75rem;
+  border: 1px solid hsl(240, 3.7%, 15.9%);
+  transition: all 0.2s ease-in-out;
+  position: relative;
 }
 
 .comment:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: hsl(142, 80%, 40%, 0.4);
 }
 
 .comment-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
   margin-bottom: 1rem;
+  font-size: 0.875rem;
 }
 
 .comment-author {
   font-weight: bold;
   color: hsl(142, 100%, 50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.comment-author::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: hsl(142, 100%, 50%);
+  border-radius: 50%;
 }
 
 .comment-date {
   color: hsl(240, 5%, 64.9%);
-  font-size: 0.875rem;
+  margin-left: auto;
+  margin-right: 1rem;
+}
+
+.comment-dropdown {
+  position: relative;
+}
+
+.comment-dropdown .dropdown-toggle {
+  background: none;
+  border: none;
+  color: hsl(240, 5%, 64.9%);
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0.25rem;
+  border-radius: 50%;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.comment-dropdown .dropdown-toggle:hover {
+  background-color: hsl(240, 3.7%, 15.9%);
+  color: hsl(0, 0%, 100%);
+}
+
+.comment-dropdown .dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  display: none;
+  background-color: hsl(240, 3.7%, 13%);
+  border: 1px solid hsl(240, 3.7%, 18%);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0;
+  z-index: 100;
+  min-width: 150px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.comment-dropdown .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: hsl(0, 0%, 100%);
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.comment-dropdown .dropdown-item:hover {
+  background-color: hsl(240, 3.7%, 18%);
+}
+
+.comment-dropdown .dropdown-item.btn-edit-comment {
+  color: hsl(217, 91.2%, 59.8%);
+}
+
+.comment-dropdown .dropdown-item.btn-delete-comment {
+  color: hsl(0, 72.2%, 50.6%);
 }
 
 .comment-body {
-  color: #fff;
   line-height: 1.6;
   margin-bottom: 1rem;
+  color: hsl(0, 0%, 90%);
+  word-break: break-word;
 }
 
 .comment-footer {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
 }
 
+.btn-like, 
 .btn-reply {
   background: none;
   border: none;
-  color: hsl(142, 100%, 50%);
   cursor: pointer;
   font-size: 0.875rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  transition: background-color 0.2s;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.15s, color 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.btn-like {
+  color: hsl(0, 85%, 60%);
+}
+
+.btn-like:hover {
+  background-color: hsla(0, 85%, 60%, 0.1);
+}
+
+.btn-like::before {
+  content: '♡';
+  font-size: 1.1rem;
+}
+
+.btn-like.liked::before {
+  content: '♥';
+}
+
+.btn-like .like-count {
+  opacity: 0.8;
+}
+
+.btn-reply {
+  color: hsl(217, 91.2%, 59.8%);
 }
 
 .btn-reply:hover {
-  background-color: hsla(142, 100%, 50%, 0.1);
+  background-color: hsla(217, 91.2%, 59.8%, 0.1);
+}
+
+.btn-reply::before {
+  content: '↪';
+  font-size: 1rem;
 }
 
 .reply-form-container {
   margin-top: 1rem;
   padding: 1rem;
-  background-color: hsl(240, 3.7%, 12%);
+  background-color: hsl(240, 3.7%, 13%);
   border-radius: 0.5rem;
+  animation: slideDown 0.3s ease-out;
 }
 
-.reply-textarea {
+.reply-textarea, 
+#ajax-body, 
+#edit-comment-body {
   width: 100%;
-  min-height: 100px;
   padding: 0.75rem;
+  border-radius: 0.5rem;
   background-color: hsl(240, 3.7%, 15%);
   border: 1px solid hsl(240, 3.7%, 20%);
-  border-radius: 0.5rem;
-  color: #fff;
+  color: hsl(0, 0%, 100%);
   resize: vertical;
-  margin-bottom: 1rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.reply-textarea:focus, 
+#ajax-body:focus, 
+#edit-comment-body:focus {
+  outline: none;
+  border-color: hsl(142, 100%, 50%);
+  box-shadow: 0 0 0 2px hsla(142, 100%, 50%, 0.2);
 }
 
 .reply-actions {
   display: flex;
-  gap: 1rem;
   justify-content: flex-end;
-}
-
-.btn-reply-submit,
-.btn-reply-cancel {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: none;
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition: all 0.2s;
-}
-
-.btn-reply-submit {
-  background-color: hsl(142, 100%, 50%);
-  color: hsl(240, 3.7%, 10%);
-}
-
-.btn-reply-submit:hover {
-  background-color: hsl(142, 100%, 45%);
-}
-
-.btn-reply-cancel {
-  background-color: transparent;
-  color: hsl(240, 5%, 64.9%);
-}
-
-.btn-reply-cancel:hover {
-  background-color: hsl(240, 3.7%, 15%);
-}
-
-/* Style des tags */
-.tags {
-  display: flex;
-  flex-wrap: wrap;
+  margin-top: 0.75rem;
   gap: 0.5rem;
-  margin: 2rem 0;
 }
 
-.tag-link {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background-color: hsla(142, 100%, 50%, 0.1);
-  color: hsl(142, 100%, 50%);
-  border-radius: 2rem;
-  font-size: 0.875rem;
-  text-decoration: none;
-  transition: all 0.2s;
+/* Modal pour édition/suppression de commentaires */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
 }
 
-.tag-link:hover {
-  background-color: hsla(142, 100%, 50%, 0.2);
-  transform: translateY(-1px);
+.modal-content {
+  background-color: hsl(240, 3.7%, 13%);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  width: 95%;
+  max-width: 500px;
+  position: relative;
+  animation: modalFadeIn 0.3s;
+  border: 1px solid hsl(240, 3.7%, 20%);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
-/* Style des messages de feedback */
-.feedback-message {
-  margin-top: 0.5rem;
-  padding: 0.75rem;
+.close-modal {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: hsl(240, 5%, 64.9%);
+  transition: color 0.15s;
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.close-modal:hover {
+  color: hsl(0, 0%, 100%);
+  background-color: hsla(0, 0%, 100%, 0.1);
+}
+
+.modal h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: hsl(0, 0%, 100%);
+  font-size: 1.5rem;
+}
+
+.modal p {
+  color: hsl(0, 0%, 80%);
+  margin-bottom: 1.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+#comment-to-delete {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: hsl(240, 3.7%, 10%);
   border-radius: 0.5rem;
+  border: 1px solid hsl(240, 3.7%, 15.9%);
+  max-height: 100px;
+  overflow-y: auto;
+  color: hsl(0, 0%, 70%);
+  font-style: italic;
+}
+
+#edit-comment-feedback,
+#delete-comment-feedback {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
   font-size: 0.875rem;
-  animation: fadeIn 0.3s ease;
+  color: hsl(0, 100%, 89%);
 }
 
-.feedback-message.error {
-  background-color: hsla(0, 100%, 50%, 0.1);
-  color: hsl(0, 100%, 70%);
-  border: 1px solid hsla(0, 100%, 50%, 0.2);
+.btn-primary, 
+.btn-secondary, 
+.btn-danger, 
+#ajax-submit {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  font-size: 0.95rem;
 }
 
-.feedback-message.success {
-  background-color: hsla(142, 100%, 50%, 0.1);
-  color: hsl(142, 100%, 70%);
-  border: 1px solid hsla(142, 100%, 50%, 0.2);
+.btn-primary, 
+#ajax-submit {
+  background-color: hsl(142, 76.2%, 36.3%);
+  color: hsl(0, 0%, 100%);
+}
+
+.btn-primary:hover, 
+#ajax-submit:hover {
+  background-color: hsl(142, 76.2%, 40%);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 128, 0, 0.3);
+}
+
+.btn-secondary {
+  background-color: hsl(240, 3.7%, 18%);
+  color: hsl(240, 5%, 80%);
+}
+
+.btn-secondary:hover {
+  background-color: hsl(240, 3.7%, 25%);
+  color: hsl(0, 0%, 100%);
+}
+
+.btn-danger {
+  background-color: hsl(0, 72.2%, 50.6%);
+  color: hsl(0, 0%, 100%);
+}
+
+.btn-danger:hover {
+  background-color: hsl(0, 84.2%, 60.2%);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(255, 0, 0, 0.3);
+}
+
+/* Formulaire de commentaire principal */
+.comment-form {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: hsl(240, 3.7%, 11%);
+  border-radius: 0.75rem;
+  border: 1px solid hsl(240, 3.7%, 18%);
+  transition: border-color 0.3s;
+}
+
+.comment-form:focus-within {
+  border-color: hsl(142, 100%, 50%, 0.4);
+}
+
+.comment-form h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: hsl(0, 0%, 100%);
+  font-size: 1.25rem;
+}
+
+#ajax-submit {
+  margin-top: 1rem;
 }
 
 /* Animations */
 @keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
   from {
     opacity: 0;
     transform: translateY(-10px);
@@ -273,264 +494,61 @@
   }
 }
 
-@keyframes fadeOut {
+@keyframes modalFadeIn {
   from {
-    opacity: 1;
-    transform: translateY(0);
+    opacity: 0;
+    transform: scale(0.95);
   }
   to {
-    opacity: 0;
-    transform: translateY(10px);
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
-/* Menu à trois points et actions */
-.comment-dropdown {
-  position: relative;
-  margin-left: auto;
+/* Adaptations responsive */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .modal-content {
+    width: 95%;
+    padding: 1.5rem;
+  }
 }
 
-.dropdown-toggle {
-  background: none;
-  border: none;
-  color: hsl(240, 5%, 64.9%);
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 50%;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Tag Links */
+.tag-link {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  background-color: hsl(240, 3.7%, 13%);
+  color: hsl(217, 91.2%, 59.8%);
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: background-color 0.2s, transform 0.2s;
 }
 
-.dropdown-toggle:hover {
-  background-color: hsl(240, 3.7%, 15%);
-  color: #fff;
+.tag-link:hover {
+  background-color: hsl(240, 3.7%, 18%);
+  transform: translateY(-2px);
 }
 
-.dots {
-  font-size: 1.25rem;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Style pour les réponses aux commentaires */
+.replies {
+  margin-top: 1rem;
+  padding-left: 1.5rem;
+  border-left: 2px solid hsl(142, 100%, 50%, 0.3);
 }
 
-.dropdown-menu {
-  position: absolute;
-  right: 0;
-  top: 100%;
+.comment.reply {
   background-color: hsl(240, 3.7%, 12%);
-  border: 1px solid hsl(240, 3.7%, 20%);
-  border-radius: 0.5rem;
-  min-width: 150px;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  display: none;
-  overflow: hidden;
-  margin-top: 0.5rem;
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  color: #fff;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 0.875rem;
-  text-align: left;
-  transition: all 0.2s;
-}
-
-.dropdown-item:hover {
-  background-color: hsl(240, 3.7%, 15%);
-}
-
-.dropdown-item i {
-  font-size: 1rem;
-  opacity: 0.7;
-}
-
-/* Style spécifique pour les boutons d'action */
-.btn-edit-comment:hover {
-  color: hsl(210, 100%, 70%);
-}
-
-.btn-delete-comment {
-  color: hsl(0, 100%, 70%);
-}
-
-.btn-delete-comment:hover {
-  background-color: hsla(0, 100%, 50%, 0.1);
-}
-
-/* Modal pour l'édition et la suppression */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.modal[style*="flex"] {
-  opacity: 1;
-}
-
-.modal-content {
-  background-color: hsl(240, 3.7%, 10%);
-  padding: 2rem;
-  border-radius: 0.75rem;
-  width: 90%;
-  max-width: 500px;
-  position: relative;
-  border: 1px solid hsl(240, 3.7%, 20%);
-  transform: translateY(20px);
-  transition: transform 0.3s ease;
-}
-
-.modal[style*="flex"] .modal-content {
-  transform: translateY(0);
-}
-
-.modal h3 {
-  margin-bottom: 1.5rem;
-  color: #fff;
-}
-
-.close-modal {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  color: hsl(240, 5%, 64.9%);
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-
-.close-modal:hover {
-  background-color: hsl(240, 3.7%, 15%);
-  color: #fff;
-}
-
-#edit-comment-body {
-  width: 100%;
-  min-height: 120px;
+  margin-bottom: 0.75rem;
   padding: 1rem;
-  background-color: hsl(240, 3.7%, 15%);
-  border: 1px solid hsl(240, 3.7%, 20%);
   border-radius: 0.5rem;
-  color: #fff;
-  font-size: 0.95rem;
-  margin-bottom: 1rem;
-  resize: vertical;
-  font-family: inherit;
-  line-height: 1.5;
-}
-
-#edit-comment-body:focus {
-  outline: none;
-  border-color: hsl(142, 100%, 50%);
-  box-shadow: 0 0 0 2px hsla(142, 100%, 50%, 0.2);
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.btn-secondary {
-  background-color: transparent;
-  border: 1px solid hsl(240, 5%, 40%);
-  color: hsl(240, 5%, 70%);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition: all 0.2s;
-}
-
-.btn-secondary:hover {
-  background-color: hsl(240, 3.7%, 15%);
-  color: #fff;
-}
-
-.btn-primary {
-  background-color: hsl(142, 100%, 30%);
-  color: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition: all 0.2s;
-}
-
-.btn-primary:hover {
-  background-color: hsl(142, 100%, 35%);
-}
-
-/* Notifications */
-.notification {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 1rem 1.5rem;
-    border-radius: 0.5rem;
-    color: white;
-    opacity: 0;
-    transform: translateY(100%);
-    transition: all 0.3s ease;
-    z-index: 1000;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.notification.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.notification.success {
-    background-color: hsl(142, 76%, 36%);
-}
-
-.notification.error {
-    background-color: hsl(346, 87%, 43%);
-}
-
-.notification.info {
-    background-color: hsl(200, 98%, 39%);
-}
-
-/* Animation de fondu pour les notifications */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 </style> 

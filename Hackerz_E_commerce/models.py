@@ -4,6 +4,8 @@ from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+import markdown
+import re
 
 
 class Category(models.Model):
@@ -55,6 +57,51 @@ class Product(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+    
+    def formatted_description(self):
+        """
+        Retourne la description formatée en HTML à partir du Markdown
+        """
+        # Si la description est vide, retourner une chaîne vide
+        if not self.description:
+            return ''
+        
+        # Configuration du parser Markdown avec les extensions
+        md = markdown.Markdown(extensions=[
+            'markdown.extensions.fenced_code',  # Pour les blocs de code avec ```
+            'markdown.extensions.codehilite',   # Pour la coloration syntaxique
+            'markdown.extensions.tables',       # Pour les tableaux
+            'markdown.extensions.nl2br',        # Convertir les retours à la ligne en <br>
+            'markdown.extensions.extra',        # Fonctionnalités supplémentaires
+        ])
+        
+        # Amélioration du formatage pour les titres
+        content = self.description
+        
+        # Structurer le contenu avec des espaces autour des titres
+        content = content.replace("\n##", "\n\n##")
+        content = content.replace("\n#", "\n\n#")
+        
+        # Améliorer les listes en ajoutant des espaces entre les éléments si nécessaire
+        content = re.sub(r'(\n- [^\n]+)(\n- )', r'\1\n\2', content)
+        content = re.sub(r'(\n\d+\. [^\n]+)(\n\d+\. )', r'\1\n\2', content)
+        
+        # Améliorer les blocs de code
+        content = re.sub(r'```\n', r'```text\n', content)
+        
+        # Convertir Markdown en HTML
+        html = md.convert(content)
+        
+        # Améliorer le style des blocs de code
+        html = re.sub(r'<pre><code>(.*?)</code></pre>', r'<pre class="code-block"><code>\1</code></pre>', html, flags=re.DOTALL)
+        
+        # Améliorer les listes à puces
+        html = re.sub(r'<ul>\s*<li>', r'<ul class="styled-list">\n<li>', html)
+        
+        # Améliorer les listes numérotées
+        html = re.sub(r'<ol>\s*<li>', r'<ol class="styled-list">\n<li>', html)
+        
+        return html
 
 
 class Review(models.Model):

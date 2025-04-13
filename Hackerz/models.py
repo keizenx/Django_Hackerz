@@ -22,12 +22,12 @@ class Profile(models.Model):
         return f"Profil de {self.user.username}"
 
 # Signal pour créer automatiquement un profil lorsqu'un utilisateur est créé
-@receiver(post_save, sender=User)
+@receiver(post_save, sender='auth.User')
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender='auth.User')
 def save_user_profile(sender, instance, **kwargs):
     try:
         instance.profile.save()
@@ -75,4 +75,18 @@ class EmailConfirmationToken(models.Model):
         return self.created + timedelta(hours=24) > timezone.now()
     
     def __str__(self):
-        return f"Token de confirmation pour {self.user.email}" 
+        return f"Token de confirmation pour {self.user.email}"
+
+class NewsletterSubscriber(models.Model):
+    """Modèle pour les abonnés à la newsletter."""
+    email = models.EmailField(unique=True)
+    is_active = models.BooleanField(default=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.email
+    
+    class Meta:
+        verbose_name = "Abonné à la newsletter"
+        verbose_name_plural = "Abonnés à la newsletter" 

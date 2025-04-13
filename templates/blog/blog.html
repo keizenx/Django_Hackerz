@@ -85,21 +85,21 @@
 
           <!-- Pagination -->
           {% if posts.has_other_pages %}
-          <div class="pagination" style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
+          <div class="pagination" style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.75rem;">
             {% if posts.has_previous %}
-            <a href="?page={{ posts.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if selected_tag %}&tag={{ selected_tag.slug }}{% endif %}" class="pagination-link">&laquo; Précédent</a>
+            <a href="?page={{ posts.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if selected_tag %}&tag={{ selected_tag.slug }}{% endif %}" class="pagination-link" style="background-color: hsl(142, 100%, 50%); color: hsl(0, 0%, 5%); font-weight: 500;">&laquo; Précédent</a>
             {% endif %}
 
             {% for num in posts.paginator.page_range %}
               {% if posts.number == num %}
-                <span class="pagination-link active">{{ num }}</span>
+                <span class="pagination-link active" style="background-color: hsl(142, 100%, 50%); color: hsl(0, 0%, 5%); font-weight: 700; box-shadow: 0 0 5px rgba(0, 255, 65, 0.5);">{{ num }}</span>
               {% elif num > posts.number|add:'-3' and num < posts.number|add:'3' %}
-                <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if selected_tag %}&tag={{ selected_tag.slug }}{% endif %}" class="pagination-link">{{ num }}</a>
+                <a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if selected_tag %}&tag={{ selected_tag.slug }}{% endif %}" class="pagination-link" style="border: 1px solid hsl(142, 100%, 50%); color: hsl(142, 100%, 50%);">{{ num }}</a>
               {% endif %}
             {% endfor %}
 
             {% if posts.has_next %}
-            <a href="?page={{ posts.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if selected_tag %}&tag={{ selected_tag.slug }}{% endif %}" class="pagination-link">Suivant &raquo;</a>
+            <a href="?page={{ posts.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if selected_tag %}&tag={{ selected_tag.slug }}{% endif %}" class="pagination-link" style="background-color: hsl(142, 100%, 50%); color: hsl(0, 0%, 5%); font-weight: 500;">Suivant &raquo;</a>
             {% endif %}
           </div>
           {% endif %}

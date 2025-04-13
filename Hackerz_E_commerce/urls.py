@@ -16,9 +16,11 @@ urlpatterns = [
     path('add_review/<int:product_id>/', views.add_review, name='add_review'),
     path('buy_now/<int:product_id>/', views.buy_now, name='buy_now'),
     path('process_payment/', views.process_payment, name='process_payment'),
+    path('payment/success/', views.payment_success, name='payment_success'),
     path('vendor/products/', views.vendor_products, name='vendor_products'),
     path('vendor/product/add/', views.add_product, name='add_product'),
     path('vendor/product/<int:product_id>/', views.vendor_product_detail, name='vendor_product_detail'),
     path('vendor/product/<int:product_id>/edit/', views.edit_product, name='edit_product'),
     path('vendor/product/<int:product_id>/delete/', views.delete_product, name='delete_product'),
+    path('order/<int:order_id>/invoice/', views.generate_invoice_pdf, name='generate_invoice'),
 ] 
