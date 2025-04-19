@@ -216,9 +216,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'franckcours99@gmail.com'
-EMAIL_HOST_PASSWORD = 'ialr jrtb slao urik'
-DEFAULT_FROM_EMAIL = 'Hackerz <franckcours99@gmail.com>'
+EMAIL_HOST_USER = 'your gmail address'
+EMAIL_HOST_PASSWORD = 'xxxxxxxxxxxxxx'
+DEFAULT_FROM_EMAIL = 'Hackerz <gmail address>'
 
 # Configuration pour la réinitialisation de mot de passe
 PASSWORD_RESET_TIMEOUT = 3600  # 1 heure en secondes 
